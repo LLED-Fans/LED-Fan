@@ -1,0 +1,5 @@
+.pio
+CMakeListsPrivate.txt
+
+.idea
+cmake-build-esp32dev
