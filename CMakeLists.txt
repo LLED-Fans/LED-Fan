@@ -86,4 +86,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/HttpServer.cpp src/HttpServer.h src/Network.cpp src/Network.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST})

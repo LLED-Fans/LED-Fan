@@ -4,6 +4,7 @@
 
 #include "Screen.h"
 
+// FIXME This should definitely be per-instance
 #define LED_TYPE WS2811
 #define COLOR_ORDER GRB
 #define LED_PIN 25

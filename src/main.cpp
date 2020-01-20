@@ -3,6 +3,7 @@
 //
 
 #include <HardwareSerial.h>
+#include <SPIFFS.h>
 #include "Screen.h"
 #include "SensorSwitch.h"
 #include "RotationSensor.h"
@@ -19,11 +20,17 @@ RotationSensor *rotationSensor;
 HttpServer *server;
 
 void setup() {
+    // Enable Monitoring
     Serial.begin(9600);
 
+    // Mount file system
+    SPIFFS.begin(false);
+
+    // Initialize Screen
     screen = new Screen(18);
     rotationSensor = new RotationSensor(new SensorSwitch(MAGNET_PIN));
 
+    // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
     server = new HttpServer(screen);
 }
