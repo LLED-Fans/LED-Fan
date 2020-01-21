@@ -50,8 +50,7 @@ void loop() {
     else {
         // Something is wrong, I can feel it
         screen->drawValue(
-            rotationSensor->sensorSwitch->isOn() ? 0 : 1,
-            (rotationSensor->sensorSwitch->rawValue() - 3000) / 1000.0f
+            rotationSensor->sensorSwitch->isOn() ? 0 : 1
         );
     }
 
