@@ -33,16 +33,16 @@ HttpServer::HttpServer(Screen *screen, RotationSensor *rotationSensor) : screen(
     SERVE_HTML("/", "/index.html")
     SERVE_HTML("/settings", "/settings.html")
 
-    _server.on("/mode/set", HTTP_GET, [screen](AsyncWebServerRequest *request) {
-        if (!request->hasParam("mode", false)) {
+    _server.on("/mode/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+        if (!request->hasParam("mode", true)) {
             request_result(false);
         }
 
-        auto mode = request->getParam("mode", false)->value();
+        auto mode = request->getParam("mode", true)->value();
         if (mode == "demo") {
-            screen->scrapMode = 0;
+            screen->mode = 0;
         } else if (mode == "screen") {
-            screen->scrapMode = 1;
+            screen->mode = 1;
         }
 
         request_result(true);
@@ -85,6 +85,13 @@ String HttpServer::processTemplates(const String &var) {
         return String(screen->pin());
     if (var == "MAGNET_PIN")
         return String(rotationSensor->sensorSwitch->pin);
+
+    if (var == "S_MODE_DEMO") {
+        return screen->mode == 0 ? "mdl-button--accent" : "";
+    }
+    if (var == "S_MODE_SCREEN") {
+        return screen->mode == 1 ? "mdl-button--accent" : "";
+    }
 
     return String("ERROR");
 }

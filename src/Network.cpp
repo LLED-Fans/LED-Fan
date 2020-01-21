@@ -24,6 +24,11 @@ bool Network::connect(char *ssid, char *password, bool savePreset, int retries) 
     printfln("Connecting to Station: %s...", ssid);
     WiFi.begin(ssid, password);
 
+    if (savePreset) {
+        TextFiles::write("/wifi/ssid", ssid);
+        TextFiles::write("/wifi/password", password);
+    }
+
     for (int i = retries; i >= 0; --i) {
         if (WiFi.status() == WL_CONNECTED) {
             break;
@@ -35,11 +40,6 @@ bool Network::connect(char *ssid, char *password, bool savePreset, int retries) 
         }
         
         delay(1000);
-    }
-
-    if (savePreset) {
-        TextFiles::write("/wifi/ssid", ssid);
-        TextFiles::write("/wifi/password", password);
     }
 
     printfln("Successfully connected!");
@@ -54,7 +54,7 @@ bool Network::connectToPreset() {
         return false;
     }
 
-    return connect(ssid.begin(), password.begin(), false, 2);
+    return connect(ssid.begin(), password.begin(), false, 0);
 }
 
 bool Network::checkStatus() {

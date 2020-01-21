@@ -12,7 +12,7 @@ public:
     int count;
     CRGB *leds;
 
-    int scrapMode = 0;
+    int mode = 0;
 
     Screen(int ledCount);
 

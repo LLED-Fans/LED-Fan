@@ -16,7 +16,7 @@ Screen::Screen(int ledCount): count(ledCount) {
 }
 
 void Screen::draw(float rotation) {
-    int start = scrapMode == 0 ? 0 : scrapMode == 1 ? 85 : 170;
+    int start = mode == 0 ? 0 : mode == 1 ? 85 : 170;
     fill_rainbow(leds, count, start + (int)(rotation * 255), 7);
     FastLED.show();
 }

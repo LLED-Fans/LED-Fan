@@ -90,23 +90,23 @@
               </div>
               <div class="mdl-card__supporting-text">
                 <h4>Mode</h4>
-                <div class="mdl-grid controls">
-                  <div class="mdl-cell mdl-cell--6-col">
-                    <form action="mode/set?mode=screen">
-                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                <form action="mode/set" method="POST" enctype='multipart/form-data'>
+                  <div class="mdl-grid controls">
+                    <div class="mdl-cell mdl-cell--6-col">
+                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_SCREEN%"
+                              name="mode" value="screen">
                         Screen
                       </button>
-                    </form>
-                  </div>
+                    </div>
 
-                  <div class="mdl-cell mdl-cell--6-col">
-                    <form action="mode/set?mode=demo">
-                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    <div class="mdl-cell mdl-cell--6-col">
+                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_DEMO%"
+                              name="mode" value="demo">
                         Demo
                       </button>
-                    </form>
+                    </div>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
