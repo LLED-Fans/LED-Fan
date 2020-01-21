@@ -16,7 +16,7 @@
   limitations under the License
 -->
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
@@ -43,31 +43,25 @@
     <link rel="stylesheet" href="material.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-    #view-source {
-      position: fixed;
-      display: block;
-      right: 0;
-      bottom: 0;
-      margin-right: 40px;
-      margin-bottom: 40px;
-      z-index: 900;
-    }
+        #view-source {
+            position: fixed;
+            display: block;
+            right: 0;
+            bottom: 0;
+            margin-right: 40px;
+            margin-bottom: 40px;
+            z-index: 900;
+        }
     </style>
-  </head>
-  <body>
-    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-      <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+</head>
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
         <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">Settings</span>
-          <div class="mdl-layout-spacer"></div>
-          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
-            <li class="mdl-menu__item">About</li>
-            <li class="mdl-menu__item">Contact</li>
-            <li class="mdl-menu__item">Legal information</li>
-          </ul>
+            <span class="mdl-layout-title">Settings</span>
         </div>
-      </header>
-      <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+    </header>
+    <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
         <header class="demo-drawer-header">
           <span style="font-weight: bold">
             <img src="images/globe.svg">
@@ -75,94 +69,83 @@
           </span>
         </header>
         <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
-          <a class="mdl-navigation__link" href="/"><img src="images/home.svg" class="icon">Home</a>
-          <a class="mdl-navigation__link" href="settings"><img src="images/settings.svg" class="icon">Settings</a>
-          <div class="mdl-layout-spacer"></div>
-          <a class="mdl-navigation__link" href=""><img src="images/help-circle.svg" class="icon"><span class="visuallyhidden">Help</span></a>
+            <a class="mdl-navigation__link" href="/"><img src="images/home.svg" class="icon">Home</a>
+            <a class="mdl-navigation__link" href="settings"><img src="images/settings.svg" class="icon">Settings</a>
+            <div class="mdl-layout-spacer"></div>
+            <a class="mdl-navigation__link" href=""><img src="images/help-circle.svg" class="icon"><span
+                    class="visuallyhidden">Help</span></a>
         </nav>
-      </div>
-      <main class="mdl-layout__content mdl-color--grey-100">
-        <div class="mdl-grid demo-content">
-          <div class="demo-cards mdl-cell mdl-cell--6-col mdl-grid mdl-grid--no-spacing">
-            <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
-                <h2 class="mdl-card__title-text">Screen</h2>
-              </div>
-              <div class="mdl-card__supporting-text">
-                <h4>Mode</h4>
-                <form action="mode/set" method="POST" enctype='multipart/form-data'>
-                  <div class="mdl-grid controls">
-                    <div class="mdl-cell mdl-cell--6-col">
-                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_SCREEN%"
-                              name="mode" value="screen">
-                        Screen
-                      </button>
-                    </div>
-
-                    <div class="mdl-cell mdl-cell--6-col">
-                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_DEMO%"
-                              name="mode" value="demo">
-                        Demo
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div class="demo-cards mdl-cell mdl-cell--6-col mdl-grid mdl-grid--no-spacing">
-            <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
-                <h2 class="mdl-card__title-text">WiFi</h2>
-              </div>
-              <div class="mdl-card__supporting-text">
-                <h4>Access Point</h4>
-                <p><b>IP:</b> %AP_IP%</p>
-                <p><b>SSID:</b> %AP_SSID%</p>
-
-                <h4>Station</h4>
-                <p><b>IP:</b> %LOCAL_IP%</p>
-                <p><b>SSID:</b> %LOCAL_SSID%</p>
-
-                <h4>Connect to Wifi</h4>
-
-                <form action="wifi/connect" method="POST" enctype='multipart/form-data'>
-                  <div class="mdl-grid controls">
-                    <div class="mdl-textfield mdl-js-textfield mdl-cell mdl-cell--6-col">
-                      <input class="mdl-textfield__input" type="text" id="ssid" name="ssid">
-                      <label class="mdl-textfield__label" for="ssid">SSID...</label>
-                    </div>
-
-                    <div class="mdl-textfield mdl-js-textfield mdl-cell mdl-cell--5-col">
-                      <input class="mdl-textfield__input" type="password" id="password" name="password">
-                      <label class="mdl-textfield__label" for="password">Password...</label>
-                    </div>
-
-                    <div class="mdl-cell mdl-cell--1-col">
-                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                        <img src="images/log-in.svg" class="icon">
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
     </div>
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
-        <defs>
-          <mask id="piemask" maskContentUnits="objectBoundingBox">
-            <circle cx=0.5 cy=0.5 r=0.49 fill="white" />
-            <circle cx=0.5 cy=0.5 r=0.40 fill="black" />
-          </mask>
-          <g id="piechart">
-            <circle cx=0.5 cy=0.5 r=0.5 />
-            <path d="M 0.5 0.5 0.5 0 A 0.5 0.5 0 0 1 0.95 0.28 z" stroke="none" fill="rgba(255, 255, 255, 0.75)" />
-          </g>
-        </defs>
-      </svg>
-    <script src="material.min.js"></script>
-  </body>
+    <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content">
+            <div class="demo-cards mdl-cell mdl-cell--6-col mdl-grid mdl-grid--no-spacing">
+                <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+                    <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                        <h2 class="mdl-card__title-text">Screen</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        <h4>Mode</h4>
+                        <form action="mode/set" method="POST" enctype='multipart/form-data'>
+                            <div class="mdl-grid controls">
+                                <div class="mdl-cell mdl-cell--6-col">
+                                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_SCREEN%"
+                                            name="mode" value="screen">
+                                        Screen
+                                    </button>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--6-col">
+                                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_DEMO%"
+                                            name="mode" value="demo">
+                                        Demo
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="demo-cards mdl-cell mdl-cell--6-col mdl-grid mdl-grid--no-spacing">
+                <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+                    <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                        <h2 class="mdl-card__title-text">WiFi</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        <h4>Access Point</h4>
+                        <p><b>IP:</b> %AP_IP%</p>
+                        <p><b>SSID:</b> %AP_SSID%</p>
+
+                        <h4>Station</h4>
+                        <p><b>IP:</b> %LOCAL_IP%</p>
+                        <p><b>SSID:</b> %LOCAL_SSID%</p>
+
+                        <h4>Connect to Wifi</h4>
+
+                        <form action="wifi/connect" method="POST" enctype='multipart/form-data'>
+                            <div class="mdl-grid controls">
+                                <div class="mdl-textfield mdl-js-textfield mdl-cell mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="ssid" name="ssid">
+                                    <label class="mdl-textfield__label" for="ssid">SSID...</label>
+                                </div>
+
+                                <div class="mdl-textfield mdl-js-textfield mdl-cell mdl-cell--5-col">
+                                    <input class="mdl-textfield__input" type="password" id="password" name="password">
+                                    <label class="mdl-textfield__label" for="password">Password...</label>
+                                </div>
+
+                                <div class="mdl-cell mdl-cell--1-col">
+                                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                                        <img src="images/log-in.svg" class="icon">
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="material.min.js"></script>
+</body>
 </html>
