@@ -20,3 +20,7 @@ float RotationSensor::update(unsigned long currentTime) {
 
     return (float) (currentTime - lastRotationMillis) / (float) timePerRotation;
 }
+
+bool RotationSensor::isReliable() {
+    return sensorSwitch->isReliable;
+}

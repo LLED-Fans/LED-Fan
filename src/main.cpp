@@ -41,7 +41,7 @@ void loop() {
     unsigned long milliseconds = millis();
 
     float currentRotation = rotationSensor->update(milliseconds);
-    if (currentRotation > 0 && currentRotation < 5) {
+    if (rotationSensor->isReliable() && currentRotation > 0 && currentRotation < 5) {
         screen->draw(milliseconds, fmod(currentRotation, 1.0f));
     }
     else {

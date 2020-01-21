@@ -18,6 +18,7 @@ public:
     RotationSensor(SensorSwitch *sensorSwitch);
 
     float update(unsigned long currentTime);
+    bool isReliable();
 };
 
 
