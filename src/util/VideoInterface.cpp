@@ -9,15 +9,35 @@ VideoInterface::VideoInterface(Screen *screen) : screen(screen) {
     jpegDecoder = new JPEGDecoder();
 }
 
-void VideoInterface::acceptJpeg(uint8_t *data, size_t len) {
-    if (!jpegDecoder->decodeArray(data, len)) {
-        Printf::ln("Failed to decode JPEG.");
-        return;
+bool VideoInterface::acceptRawRGB(File file) {
+    if (file.size() != 3 * screen->virtualSize * screen->virtualSize) {
+        Printf::ln("Got image of invalid size; resizing unsupported! (%d)", file.size());
+        return false;
+    }
+
+    auto *buffer = new char[3 * screen->virtualSize];
+    for (int y = 0; y < screen->virtualSize; y++) {
+        file.readBytes(buffer, 3 * screen->virtualSize);
+
+        for (int x = 0; x < screen->virtualSize; x++) {
+            screen->virtualScreen[x * screen->virtualSize + y] =
+                CRGB(buffer[x * 3], buffer[x * 3 + 1], buffer[x * 3 + 2]);
+        }
+    }
+
+    return true;
+}
+
+bool VideoInterface::acceptJpeg(File file) {
+    auto status = jpegDecoder->decodeFsFile(file);
+    if (!status) {
+        Printf::ln("Failed to decode JPEG: %d", status);
+        return false;
     }
 
     if (jpegDecoder->width != screen->virtualSize || jpegDecoder->height != screen->virtualSize) {
-        Printf::ln("Got image of invalid size; resizing unsupported! (%d, %d)");
-        return;
+        Printf::ln("Got image of invalid size; resizing unsupported! (%d, %d)", jpegDecoder->width, jpegDecoder->height);
+        return false;
     }
 
     // See https://github.com/Bodmer/JPEGDecoder/blob/master/examples/Other%20libraries/SPIFFS_Jpeg/JPEG_functions.ino
@@ -45,4 +65,8 @@ void VideoInterface::acceptJpeg(uint8_t *data, size_t len) {
             }
         }
     }
+
+    Printf::ln("Successfully applied image");
+
+    return true;
 }

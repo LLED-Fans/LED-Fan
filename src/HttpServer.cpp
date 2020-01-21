@@ -61,6 +61,23 @@ String HttpServer::processTemplates(const String &var) {
     return String("ERROR");
 }
 
+bool handlePartialFile(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    if (!index) {
+        request->_tempFile = SPIFFS.open("/img", FILE_WRITE);
+    }
+    request->_tempFile.write(data, len);
+
+    if(index + len == total) {
+        // Final Packet
+        request->_tempFile.close();
+        request->_tempFile = SPIFFS.open("/img", FILE_READ);
+
+        return true;
+    }
+
+    return false;
+}
+
 void HttpServer::setupRoutes() {
     auto template_processor = std::bind(&HttpServer::processTemplates, this, _1);
     auto videoInterface = this->videoInterface;
@@ -110,10 +127,24 @@ void HttpServer::setupRoutes() {
     // ------------------- Data ----------------------
     // -----------------------------------------------
 
-    _server.on("/img", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
+    _server.on("/img/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
                    request->send(200);
                }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-                   videoInterface->acceptJpeg(data, len);
+                   if (handlePartialFile(request, data, len, index, total)) {
+                       bool accepted = videoInterface->acceptRawRGB(request->_tempFile);
+                       request_result(accepted);
+                   }
+               }
+    );
+
+
+    _server.on("/img/jpg", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
+                   request->send(200);
+               }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+                   if (handlePartialFile(request, data, len, index, total)) {
+                       bool accepted = videoInterface->acceptJpeg(request->_tempFile);
+                       request_result(accepted);
+                   }
                }
     );
 }

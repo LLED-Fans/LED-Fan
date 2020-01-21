@@ -5,7 +5,6 @@
 #ifndef LED_FAN_VIDEOINTERFACE_H
 #define LED_FAN_VIDEOINTERFACE_H
 
-
 #include <JPEGDecoder.h>
 #include <Screen.h>
 
@@ -16,7 +15,8 @@ public:
 
     VideoInterface(Screen *screen);
 
-    void acceptJpeg(uint8_t *data, size_t len);
+    bool acceptRawRGB(File file);
+    bool acceptJpeg(File file);
 };
 
 
