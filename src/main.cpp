@@ -31,7 +31,7 @@ void setup() {
     // Initialize Screen
     screen = new Screen(18, 64);
     rotationSensor = new RotationSensor(
-            new SensorSwitch(MAGNET_PIN, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 5.0))
+            new SensorSwitch(MAGNET_PIN, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 2.0))
     );
 
     // Initialize Server
