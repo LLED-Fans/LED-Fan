@@ -2,7 +2,6 @@
 // Created by Lukas Tenbrink on 20.01.20.
 //
 
-#include <HardwareSerial.h>
 #include "PeakDetector.h"
 
 bool PeakDetector::accept(int value) {
