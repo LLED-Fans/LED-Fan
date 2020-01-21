@@ -18,6 +18,8 @@ public:
 
     void draw(float rotation);
     void drawError();
+
+    int pin();
 };
 
 

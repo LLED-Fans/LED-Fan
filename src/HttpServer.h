@@ -7,12 +7,16 @@
 
 
 #include "Screen.h"
+#include "RotationSensor.h"
 
 class HttpServer {
 public:
     Screen *screen;
+    RotationSensor *rotationSensor;
 
-    HttpServer(Screen *screen);
+    HttpServer(Screen *screen, RotationSensor *rotationSensor);
+
+    String processTemplates(const String &var);
 };
 
 

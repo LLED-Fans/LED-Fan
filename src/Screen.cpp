@@ -25,3 +25,7 @@ void Screen::drawError() {
     fill_solid(leds, count, CRGB::Red);
     FastLED.show();
 }
+
+int Screen::pin() {
+    return LED_PIN;
+}

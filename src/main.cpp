@@ -32,7 +32,9 @@ void setup() {
 
     // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
-    server = new HttpServer(screen);
+    Network::connectToPreset();
+
+    server = new HttpServer(screen, rotationSensor);
 }
 
 void loop() {
@@ -45,5 +47,9 @@ void loop() {
     else {
         // Something is wrong, I can feel it
         screen->drawError();
+    }
+
+    EVERY_N_SECONDS(10) {
+        Network::checkStatus();
     }
 }
