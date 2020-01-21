@@ -38,10 +38,15 @@ int Screen::pin() {
 }
 
 void Screen::drawScreen(unsigned long milliseconds, float rotation) {
-    Serial.print(virtualScreen[0]);
+    for (int i = 0; i < count; i++) {
+        double relative_x = sin(rotation * M_2_PI);
+        double relative_y = cos(rotation * M_2_PI);
 
-    auto color = (milliseconds / 100) % 2 == 0 ? CRGB::White : CRGB::Blue;
-    fill_solid(leds, count, color);
+        int x = int((relative_x + 1.0) * (double) virtualSize / 2 + 0.5);
+        int y = int((relative_y + 1.0) * (double) virtualSize / 2 + 0.5);
+
+        leds[i] = virtualScreen[x * virtualSize + y];
+    }
     FastLED.show();
 }
 
