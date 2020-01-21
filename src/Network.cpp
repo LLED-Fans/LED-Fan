@@ -3,25 +3,25 @@
 //
 
 #include <HardwareSerial.h>
-#include <util/util.h>
 #include <WiFi.h>
 #include <SPIFFS.h>
 #include <util/TextFiles.h>
+#include <util/Printf.h>
 #include "Network.h"
 
 void Network::host(char* ssid, char* password) {
-    printfln("Setting AP (Access Point)…");
+    Printf::ln("Setting AP (Access Point)…");
 
     WiFi.mode(WIFI_AP_STA); // <<< Station AND Access Point
     WiFi.softAP(ssid, password);
 
     IPAddress IP = WiFi.softAPIP();
-    printfln("AP IP address: ");
+    Printf::ln("AP IP address: ");
     Serial.println(IP);
 }
 
 bool Network::connect(char *ssid, char *password, bool savePreset, int retries) {
-    printfln("Connecting to Station: %s...", ssid);
+    Printf::ln("Connecting to Station: %s...", ssid);
     WiFi.begin(ssid, password);
 
     if (savePreset) {
@@ -35,14 +35,14 @@ bool Network::connect(char *ssid, char *password, bool savePreset, int retries) 
         }
         
         if (i == 0) {
-            printfln("Failed to connect!");
+            Printf::ln("Failed to connect!");
             return false;
         }
         
         delay(1000);
     }
 
-    printfln("Successfully connected!");
+    Printf::ln("Successfully connected!");
     return true;
 }
 

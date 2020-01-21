@@ -8,6 +8,7 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <esp_wifi.h>
+#include <util/VideoInterface.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -20,9 +21,50 @@ using namespace std::placeholders;
 // FIXME This should be per-instance. Or something.
 AsyncWebServer _server(80);
 
-HttpServer::HttpServer(Screen *screen, RotationSensor *rotationSensor) : screen(screen),
-                                                                         rotationSensor(rotationSensor) {
+HttpServer::HttpServer(Screen *screen, RotationSensor *rotationSensor)
+        : screen(screen),
+          videoInterface(new VideoInterface(screen)),
+          rotationSensor(rotationSensor) {
+    setupRoutes();
+    _server.begin();
+}
+
+String HttpServer::processTemplates(const String &var) {
+    if (var == "AP_IP")
+        return WiFi.softAPIP().toString();
+    if (var == "AP_SSID") {
+        wifi_config_t conf_current;
+        esp_wifi_get_config(WIFI_IF_AP, &conf_current);
+        return String(reinterpret_cast<char*>(conf_current.ap.ssid));;
+    }
+
+    if (var == "LOCAL_IP")
+        return WiFi.localIP().toString();
+    if (var == "LOCAL_SSID")
+        return String(WiFi.SSID());
+
+    if (var == "LED_PIN")
+        return String(screen->pin());
+    if (var == "MAGNET_PIN")
+        return String(rotationSensor->sensorSwitch->pin);
+
+    if (var == "S_MODE_DEMO") {
+        return screen->mode == Screen::demo ? "mdl-button--accent" : "";
+    }
+    if (var == "S_MODE_SCREEN") {
+        return screen->mode == Screen::screen ? "mdl-button--accent" : "";
+    }
+    if (var == "%VIRTUAL_SCREEN_SIZE%") {
+        return String(screen->virtualSize);
+    }
+
+    return String("ERROR");
+}
+
+void HttpServer::setupRoutes() {
     auto template_processor = std::bind(&HttpServer::processTemplates, this, _1);
+    auto videoInterface = this->videoInterface;
+    auto screen = this->screen;
 
     _server.serveStatic("/material.min.js", SPIFFS, "/material.min.js");
     _server.serveStatic("/material.min.css", SPIFFS, "/material.min.css");
@@ -64,34 +106,14 @@ HttpServer::HttpServer(Screen *screen, RotationSensor *rotationSensor) : screen(
         request->send(200, "text/plain", "404 / Not Found");
     });
 
-    _server.begin();
-}
+    // -----------------------------------------------
+    // ------------------- Data ----------------------
+    // -----------------------------------------------
 
-String HttpServer::processTemplates(const String &var) {
-    if (var == "AP_IP")
-        return WiFi.softAPIP().toString();
-    if (var == "AP_SSID") {
-        wifi_config_t conf_current;
-        esp_wifi_get_config(WIFI_IF_AP, &conf_current);
-        return String(reinterpret_cast<char*>(conf_current.ap.ssid));;
-    }
-
-    if (var == "LOCAL_IP")
-        return WiFi.localIP().toString();
-    if (var == "LOCAL_SSID")
-        return String(WiFi.SSID());
-
-    if (var == "LED_PIN")
-        return String(screen->pin());
-    if (var == "MAGNET_PIN")
-        return String(rotationSensor->sensorSwitch->pin);
-
-    if (var == "S_MODE_DEMO") {
-        return screen->mode == Screen::demo ? "mdl-button--accent" : "";
-    }
-    if (var == "S_MODE_SCREEN") {
-        return screen->mode == Screen::screen ? "mdl-button--accent" : "";
-    }
-
-    return String("ERROR");
+    _server.on("/img", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
+                   request->send(200);
+               }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+                   videoInterface->acceptJpeg(data, len);
+               }
+    );
 }

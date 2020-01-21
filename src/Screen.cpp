@@ -9,10 +9,12 @@
 #define COLOR_ORDER GRB
 #define LED_PIN 25
 
-Screen::Screen(int ledCount): count(ledCount) {
+Screen::Screen(int ledCount, int virtualSize): count(ledCount), virtualSize(virtualSize) {
     this->leds = new CRGB[ledCount];
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, ledCount)
             .setCorrection(TypicalLEDStrip);
+
+    virtualScreen = new CRGB[virtualSize * virtualSize];
 }
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
@@ -36,6 +38,8 @@ int Screen::pin() {
 }
 
 void Screen::drawScreen(unsigned long milliseconds, float rotation) {
+    Serial.print(virtualScreen[0]);
+
     auto color = (milliseconds / 100) % 2 == 0 ? CRGB::White : CRGB::Blue;
     fill_solid(leds, count, color);
     FastLED.show();

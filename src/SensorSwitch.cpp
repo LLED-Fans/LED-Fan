@@ -18,7 +18,7 @@ bool SensorSwitch::test() {
         thresholdSwitch->upper = ((peaks->lower * 1 / 5) + (peaks->upper * 4 / 5));
         thresholdSwitch->lower = ((peaks->lower * 3 / 5) + (peaks->upper * 2 / 5));
         isReliable = thresholdSwitch->upper > thresholdSwitch->lower + 100;
-        //printfln("Boundaries! %d", thresholdSwitch.lower, thresholdSwitch.upper);
+        //Printf::ln("Boundaries! %d", thresholdSwitch.lower, thresholdSwitch.upper);
     }
 
     return thresholdSwitch->accept(magnetValue);

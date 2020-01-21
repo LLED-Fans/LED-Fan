@@ -13,9 +13,9 @@ float RotationSensor::update(unsigned long currentTime) {
             // Full Rotation
             timePerRotation = currentTime - lastRotationMillis;
             lastRotationMillis = currentTime;
-            //printfln("Rotation! Took %f", timePerRotation);
+            //Printf::ln("Rotation! Took %f", timePerRotation);
         }
-        //printfln("Turn! %d", magnetSwitch.isOn);
+        //Printf::ln("Turn! %d", magnetSwitch.isOn);
     }
 
     return (float) (currentTime - lastRotationMillis) / (float) timePerRotation;

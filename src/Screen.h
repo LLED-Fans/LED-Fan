@@ -18,7 +18,10 @@ public:
 
     Mode mode = demo;
 
-    Screen(int ledCount);
+    int virtualSize;
+    CRGB *virtualScreen;
+
+    Screen(int ledCount, int virtualSize);
 
     void draw(unsigned long milliseconds, float rotation);
 

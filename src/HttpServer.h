@@ -7,15 +7,18 @@
 
 
 #include "Screen.h"
+#include <util/VideoInterface.h>
 #include "RotationSensor.h"
 
 class HttpServer {
 public:
     Screen *screen;
+    VideoInterface *videoInterface;
     RotationSensor *rotationSensor;
 
     HttpServer(Screen *screen, RotationSensor *rotationSensor);
 
+    void setupRoutes();
     String processTemplates(const String &var);
 };
 

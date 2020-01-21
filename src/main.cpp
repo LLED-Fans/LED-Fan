@@ -27,7 +27,7 @@ void setup() {
     SPIFFS.begin(false);
 
     // Initialize Screen
-    screen = new Screen(18);
+    screen = new Screen(18, 64);
     rotationSensor = new RotationSensor(new SensorSwitch(MAGNET_PIN));
 
     // Initialize Server
