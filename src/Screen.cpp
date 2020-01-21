@@ -29,7 +29,15 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
 }
 
 void Screen::drawError() {
-    fill_solid(leds, count, CRGB::Red);
+    drawValue(0);
+}
+
+void Screen::drawValue(float value, float value1, float value2) {
+    fill_solid(leds, count, CRGB(
+            (int)(value * 255),
+            (int)(value1 * 255),
+            (int)(value2 * 255)
+    ));
     FastLED.show();
 }
 

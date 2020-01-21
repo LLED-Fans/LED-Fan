@@ -6,6 +6,7 @@
 #define LED_FAN_SENSORSWITCH_H
 
 
+#include <cstdint>
 #include <util/PeakDetector.h>
 #include <util/ThresholdSwitch.h>
 
@@ -20,6 +21,7 @@ public:
     SensorSwitch(int pin);
 
     bool test();
+    uint16_t rawValue();
 
     bool isOn() {
         return thresholdSwitch->isOn;

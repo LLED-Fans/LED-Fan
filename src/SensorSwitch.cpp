@@ -3,6 +3,7 @@
 //
 
 #include <esp32-hal-adc.h>
+#include <HardwareSerial.h>
 #include "SensorSwitch.h"
 
 SensorSwitch::SensorSwitch(int pin): pin(pin) {
@@ -22,4 +23,8 @@ bool SensorSwitch::test() {
     }
 
     return thresholdSwitch->accept(magnetValue);
+}
+
+uint16_t SensorSwitch::rawValue() {
+    return analogRead(pin);
 }

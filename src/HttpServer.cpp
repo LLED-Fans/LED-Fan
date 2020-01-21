@@ -54,8 +54,16 @@ String HttpServer::processTemplates(const String &var) {
     if (var == "S_MODE_SCREEN") {
         return screen->mode == Screen::screen ? "mdl-button--accent" : "";
     }
-    if (var == "%VIRTUAL_SCREEN_SIZE%") {
+    if (var == "VIRTUAL_SCREEN_SIZE") {
         return String(screen->virtualSize);
+    }
+    if (var == "MAGNET_VALUE") {
+        return String(rotationSensor->sensorSwitch->peaks->lower)
+            + " < " +  String(rotationSensor->sensorSwitch->rawValue())
+            + " < " +  String(rotationSensor->sensorSwitch->peaks->upper);
+    }
+    if (var == "ROTATION_SPEED") {
+        return rotationSensor->isReliable() ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
     }
 
     return String("ERROR");

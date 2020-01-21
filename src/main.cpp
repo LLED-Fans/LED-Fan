@@ -10,10 +10,12 @@
 #include "Network.h"
 #include "HttpServer.h"
 
-#define MAGNET_PIN 13
+#define MAGNET_PIN 33
 
 #define HOST_NETWORK_SSID "LLED Fan"
 #define HOST_NETWORK_PASSWORD "We love LED"
+
+#define MICROSECONDS_PER_FRAME 10000
 
 Screen *screen;
 RotationSensor *rotationSensor;
@@ -38,7 +40,8 @@ void setup() {
 }
 
 void loop() {
-    unsigned long milliseconds = millis();
+    unsigned long microseconds = micros();
+    auto milliseconds = microseconds / 1000;
 
     float currentRotation = rotationSensor->update(milliseconds);
     if (rotationSensor->isReliable() && currentRotation > 0 && currentRotation < 5) {
@@ -46,10 +49,16 @@ void loop() {
     }
     else {
         // Something is wrong, I can feel it
-        screen->drawError();
+        screen->drawValue(
+            rotationSensor->sensorSwitch->isOn() ? 0 : 1,
+            (rotationSensor->sensorSwitch->rawValue() - 3000) / 1000.0f
+        );
     }
 
     EVERY_N_SECONDS(10) {
         Network::checkStatus();
     }
+
+    unsigned long postFrameMicroseconds = micros();
+    delayMicroseconds(MICROSECONDS_PER_FRAME - (postFrameMicroseconds - microseconds));
 }

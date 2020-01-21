@@ -30,6 +30,8 @@ public:
     void drawError();
 
     int pin();
+
+    void drawValue(float value, float value1 = 0, float value2 = 0);
 };
 
 
