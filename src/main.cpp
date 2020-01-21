@@ -59,6 +59,9 @@ void loop() {
         Network::checkStatus();
     }
 
-    unsigned long postFrameMicroseconds = micros();
-    delayMicroseconds(MICROSECONDS_PER_FRAME - (postFrameMicroseconds - microseconds));
+    unsigned long frameTime = (micros() - microseconds);
+    if (frameTime < MICROSECONDS_PER_FRAME) {
+        delayMicroseconds(MICROSECONDS_PER_FRAME - frameTime);
+    }
+    // Else we just run with lower framerate
 }
