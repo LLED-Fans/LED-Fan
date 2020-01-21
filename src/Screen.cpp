@@ -47,11 +47,18 @@ int Screen::pin() {
 
 void Screen::drawScreen(unsigned long milliseconds, float rotation) {
     for (int i = 0; i < count; i++) {
-        double relative_x = sin(rotation * M_2_PI);
-        double relative_y = cos(rotation * M_2_PI);
+        // -0.5 to 0.5
+        double pixelOffcenter = ((double) i / (double) (count - 1)) - 0.5;
+        // -1 to 1
+        double dirX = sin(rotation * M_2_PI);
+        double dirY = cos(rotation * M_2_PI);
 
-        int x = int((relative_x + 1.0) * (double) virtualSize / 2 + 0.5);
-        int y = int((relative_y + 1.0) * (double) virtualSize / 2 + 0.5);
+        // 0 to 1
+        double relativeX = 0.5 + dirX * pixelOffcenter;
+        double relativeY = 0.5 + dirY * pixelOffcenter;
+
+        int x = int(relativeX * virtualSize + 0.5);
+        int y = int(relativeY * virtualSize + 0.5);
 
         leds[i] = virtualScreen[x * virtualSize + y];
     }
