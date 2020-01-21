@@ -9,14 +9,21 @@
 
 class Screen {
 public:
+    enum Mode {
+        demo, screen
+    };
+
     int count;
     CRGB *leds;
 
-    int mode = 0;
+    Mode mode = demo;
 
     Screen(int ledCount);
 
-    void draw(float rotation);
+    void draw(long time, float rotation);
+
+    void drawDemo(long time, float rotation);
+    void drawScreen(long time, float rotation);
     void drawError();
 
     int pin();

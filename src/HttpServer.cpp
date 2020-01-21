@@ -40,9 +40,9 @@ HttpServer::HttpServer(Screen *screen, RotationSensor *rotationSensor) : screen(
 
         auto mode = request->getParam("mode", true)->value();
         if (mode == "demo") {
-            screen->mode = 0;
+            screen->mode = Screen::demo;
         } else if (mode == "screen") {
-            screen->mode = 1;
+            screen->mode = Screen::screen;
         }
 
         request_result(true);
@@ -87,10 +87,10 @@ String HttpServer::processTemplates(const String &var) {
         return String(rotationSensor->sensorSwitch->pin);
 
     if (var == "S_MODE_DEMO") {
-        return screen->mode == 0 ? "mdl-button--accent" : "";
+        return screen->mode == Screen::demo ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_SCREEN") {
-        return screen->mode == 1 ? "mdl-button--accent" : "";
+        return screen->mode == Screen::screen ? "mdl-button--accent" : "";
     }
 
     return String("ERROR");
