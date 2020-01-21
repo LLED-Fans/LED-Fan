@@ -36,7 +36,7 @@ int Screen::pin() {
 }
 
 void Screen::drawScreen(unsigned long milliseconds, float rotation) {
-    auto color = (time / 100) % 2 == 0 ? CRGB::White : CRGB::Blue;
+    auto color = (milliseconds / 100) % 2 == 0 ? CRGB::White : CRGB::Blue;
     fill_solid(leds, count, color);
     FastLED.show();
 }
