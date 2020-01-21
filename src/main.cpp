@@ -38,11 +38,11 @@ void setup() {
 }
 
 void loop() {
-    unsigned long currentTime = millis();
+    unsigned long milliseconds = millis();
 
-    float currentRotation = rotationSensor->update(currentTime);
+    float currentRotation = rotationSensor->update(milliseconds);
     if (currentRotation > 0 && currentRotation < 5) {
-        screen->draw(fmod(currentRotation, 1.0f));
+        screen->draw(milliseconds, fmod(currentRotation, 1.0f));
     }
     else {
         // Something is wrong, I can feel it

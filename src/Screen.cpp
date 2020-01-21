@@ -15,13 +15,13 @@ Screen::Screen(int ledCount): count(ledCount) {
             .setCorrection(TypicalLEDStrip);
 }
 
-void Screen::draw(long time, float rotation) {
+void Screen::draw(unsigned long milliseconds, float rotation) {
     switch (mode) {
         default:
-            drawScreen(time, rotation);
+            drawScreen(milliseconds, rotation);
             break;
         case demo:
-            drawDemo(time, rotation);
+            drawDemo(milliseconds, rotation);
             break;
     }
 }
@@ -35,13 +35,13 @@ int Screen::pin() {
     return LED_PIN;
 }
 
-void Screen::drawScreen(long time, float rotation) {
+void Screen::drawScreen(unsigned long milliseconds, float rotation) {
     auto color = (time / 100) % 2 == 0 ? CRGB::White : CRGB::Blue;
     fill_solid(leds, count, color);
     FastLED.show();
 }
 
-void Screen::drawDemo(long time, float rotation) {
-    fill_rainbow(leds, count, (int)(rotation * 255), 7);
+void Screen::drawDemo(unsigned long milliseconds, float rotation) {
+    fill_rainbow(leds, count, milliseconds / 10 + (int)(rotation * 255), 7);
     FastLED.show();
 }

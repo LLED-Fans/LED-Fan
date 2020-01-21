@@ -20,10 +20,10 @@ public:
 
     Screen(int ledCount);
 
-    void draw(long time, float rotation);
+    void draw(unsigned long milliseconds, float rotation);
 
-    void drawDemo(long time, float rotation);
-    void drawScreen(long time, float rotation);
+    void drawDemo(unsigned long milliseconds, float rotation);
+    void drawScreen(unsigned long milliseconds, float rotation);
     void drawError();
 
     int pin();
