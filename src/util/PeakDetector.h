@@ -12,8 +12,8 @@ public:
     const float decay;
     const float keep;
 
-    int lower;
-    int upper;
+    int lower = INT_MAX;
+    int upper = INT_MAX;
 
     PeakDetector(float decay): decay(decay), keep(1.0f - decay) {
     }

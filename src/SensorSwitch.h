@@ -18,7 +18,7 @@ public:
     PeakDetector *peaks;
     ThresholdSwitch *thresholdSwitch;
 
-    SensorSwitch(int pin);
+    SensorSwitch(int pin, PeakDetector *peaks);
 
     bool test();
     uint16_t rawValue();

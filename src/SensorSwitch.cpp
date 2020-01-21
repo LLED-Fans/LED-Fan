@@ -6,8 +6,7 @@
 #include <HardwareSerial.h>
 #include "SensorSwitch.h"
 
-SensorSwitch::SensorSwitch(int pin): pin(pin) {
-    peaks = new PeakDetector(1.0f / 50.0f);
+SensorSwitch::SensorSwitch(int pin, PeakDetector *peaks): pin(pin), peaks(peaks) {
     thresholdSwitch = new ThresholdSwitch(0, 0);
 }
 

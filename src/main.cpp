@@ -30,7 +30,9 @@ void setup() {
 
     // Initialize Screen
     screen = new Screen(18, 64);
-    rotationSensor = new RotationSensor(new SensorSwitch(MAGNET_PIN));
+    rotationSensor = new RotationSensor(
+            new SensorSwitch(MAGNET_PIN, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 5.0))
+    );
 
     // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
@@ -50,7 +52,7 @@ void loop() {
     else {
         // Something is wrong, I can feel it
         screen->drawValue(
-            rotationSensor->sensorSwitch->isOn() ? 0 : 1
+            rotationSensor->sensorSwitch->rawValue() ? 0 : 1
         );
     }
 
