@@ -15,7 +15,7 @@
 #define HOST_NETWORK_SSID "LLED Fan"
 #define HOST_NETWORK_PASSWORD "We love LED"
 
-#define MICROSECONDS_PER_FRAME 10000
+#define MICROSECONDS_PER_FRAME 1000
 
 Screen *screen;
 RotationSensor *rotationSensor;
@@ -46,7 +46,7 @@ void loop() {
     auto milliseconds = microseconds / 1000;
 
     float currentRotation = rotationSensor->update(milliseconds);
-    if (rotationSensor->isReliable() && currentRotation > 0 && currentRotation < 5) {
+    if (rotationSensor->isReliable() && currentRotation >= 0 && currentRotation < 5) {
         screen->draw(milliseconds, fmod(currentRotation, 1.0f));
     }
     else {
