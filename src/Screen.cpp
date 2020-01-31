@@ -66,6 +66,6 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
 }
 
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
-    fill_rainbow(leds, count, milliseconds / 10 + (int)(rotation * 255), 7);
+    fill_rainbow(leds, count, milliseconds * 255 / 1000 / 10 + (int)(rotation * 255), 7);
     FastLED.show();
 }
