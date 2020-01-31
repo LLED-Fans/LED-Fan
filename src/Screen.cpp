@@ -50,8 +50,8 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
         // -0.5 to 0.5
         double pixelOffcenter = ((double) i / (double) (count - 1)) - 0.5;
         // -1 to 1
-        double dirX = sin(rotation * M_2_PI);
-        double dirY = cos(rotation * M_2_PI);
+        double dirX = sin(rotation * M_TWOPI);
+        double dirY = cos(rotation * M_TWOPI);
 
         // 0 to 1
         double relativeX = 0.5 + dirX * pixelOffcenter;
