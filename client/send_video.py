@@ -23,7 +23,7 @@ def get_image_file(path):
 
 while True:
     #img = get_white_noise_image(64, 64)
-    img = get_image_file("white_square.png")
+    img = get_image_file("two_color_square.png")
     img = img.resize((64, 64))
 
     data = img.tobytes("raw")
