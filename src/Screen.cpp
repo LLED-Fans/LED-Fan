@@ -57,8 +57,9 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
         double relativeX = 0.5 + dirX * pixelOffcenter;
         double relativeY = 0.5 + dirY * pixelOffcenter;
 
-        int x = int(relativeX * virtualSize + 0.5);
-        int y = int(relativeY * virtualSize + 0.5);
+        // 0 to virtualSize - 1
+        int x = int(relativeX * (virtualSize - 1) + 0.5);
+        int y = int(relativeY * (virtualSize - 1) + 0.5);
 
         leds[i] = virtualScreen[x * virtualSize + y];
     }
