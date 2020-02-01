@@ -2,6 +2,7 @@
 // Created by Lukas Tenbrink on 21.01.20.
 //
 
+#include <screen/ConcentricCoordinates.h>
 #include "VideoInterface.h"
 #include "Printf.h"
 
@@ -69,4 +70,23 @@ bool VideoInterface::acceptJpeg(File file) {
     Printf::ln("Successfully applied image");
 
     return true;
+}
+
+DynamicJsonDocument *VideoInterface::info() {
+    IntRoller *concentricResolution = ConcentricCoordinates::resolution(screen->count / 2);
+    int pixelCount = concentricResolution->sum();
+    float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution);
+
+    auto doc = new DynamicJsonDocument(
+        JSON_OBJECT_SIZE(1)
+        + JSON_ARRAY_SIZE(1)
+        + pixelCount
+    );
+
+    JsonArray pixels = doc->createNestedArray("pixels");
+    for (int i = 0; i < pixelCount; ++i) {
+        pixels.add(rawPixels[i]);
+    }
+
+    return doc;
 }

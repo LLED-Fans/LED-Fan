@@ -54,6 +54,9 @@ String HttpServer::processTemplates(const String &var) {
     if (var == "S_MODE_SCREEN") {
         return screen->mode == Screen::screen ? "mdl-button--accent" : "";
     }
+    if (var == "S_MODE_CONCENTRIC") {
+        return screen->mode == Screen::concentric ? "mdl-button--accent" : "";
+    }
     if (var == "VIRTUAL_SCREEN_SIZE") {
         return String(screen->virtualSize);
     }
@@ -110,6 +113,8 @@ void HttpServer::setupRoutes() {
             screen->mode = Screen::demo;
         } else if (mode == "screen") {
             screen->mode = Screen::screen;
+        } else if (mode == "concentric") {
+            screen->mode = Screen::concentric;
         }
 
         request_result(true);
@@ -135,7 +140,14 @@ void HttpServer::setupRoutes() {
     // ------------------- Data ----------------------
     // -----------------------------------------------
 
-    _server.on("/img/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
+    _server.on("/i", HTTP_GET,[videoInterface](AsyncWebServerRequest *request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        auto json = videoInterface->info();
+        serializeJsonPretty(*json, *response);
+        request->send(response);
+    });
+
+    _server.on("/i/img/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
                    request->send(200);
                }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
                    if (handlePartialFile(request, data, len, index, total)) {
@@ -146,7 +158,7 @@ void HttpServer::setupRoutes() {
     );
 
 
-    _server.on("/img/jpg", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
+    _server.on("/i/img/jpg", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
                    request->send(200);
                }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
                    if (handlePartialFile(request, data, len, index, total)) {

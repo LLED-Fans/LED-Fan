@@ -3,6 +3,7 @@
 //
 
 #include "Screen.h"
+#include "ConcentricCoordinates.h"
 
 // FIXME This should definitely be per-instance
 #define LED_TYPE WS2811
@@ -15,6 +16,9 @@ Screen::Screen(int ledCount, int virtualSize): count(ledCount), virtualSize(virt
             .setCorrection(TypicalLEDStrip);
 
     virtualScreen = new CRGB[virtualSize * virtualSize];
+
+    concentricResolution = ConcentricCoordinates::resolution(ledCount / 2);
+    concentricScreen = new CRGB[concentricResolution->sum()];
 }
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
@@ -24,6 +28,9 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
             break;
         case demo:
             drawDemo(milliseconds, rotation);
+            break;
+        case concentric:
+            drawConcentric(milliseconds, rotation);
             break;
     }
 }
@@ -69,4 +76,34 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
     fill_rainbow(leds, count, milliseconds * 255 / 1000 / 10 + (int)(rotation * 255), 7);
     FastLED.show();
+}
+
+void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
+    int ringIndex = 0;
+    for (int ring = 0; ring < concentricResolution->count; ++ring) {
+        int ringResolution = (*concentricResolution)[ring];
+
+        for (int polarity = 0; polarity <= 1; ++polarity) {
+            float ledRotation = rotation + polarity * 0.5;
+            int pDirection = polarity * 2 - 1;
+
+            float index = ledRotation * ringResolution;
+
+            int leftIndex = ((int)index) % ringResolution;
+            int rightIndex = (int)(index + 1) % ringResolution;
+            float lerp = fmodf(ledRotation, 1.0);
+            float ilerp = 1.0 - lerp;
+
+            auto leftPixel = concentricScreen[leftIndex + ringIndex];
+            auto rightPixel = concentricScreen[rightIndex + ringIndex];
+
+            leds[(count - 1) * (1 - polarity) + ring * pDirection] = CRGB(
+                leftPixel.r * ilerp + rightPixel.r * lerp,
+                leftPixel.g * ilerp + rightPixel.g * lerp,
+                leftPixel.b * ilerp + rightPixel.b * lerp
+            );
+
+            ringIndex += ringResolution;
+        }
+    }
 }

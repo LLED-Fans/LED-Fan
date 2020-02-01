@@ -6,11 +6,12 @@
 #define LED_FAN_SCREEN_H
 
 #include <FastLED.h>
+#include <util/IntRoller.h>
 
 class Screen {
 public:
     enum Mode {
-        demo, screen
+        demo, screen, concentric
     };
 
     int count;
@@ -21,12 +22,16 @@ public:
     int virtualSize;
     CRGB *virtualScreen;
 
+    IntRoller *concentricResolution;
+    CRGB *concentricScreen;
+
     Screen(int ledCount, int virtualSize);
 
     void draw(unsigned long milliseconds, float rotation);
 
     void drawDemo(unsigned long milliseconds, float rotation);
     void drawScreen(unsigned long milliseconds, float rotation);
+    void drawConcentric(unsigned long milliseconds, float rotation);
     void drawError();
 
     int pin();

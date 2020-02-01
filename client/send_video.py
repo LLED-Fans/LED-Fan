@@ -34,7 +34,7 @@ while True:
     # data.seek(0, 0)
 
     r = requests.post(
-        "http://192.168.2.126/img/rgb",
+        "http://192.168.2.126/i/img/rgb",
         data=data
     )
     print(r)

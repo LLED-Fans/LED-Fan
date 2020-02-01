@@ -6,6 +6,7 @@
 #define LED_FAN_VIDEOINTERFACE_H
 
 #include <JPEGDecoder.h>
+#include <ArduinoJson.h>
 #include <screen/Screen.h>
 
 class VideoInterface {
@@ -14,6 +15,8 @@ public:
     Screen *screen;
 
     VideoInterface(Screen *screen);
+
+    DynamicJsonDocument *info();
 
     bool acceptRawRGB(File file);
     bool acceptJpeg(File file);
