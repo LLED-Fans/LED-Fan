@@ -6,9 +6,9 @@
 #define LED_FAN_HTTPSERVER_H
 
 
-#include "Screen.h"
+#include "screen/Screen.h"
 #include <util/VideoInterface.h>
-#include "RotationSensor.h"
+#include "sensor/RotationSensor.h"
 
 class HttpServer {
 public:

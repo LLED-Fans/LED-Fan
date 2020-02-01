@@ -4,11 +4,11 @@
 
 #include <HardwareSerial.h>
 #include <SPIFFS.h>
-#include "Screen.h"
-#include "SensorSwitch.h"
-#include "RotationSensor.h"
-#include "Network.h"
-#include "HttpServer.h"
+#include "screen/Screen.h"
+#include "sensor/SensorSwitch.h"
+#include "sensor/RotationSensor.h"
+#include "network/Network.h"
+#include "network/HttpServer.h"
 
 #define MAGNET_PIN 33
 

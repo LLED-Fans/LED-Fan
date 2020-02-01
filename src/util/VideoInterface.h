@@ -6,7 +6,7 @@
 #define LED_FAN_VIDEOINTERFACE_H
 
 #include <JPEGDecoder.h>
-#include <Screen.h>
+#include <screen/Screen.h>
 
 class VideoInterface {
 public:
