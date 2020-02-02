@@ -117,7 +117,7 @@ bool AsyncArtnet::accept(AsyncUDPPacket packet) {
         }
         sprintf((char *) ArtPollReply.nodereport, "%i DMX output universes active.", ArtPollReply.numbports);
 
-        // TODO
+        udp.broadcastTo((uint8_t *)&ArtPollReply, sizeof(ArtPollReply), ART_NET_PORT);
 //            udp.send(new AsyncUDPPacket(&udp, (uint8_t *)&ArtPollReply, ))
 //            udp.beginPacket(broadcast, ART_NET_PORT);//send the packet to the broadcast address
 //            Udp.write((uint8_t *)&ArtPollReply, sizeof(ArtPollReply));
