@@ -7,6 +7,7 @@
 #include <network/ArtnetServer.h>
 
 #include <cmath>
+#include <network/Updater.h>
 #include "screen/Screen.h"
 #include "sensor/SensorSwitch.h"
 #include "sensor/RotationSensor.h"
@@ -20,10 +21,13 @@
 
 #define MICROSECONDS_PER_FRAME 1000
 
-Screen *screen;
 RotationSensor *rotationSensor;
+Screen *screen;
+
 HttpServer *server;
 ArtnetServer *artnetServer;
+
+Updater *updater;
 
 void setup() {
     // Enable Monitoring
@@ -50,6 +54,9 @@ void setup() {
         server->videoInterface,
         new AsyncArtnet()
     );
+
+    // Updater
+    updater = new Updater();
 }
 
 void loop() {
@@ -64,9 +71,10 @@ void loop() {
     );
     screen->lastFrameTime = milliseconds;
 
-    EVERY_N_SECONDS(10) {
+    EVERY_N_SECONDS(2) {
         Network::checkStatus();
     }
+    updater->check();
 
     unsigned long frameTime = (micros() - microseconds);
     if (frameTime < MICROSECONDS_PER_FRAME) {
