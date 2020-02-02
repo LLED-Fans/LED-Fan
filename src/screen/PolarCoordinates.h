@@ -8,7 +8,7 @@
 
 class PolarCoordinates {
 public:
-    static void asCartesian(float theta, float r, float *x, float *y);
+    static void asCartesian(float theta, float r, float *x, float *y, bool positive=false);
 };
 
 

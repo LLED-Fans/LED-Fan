@@ -4,6 +4,7 @@
 
 #include "Screen.h"
 #include "ConcentricCoordinates.h"
+#include "PolarCoordinates.h"
 
 // FIXME This should definitely be per-instance
 #define LED_TYPE WS2811
@@ -70,18 +71,20 @@ int Screen::pin() {
 void Screen::drawScreen(unsigned long milliseconds, float rotation) {
     for (int i = 0; i < count; i++) {
         // -0.5 to 0.5
-        double pixelOffcenter = ((double) i / (double) (count - 1)) - 0.5;
-        // -1 to 1
-        double dirX = sin(rotation * M_TWOPI);
-        double dirY = cos(rotation * M_TWOPI);
+        float pixelOffcenter = ((float) i / (float) (count - 1)) - 0.5;
 
         // 0 to 1
-        double relativeX = 0.5 + dirX * pixelOffcenter;
-        double relativeY = 0.5 + dirY * pixelOffcenter;
+        float relativeX, relativeY;
+        PolarCoordinates::asCartesian(
+            rotation * M_TWOPI,
+            pixelOffcenter * 2,
+            &relativeX, &relativeY,
+            true
+        );
 
         // 0 to virtualSize - 1
-        int x = int(relativeX * (virtualSize - 1) + 0.5);
-        int y = int(relativeY * (virtualSize - 1) + 0.5);
+        int x = int(relativeX * (virtualSize - 1) + 0.5f);
+        int y = int(relativeY * (virtualSize - 1) + 0.5f);
 
         leds[i] = virtualScreen[x * virtualSize + y];
     }
