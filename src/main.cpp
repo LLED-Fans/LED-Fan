@@ -63,11 +63,11 @@ void loop() {
     unsigned long microseconds = micros();
     auto milliseconds = microseconds / 1000;
 
-    float currentRotation = rotationSensor->update(milliseconds);
-    bool isReliable = rotationSensor->isReliable() && currentRotation < 5;
+    rotationSensor->update(milliseconds);
+
     screen->draw(
         milliseconds,
-        isReliable ? std::fmod(currentRotation, 1.0f) : -1
+        rotationSensor->isReliable ? rotationSensor->rotation : -1
     );
     screen->lastFrameTime = milliseconds;
 

@@ -66,7 +66,7 @@ String HttpServer::processTemplates(const String &var) {
             + " < " +  String(rotationSensor->sensorSwitch->peaks->upper);
     }
     if (var == "ROTATION_SPEED") {
-        return rotationSensor->isReliable() ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
+        return rotationSensor->isReliable ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
     }
 
     return String("ERROR");

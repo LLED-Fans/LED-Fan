@@ -6,6 +6,7 @@
 #define LED_FAN_ROTATIONSENSOR_H
 
 
+#include <util/IntRoller.h>
 #include "SensorSwitch.h"
 
 class RotationSensor {
@@ -13,12 +14,18 @@ public:
     SensorSwitch *sensorSwitch;
 
     unsigned long lastRotationMillis;
-    unsigned long timePerRotation;
+    IntRoller rotationHistory = IntRoller(5);
+
+    int timePerRotation;
+    float rotation;
+    bool isReliable;
 
     RotationSensor(SensorSwitch *sensorSwitch);
 
-    float update(unsigned long currentTime);
-    bool isReliable();
+    void update(unsigned long currentTime);
+
+private:
+    int trustableRotations;
 };
 
 

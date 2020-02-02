@@ -32,7 +32,7 @@ IntRoller * ConcentricCoordinates::resolution(int ringCount) {
     auto *resolution = new IntRoller(ringCount);
 
     for (int ring = 0; ring < ringCount; ring++) {
-        resolution->add(ringResolution(ring));
+        resolution->append(ringResolution(ring));
     }
 
     return resolution;

@@ -21,9 +21,26 @@ public:
         return data[index];
     }
 
-    void add(int value) {
+    void append(int value) {
         head = (head + 1) % count;
         data[head] = value;
+    }
+
+    int solidMean(float threshold, int *sCount) {
+        int mean = sum() / count;
+
+        int solidSum = 0;
+        int solidCount = 0;
+        for (int i = 0; i < count; ++i) {
+            if (abs(data[i] - mean) / mean < threshold) {
+                solidSum += data[i];
+                solidCount ++;
+            }
+        }
+
+        if (sCount) *sCount = solidCount;
+
+        return solidSum;
     }
 
     int last() {
