@@ -22,6 +22,17 @@ Screen::Screen(int ledCount, int virtualSize): count(ledCount), virtualSize(virt
 }
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
+    if (millisecondsPingLeft > 0) {
+        drawRGB(((millisecondsPingLeft / 500) % 2) == 0 ? 1 : 0);
+        millisecondsPingLeft -= milliseconds - lastFrameTime;
+        return;
+    }
+
+    if (rotation < 0) {
+        drawRGB(0);
+        return;
+    }
+
     switch (mode) {
         default:
             drawScreen(milliseconds, rotation);
@@ -36,14 +47,14 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
 }
 
 void Screen::drawError() {
-    drawValue(0);
+    drawRGB(0);
 }
 
-void Screen::drawValue(float value, float value1, float value2) {
+void Screen::drawRGB(float red, float green, float blue) {
     fill_solid(leds, count, CRGB(
-            (int)(value * 255),
-            (int)(value1 * 255),
-            (int)(value2 * 255)
+            (int)(red * 255),
+            (int)(green * 255),
+            (int)(blue * 255)
     ));
     FastLED.show();
 }
@@ -106,4 +117,9 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
             ringIndex += ringResolution;
         }
     }
+}
+
+int Screen::ping() {
+    millisecondsPingLeft = 1500;
+    return 1500;
 }

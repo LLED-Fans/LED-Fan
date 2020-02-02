@@ -19,11 +19,15 @@ public:
 
     Mode mode = demo;
 
+    unsigned long lastFrameTime = 0;
+
     int virtualSize;
     CRGB *virtualScreen;
 
     IntRoller *concentricResolution;
     CRGB *concentricScreen;
+
+    unsigned long millisecondsPingLeft = 0;
 
     Screen(int ledCount, int virtualSize);
 
@@ -36,7 +40,9 @@ public:
 
     int pin();
 
-    void drawValue(float value, float value1 = 0, float value2 = 0);
+    void drawRGB(float red, float green = 0, float blue = 0);
+
+    int ping();
 };
 
 

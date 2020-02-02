@@ -101,6 +101,11 @@ void HttpServer::setupRoutes() {
     _server.serveStatic("/styles.css", SPIFFS, "/styles.css");
 
     SERVE_HTML("/", "/index.html")
+
+    // -----------------------------------------------
+    // ---------------- Settings ---------------------
+    // -----------------------------------------------
+
     SERVE_HTML("/settings", "/settings.html")
 
     _server.on("/mode/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
@@ -132,8 +137,16 @@ void HttpServer::setupRoutes() {
         request_result(result);
     });
 
+    // -----------------------------------------------
+    // ------------------ Other ----------------------
+    // -----------------------------------------------
+
     _server.onNotFound([](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", "404 / Not Found");
+        request->send(404, "text/plain", "404 / Not Found");
+    });
+
+    _server.on("/ping", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", String(screen->ping()));
     });
 
     // -----------------------------------------------

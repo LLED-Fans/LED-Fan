@@ -5,6 +5,8 @@
 #include <HardwareSerial.h>
 #include <SPIFFS.h>
 #include <network/ArtnetServer.h>
+
+#include <cmath>
 #include "screen/Screen.h"
 #include "sensor/SensorSwitch.h"
 #include "sensor/RotationSensor.h"
@@ -55,15 +57,12 @@ void loop() {
     auto milliseconds = microseconds / 1000;
 
     float currentRotation = rotationSensor->update(milliseconds);
-    if (rotationSensor->isReliable() && currentRotation >= 0 && currentRotation < 5) {
-        screen->draw(milliseconds, fmod(currentRotation, 1.0f));
-    }
-    else {
-        // Something is wrong, I can feel it
-        screen->drawValue(
-            rotationSensor->sensorSwitch->rawValue() ? 0 : 1
-        );
-    }
+    bool isReliable = rotationSensor->isReliable() && currentRotation < 5;
+    screen->draw(
+        milliseconds,
+        isReliable ? std::fmod(currentRotation, 1.0f) : -1
+    );
+    screen->lastFrameTime = milliseconds;
 
     EVERY_N_SECONDS(10) {
         Network::checkStatus();
