@@ -22,9 +22,13 @@ Screen::Screen(int ledCount, int virtualSize): count(ledCount), virtualSize(virt
 }
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
+    auto frameTime = milliseconds - lastFrameTime;
+
     if (millisecondsPingLeft > 0) {
         drawRGB(((millisecondsPingLeft / 500) % 2) == 0 ? 1 : 0);
-        millisecondsPingLeft -= milliseconds - lastFrameTime;
+        millisecondsPingLeft = millisecondsPingLeft > frameTime
+                ? millisecondsPingLeft - frameTime
+                : 0;
         return;
     }
 

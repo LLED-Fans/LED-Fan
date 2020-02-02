@@ -21,6 +21,31 @@
 
     <link rel="stylesheet" href="material.min.css">
     <link rel="stylesheet" href="styles.css">
+
+    <script>
+        function postRequest(url, data) {
+            var form_data = new FormData();
+            for (const key in data) {
+                form_data.append(key, data[key]);
+            }
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState !== 4) {
+                    return;
+                }
+
+                if (this.status !== 200) {
+                    alert("Failure!");
+                    return;
+                }
+
+                location.reload();
+            };
+            xhttp.open("POST", url, true);
+            xhttp.send(form_data);
+        }
+    </script>
 </head>
 <body>
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -53,30 +78,29 @@
                     </div>
                     <div class="mdl-card__supporting-text">
                         <h4>Mode</h4>
-                        <form action="mode/set" method="POST" enctype='multipart/form-data'>
-                            <div class="mdl-grid controls">
-                                <div class="mdl-cell mdl-cell--4-col">
-                                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_SCREEN%"
-                                            name="mode" value="screen">
-                                        Screen
-                                    </button>
-                                </div>
 
-                                <div class="mdl-cell mdl-cell--4-col">
-                                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_DEMO%"
-                                            name="mode" value="demo">
-                                        Demo
-                                    </button>
-                                </div>
-
-                                <div class="mdl-cell mdl-cell--4-col">
-                                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_CONCENTRIC%"
-                                            name="mode" value="concentric">
-                                        Concentric
-                                    </button>
-                                </div>
+                        <div class="mdl-grid controls">
+                            <div class="mdl-cell mdl-cell--4-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_SCREEN%"
+                                        onclick="postRequest('/mode/set', {mode: 'screen'})">
+                                    Screen
+                                </button>
                             </div>
-                        </form>
+
+                            <div class="mdl-cell mdl-cell--4-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_DEMO%"
+                                        onclick="postRequest('/mode/set', {mode: 'demo'})">
+                                    Demo
+                                </button>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--4-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_CONCENTRIC%"
+                                        onclick="postRequest('/mode/set', {mode: 'concentric'})">
+                                    Concentric
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
