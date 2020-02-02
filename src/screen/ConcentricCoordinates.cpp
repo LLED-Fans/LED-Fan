@@ -6,8 +6,9 @@
 #include "PolarCoordinates.h"
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
 
-float* ConcentricCoordinates::sampledCartesian(IntRoller *resolution) {
-    float *result = new float[resolution->sum()];
+float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, int* count) {
+    *count = resolution->sum();
+    auto result = new float[*count * 2];
 
     int i = 0;
     for (int ring = 0; ring < resolution->count; ring++) {
@@ -15,10 +16,11 @@ float* ConcentricCoordinates::sampledCartesian(IntRoller *resolution) {
         for (int pixel = 0; pixel < ringResolution; pixel++) {
             PolarCoordinates::asCartesian(
                 (pixel / (float) ringResolution) * M_TWOPI,
-                ring / (float) ringResolution,
-                &result[i * 2],
-                &result[i * 2 + 1]
+                ((ring / (float) ringResolution) + 1) * 0.5,
+                &result[i],
+                &result[i + 1]
             );
+            i += 2;
         }
     }
 
@@ -26,12 +28,7 @@ float* ConcentricCoordinates::sampledCartesian(IntRoller *resolution) {
 }
 
 IntRoller * ConcentricCoordinates::resolution(int ringCount) {
-    int count = 0;
-    for (int ring = 0; ring < ringCount; ring++) {
-        count += ringResolution(ring);
-    }
-
-    IntRoller *resolution = new IntRoller(count);
+    auto *resolution = new IntRoller(ringCount);
 
     for (int ring = 0; ring < ringCount; ring++) {
         resolution->add(ringResolution(ring));

@@ -25,6 +25,7 @@ bool VideoInterface::acceptRawRGB(File file) {
                 CRGB(buffer[x * 3], buffer[x * 3 + 1], buffer[x * 3 + 2]);
         }
     }
+    delete[] buffer;
 
     return true;
 }
@@ -54,8 +55,8 @@ bool VideoInterface::acceptJpeg(File file) {
         int mcu_x = JpegDec.MCUx * mcu_w;
         int mcu_y = JpegDec.MCUy * mcu_h;
 
-        for (int x = 0; x < max_x, x++;) {
-            for (int y = 0; y < max_y, y++;) {
+        for (int x = 0; x < max_x; x++) {
+            for (int y = 0; y < max_y; y++) {
                 uint16_t pixel = pImg[x * max_x + y];
 
                 auto pixelX = mcu_x + x;
@@ -72,20 +73,26 @@ bool VideoInterface::acceptJpeg(File file) {
     return true;
 }
 
-DynamicJsonDocument *VideoInterface::info() {
+DynamicJsonDocument VideoInterface::info() {
     IntRoller *concentricResolution = ConcentricCoordinates::resolution(screen->count / 2);
-    int pixelCount = concentricResolution->sum();
-    float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution);
+    int pixelCount;
+    float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, &pixelCount);
 
-    auto doc = new DynamicJsonDocument(
-        JSON_OBJECT_SIZE(1)
-        + JSON_ARRAY_SIZE(1)
-        + pixelCount
+    DynamicJsonDocument doc(
+            JSON_OBJECT_SIZE(1)
+            + JSON_ARRAY_SIZE(concentricResolution->count)
+            + JSON_ARRAY_SIZE(pixelCount)
     );
 
-    JsonArray pixels = doc->createNestedArray("pixels");
-    for (int i = 0; i < pixelCount; ++i) {
+    JsonArray pixels = doc.createNestedArray("pixels");
+    for (int i = 0; i < pixelCount * 2; ++i) {
         pixels.add(rawPixels[i]);
+    }
+    delete[] rawPixels;
+
+    JsonArray resolution = doc.createNestedArray("resolution");
+    for (int j = 0; j < concentricResolution->count; ++j) {
+        resolution.add((*concentricResolution)[j]);
     }
 
     return doc;

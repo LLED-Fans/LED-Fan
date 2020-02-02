@@ -13,8 +13,8 @@ public:
     const int count;
     int *data;
 
-    IntRoller(int c): count(c) {
-        this->data = new int[c];
+    IntRoller(int c): count(c), head(c - 1) {
+        data = new int[c];
     }
 
     int operator[](int index) {
@@ -22,24 +22,24 @@ public:
     }
 
     void add(int value) {
-        this->head = (this->head + 1) % this->count;
-        this->data[head] = value;
+        head = (head + 1) % count;
+        data[head] = value;
     }
 
     int last() {
-        return this->data[head];
+        return data[head];
     }
 
     int min() {
-        return *std::min_element(this->data, this->data + this->count);
+        return *std::min_element(data, data + count);
     }
 
     int max() {
-        return *std::max_element(this->data, this->data + this->count);
+        return *std::max_element(data, data + count);
     }
 
     int sum() {
-        return std::accumulate(this->data, this->data + this->count, 0);
+        return std::accumulate(data, data + count, 0);
     }
 private:
     int head;

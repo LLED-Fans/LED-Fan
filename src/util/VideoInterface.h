@@ -16,7 +16,7 @@ public:
 
     VideoInterface(Screen *screen);
 
-    DynamicJsonDocument *info();
+    DynamicJsonDocument info();
 
     bool acceptRawRGB(File file);
     bool acceptJpeg(File file);

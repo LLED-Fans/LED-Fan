@@ -140,12 +140,19 @@ void HttpServer::setupRoutes() {
     // ------------------- Data ----------------------
     // -----------------------------------------------
 
-    _server.on("/i", HTTP_GET,[videoInterface](AsyncWebServerRequest *request) {
+    _server.on("/i/cc", HTTP_GET,[videoInterface](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
         auto json = videoInterface->info();
-        serializeJsonPretty(*json, *response);
+        serializeJsonPretty(json, *response);
         request->send(response);
     });
+
+    _server.on("/i/cc/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
+                   request->send(200);
+               }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+                   memcpy(data, videoInterface->screen->concentricScreen + index, len);
+               }
+    );
 
     _server.on("/i/img/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
                    request->send(200);

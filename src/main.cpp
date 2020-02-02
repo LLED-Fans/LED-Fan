@@ -25,6 +25,8 @@ void setup() {
     // Enable Monitoring
     Serial.begin(9600);
 
+    Serial.println("Booting LLED Fan Firmware");
+
     // Mount file system
     SPIFFS.begin(false);
 
