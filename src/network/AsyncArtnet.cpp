@@ -18,6 +18,8 @@ bool AsyncArtnet::listen(uint16_t port) {
     Serial.print("UDP Listening on Port: ");
     Serial.println(port);
     udp.onPacket(std::bind(&AsyncArtnet::accept, this, _1));
+
+    return true;
 }
 
 bool AsyncArtnet::accept(AsyncUDPPacket packet) {
@@ -80,7 +82,7 @@ bool AsyncArtnet::accept(AsyncUDPPacket packet) {
 
         uint8_t shortname[18];
         uint8_t longname[64];
-        sprintf((char *) shortname, "artnet arduino");
+        sprintf((char *) shortname, "concentricArtnet arduino");
         sprintf((char *) longname, "Art-Net -> Arduino Bridge");
         memcpy(ArtPollReply.shortname, shortname, sizeof(shortname));
         memcpy(ArtPollReply.longname, longname, sizeof(longname));
@@ -153,7 +155,11 @@ bool AsyncArtnet::print(AsyncUDPPacket packet) {
     Serial.write(packet.data(), packet.length());
     Serial.println();
     //reply to the client
-    packet.printf("Got %u bytes of data", packet.length());
+//    packet.printf("Got %u bytes of data", packet.length());
 
     return false;
+}
+
+int AsyncArtnet::activePort() {
+    return udp.connected() ? port : -1;
 }

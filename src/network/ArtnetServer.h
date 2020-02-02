@@ -6,18 +6,22 @@
 #define LED_FAN_ARTNETSERVER_H
 
 
-#include "../util/VideoInterface.h"
+#include <screen/Screen.h>
 #include "AsyncArtnet.h"
+#include "ArtnetEndpoint.h"
 
 class ArtnetServer {
 public:
-    VideoInterface *videoInterface;
-    AsyncArtnet *artnet;
+    Screen *screen;
 
-    ArtnetServer(VideoInterface *videoInterface, AsyncArtnet *artnet);
+    int endpointCount;
+    ArtnetEndpoint *endpoints;
+    AsyncArtnet **artnets;
 
-    void acceptDMX(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
-    void acceptSync(IPAddress remoteIP);
+    ArtnetServer(Screen *screen);
+
+    void acceptDMX(int endpoint, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+    void acceptSync(int endpoint, IPAddress remoteIP);
 };
 
 

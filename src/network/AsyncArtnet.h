@@ -18,8 +18,7 @@
 #define ART_NET_ID "Art-Net\0"
 #define ART_DMX_START 18
 
-
-#include "util/VideoInterface.h"
+#include "Stream.h" // Will fail without this explicit import
 #include "AsyncUDP.h"
 
 
@@ -77,7 +76,10 @@ public:
 
     bool print(AsyncUDPPacket packet);
 
+    int activePort();
 private:
+    int port;
+
     struct artnet_reply_s ArtPollReply;
 };
 

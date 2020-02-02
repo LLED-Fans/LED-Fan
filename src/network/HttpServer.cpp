@@ -8,7 +8,6 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <esp_wifi.h>
-#include <util/VideoInterface.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -21,9 +20,9 @@ using namespace std::placeholders;
 // FIXME This should be per-instance. Or something.
 AsyncWebServer _server(80);
 
-HttpServer::HttpServer(Screen *screen, RotationSensor *rotationSensor)
-        : screen(screen),
-          videoInterface(new VideoInterface(screen)),
+HttpServer::HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor)
+        : screen(videoInterface->screen),
+          videoInterface(videoInterface),
           rotationSensor(rotationSensor) {
     setupRoutes();
     _server.begin();
@@ -153,30 +152,12 @@ void HttpServer::setupRoutes() {
     // ------------------- Data ----------------------
     // -----------------------------------------------
 
-    _server.on("/i/cc", HTTP_GET,[videoInterface](AsyncWebServerRequest *request) {
+    _server.on("/i", HTTP_GET,[videoInterface](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
         auto json = videoInterface->info();
         serializeJsonPretty(json, *response);
         request->send(response);
     });
-
-    _server.on("/i/cc/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
-                   request->send(200);
-               }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-                   memcpy(data, videoInterface->screen->concentricScreen + index, len);
-               }
-    );
-
-    _server.on("/i/img/rgb", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
-                   request->send(200);
-               }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-                   if (handlePartialFile(request, data, len, index, total)) {
-                       bool accepted = videoInterface->acceptRawRGB(request->_tempFile);
-                       request_result(accepted);
-                   }
-               }
-    );
-
 
     _server.on("/i/img/jpg", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
                    request->send(200);

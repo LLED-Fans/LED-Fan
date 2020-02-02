@@ -8,17 +8,18 @@
 #include <JPEGDecoder.h>
 #include <ArduinoJson.h>
 #include <screen/Screen.h>
+#include <network/ArtnetServer.h>
 
 class VideoInterface {
 public:
     JPEGDecoder *jpegDecoder;
     Screen *screen;
+    ArtnetServer *artnetServer;
 
-    VideoInterface(Screen *screen);
+    VideoInterface(Screen *screen, ArtnetServer *artnetServer);
 
     DynamicJsonDocument info();
 
-    bool acceptRawRGB(File file);
     bool acceptJpeg(File file);
 };
 

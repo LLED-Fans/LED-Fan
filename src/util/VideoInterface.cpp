@@ -6,28 +6,9 @@
 #include "VideoInterface.h"
 #include "Printf.h"
 
-VideoInterface::VideoInterface(Screen *screen) : screen(screen) {
+VideoInterface::VideoInterface(Screen *screen, ArtnetServer *artnetServer) : screen(screen),
+                                                                             artnetServer(artnetServer) {
     jpegDecoder = new JPEGDecoder();
-}
-
-bool VideoInterface::acceptRawRGB(File file) {
-    if (file.size() != 3 * screen->virtualSize * screen->virtualSize) {
-        Printf::ln("Got image of invalid size; resizing unsupported! (%d)", file.size());
-        return false;
-    }
-
-    auto *buffer = new char[3 * screen->virtualSize];
-    for (int y = 0; y < screen->virtualSize; y++) {
-        file.readBytes(buffer, 3 * screen->virtualSize);
-
-        for (int x = 0; x < screen->virtualSize; x++) {
-            screen->virtualScreen[x * screen->virtualSize + y] =
-                CRGB(buffer[x * 3], buffer[x * 3 + 1], buffer[x * 3 + 2]);
-        }
-    }
-    delete[] buffer;
-
-    return true;
 }
 
 bool VideoInterface::acceptJpeg(File file) {
@@ -79,21 +60,48 @@ DynamicJsonDocument VideoInterface::info() {
     float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, &pixelCount);
 
     DynamicJsonDocument doc(
-            JSON_OBJECT_SIZE(1)
+            JSON_OBJECT_SIZE(2)
+            // Cartesian Screen
+            + JSON_OBJECT_SIZE(3)
+            // Concentric Screen
+            + JSON_OBJECT_SIZE(3)
             + JSON_ARRAY_SIZE(concentricResolution->count)
             + JSON_ARRAY_SIZE(pixelCount * 2)
     );
 
-    JsonArray pixels = doc.createNestedArray("pixels");
-    for (int i = 0; i < pixelCount * 2; ++i) {
-        pixels.add(rawPixels[i]);
-    }
-    delete[] rawPixels;
+    // ==============================================
+    // ================Cartesian=====================
+    // ==============================================
 
-    JsonArray resolution = doc.createNestedArray("resolution");
-    for (int j = 0; j < concentricResolution->count; ++j) {
-        resolution.add((*concentricResolution)[j]);
+    {
+        auto object = doc.createNestedObject("cartesian");
+
+        object["port"] = artnetServer->endpoints[0].port;
+        object["width"] = screen->virtualSize;
+        object["height"] = screen->virtualSize;
+    }
+
+    // ==============================================
+    // ================Concentric=====================
+    // ==============================================
+
+    {
+        auto object = doc.createNestedObject("concentric");
+
+        object["port"] = artnetServer->endpoints[1].port;
+
+        JsonArray pixels = object.createNestedArray("pixels");
+        for (int i = 0; i < pixelCount * 2; ++i) {
+            pixels.add(rawPixels[i]);
+        }
+        delete[] rawPixels;
+
+        JsonArray resolution = object.createNestedArray("resolution");
+        for (int j = 0; j < concentricResolution->count; ++j) {
+            resolution.add((*concentricResolution)[j]);
+        }
     }
 
     return doc;
 }
+

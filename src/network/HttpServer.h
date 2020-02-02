@@ -6,9 +6,8 @@
 #define LED_FAN_HTTPSERVER_H
 
 
-#include "screen/Screen.h"
 #include <util/VideoInterface.h>
-#include "sensor/RotationSensor.h"
+#include <sensor/RotationSensor.h>
 
 class HttpServer {
 public:
@@ -16,7 +15,7 @@ public:
     VideoInterface *videoInterface;
     RotationSensor *rotationSensor;
 
-    HttpServer(Screen *screen, RotationSensor *rotationSensor);
+    HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor);
 
     void setupRoutes();
     String processTemplates(const String &var);

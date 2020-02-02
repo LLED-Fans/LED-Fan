@@ -33,9 +33,11 @@ def pixel_at(image: Image, x: float, y: float):
 print("Getting Server Info")
 
 server_info = requests.get("http://192.168.2.126/i/cc").json()
-pixels = list(grouper(2, server_info["pixels"]))
+
+artnet_info = server_info["concentric"]
+pixels = list(grouper(2, artnet_info["pixels"]))
+port = int(artnet_info["port"])
 #print(server_info)
-#print(f"Remote Pixels ({len(pixels)}): {pixels}")
 
 sock = socket.socket(
     socket.AF_INET,    # Internet
@@ -72,7 +74,7 @@ while True:
     # data.seek(0, 0)
     r = sock.sendto(
         bytes(artnet_provider(data)),
-        ("192.168.2.126", 1234)
+        ("192.168.2.126", port)
     )
     if artnet_provider.sequence == 0:
         print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")

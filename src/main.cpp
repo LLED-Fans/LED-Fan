@@ -5,14 +5,9 @@
 #include <HardwareSerial.h>
 #include <SPIFFS.h>
 #include <network/ArtnetServer.h>
-
-#include <cmath>
 #include <network/Updater.h>
-#include "screen/Screen.h"
-#include "sensor/SensorSwitch.h"
-#include "sensor/RotationSensor.h"
-#include "network/Network.h"
-#include "network/HttpServer.h"
+#include <network/HttpServer.h>
+#include <network/Network.h>
 
 #define MAGNET_PIN 33
 
@@ -48,11 +43,11 @@ void setup() {
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
     Network::connectToPreset();
 
-    server = new HttpServer(screen, rotationSensor);
+    artnetServer = new ArtnetServer(screen);
 
-    artnetServer = new ArtnetServer(
-        server->videoInterface,
-        new AsyncArtnet()
+    server = new HttpServer(
+        new VideoInterface(screen, artnetServer),
+        rotationSensor
     );
 
     // Updater
