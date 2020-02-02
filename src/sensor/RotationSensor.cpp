@@ -19,7 +19,7 @@ void RotationSensor::update(unsigned long currentTime) {
             lastRotationMillis = currentTime;
             timePerRotation = rotationHistory.solidMean(0.5f, &trustableRotations);
 
-            isReliable = trustableRotations >= 2;
+            isReliable = trustableRotations >= 2 && timePerRotation < 2000;
             //Printf::ln("Rotation! Took %f", timePerRotation);
         }
         //Printf::ln("Turn! %d", magnetSwitch.isOn);
