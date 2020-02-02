@@ -8,6 +8,7 @@ from PIL import Image
 
 from artnet import ArtnetProvider
 from util import grouper, flatmap, bilinear
+from datetime import datetime
 
 
 def get_white_noise_image(width, height):
@@ -33,8 +34,8 @@ print("Getting Server Info")
 
 server_info = requests.get("http://192.168.2.126/i/cc").json()
 pixels = list(grouper(2, server_info["pixels"]))
-print(server_info)
-print(f"Remote Pixels ({len(pixels)}): {pixels}")
+#print(server_info)
+#print(f"Remote Pixels ({len(pixels)}): {pixels}")
 
 sock = socket.socket(
     socket.AF_INET,    # Internet
@@ -47,7 +48,14 @@ artnet_provider = ArtnetProvider(
     net=0
 )
 
+seconds_per_frame = 1.0 / 30.0
+
+print("Sending Data!")
+sequence_start = datetime.now()
+
 while True:
+    frame_start = datetime.now()
+
     #img = get_white_noise_image(64, 64)
     img = get_image_file("two_color_square.png")
     img = img.resize((64, 64))
@@ -66,7 +74,9 @@ while True:
         bytes(artnet_provider(data)),
         ("192.168.2.126", 1234)
     )
-    print(r)
+    if artnet_provider.sequence == 0:
+        print(f"Sequence Pushed! FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
+        sequence_start = frame_start
 
     # r = requests.post(
     #     "http://192.168.2.126/i/cc/rgb",
@@ -74,4 +84,6 @@ while True:
     # )
     # print(r)
 
-    time.sleep(0.1)
+    time_this_frame = datetime.now() - frame_start
+    if time_this_frame.total_seconds() < seconds_per_frame:
+        time.sleep(seconds_per_frame - time_this_frame.total_seconds())
