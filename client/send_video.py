@@ -32,12 +32,16 @@ def pixel_at(image: Image, x: float, y: float):
 
 print("Getting Server Info")
 
-server_info = requests.get("http://192.168.2.126/i/cc").json()
+endpoint = "concentric"
 
-artnet_info = server_info["concentric"]
-pixels = list(grouper(2, artnet_info["pixels"]))
-port = int(artnet_info["port"])
+server_info = requests.get("http://192.168.2.126/i/cc").json()
 #print(server_info)
+
+artnet_info = server_info[endpoint]
+port = int(artnet_info["port"])
+
+if endpoint == "concentric":
+    pixels = list(grouper(2, artnet_info["pixels"]))
 
 sock = socket.socket(
     socket.AF_INET,    # Internet
@@ -60,13 +64,15 @@ while True:
 
     #img = get_white_noise_image(64, 64)
     img = get_image_file("two_color_square.png")
-    img = img.resize((64, 64))
 
-    # data = img.tobytes("raw")
-    data = bytes(flatmap(
-        lambda t: pixel_at(img, *t),
-        pixels
-    ))
+    if endpoint == "concentric":
+        data = bytes(flatmap(
+            lambda t: pixel_at(img, *t),
+            pixels
+        ))
+    else:
+        img = img.resize((64, 64))
+        data = img.tobytes("raw")
 
     # data = io.BytesIO()
     # img.save(data, format='JPEG', progression=False)
