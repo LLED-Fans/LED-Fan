@@ -74,7 +74,7 @@ bool VideoInterface::acceptJpeg(File file) {
 }
 
 DynamicJsonDocument VideoInterface::info() {
-    IntRoller *concentricResolution = ConcentricCoordinates::resolution(screen->count / 2);
+    IntRoller *concentricResolution = ConcentricCoordinates::resolution(screen->ledCount);
     int pixelCount;
     float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, &pixelCount);
 

@@ -11,14 +11,14 @@
 #define COLOR_ORDER GRB
 #define LED_PIN 25
 
-Screen::Screen(int ledCount, int virtualSize): count(ledCount), virtualSize(virtualSize) {
+Screen::Screen(int ledCount, int virtualSize): ledCount(ledCount), virtualSize(virtualSize) {
     this->leds = new CRGB[ledCount];
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, ledCount)
             .setCorrection(TypicalLEDStrip);
 
     virtualScreen = new CRGB[virtualSize * virtualSize];
 
-    concentricResolution = ConcentricCoordinates::resolution(ledCount / 2);
+    concentricResolution = ConcentricCoordinates::resolution(ledCount);
     concentricScreen = new CRGB[concentricResolution->sum()];
 }
 
@@ -56,7 +56,7 @@ void Screen::drawError() {
 }
 
 void Screen::drawRGB(float red, float green, float blue) {
-    fill_solid(leds, count, CRGB(
+    fill_solid(leds, ledCount, CRGB(
             (int)(red * 255),
             (int)(green * 255),
             (int)(blue * 255)
@@ -69,9 +69,9 @@ int Screen::pin() {
 }
 
 void Screen::drawScreen(unsigned long milliseconds, float rotation) {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < ledCount; i++) {
         // -0.5 to 0.5
-        float pixelOffcenter = ((float) i / (float) (count - 1)) - 0.5;
+        float pixelOffcenter = ((float) i / (float) (ledCount - 1)) - 0.5;
 
         // 0 to 1
         float relativeX, relativeY;
@@ -92,37 +92,38 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
 }
 
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
-    fill_rainbow(leds, count, milliseconds * 255 / 1000 / 10 + (int)(rotation * 255), 7);
+    fill_rainbow(leds, ledCount, milliseconds * 255 / 1000 / 10 + (int)(rotation * 255), 7);
     FastLED.show();
 }
 
 void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
-    int ringIndex = 0;
+    int centerLEDIndex = ledCount / 2;
+    int ringArrayIndex = 0;
     for (int ring = 0; ring < concentricResolution->count; ++ring) {
         int ringResolution = (*concentricResolution)[ring];
+        int polarity = (ring % 2) == 0 ? 1 : -1;
 
-        for (int polarity = 0; polarity <= 1; ++polarity) {
-            float ledRotation = rotation + polarity * 0.5;
-            int pDirection = polarity * 2 - 1;
+        float ledRotation = rotation - (polarity - 1) * 0.25;
+        if (polarity < 0)
+            ledRotation = std::fmod(ledRotation + 0.5f, 1.0f);
 
-            float index = ledRotation * ringResolution;
+        float relativeIndex = ledRotation * (float) ringResolution;
 
-            int leftIndex = ((int)index) % ringResolution;
-            int rightIndex = (int)(index + 1) % ringResolution;
-            float lerp = fmodf(ledRotation, 1.0);
-            float ilerp = 1.0 - lerp;
+        int leftIndex = (int) relativeIndex % ringResolution;
+        int rightIndex = (int)(leftIndex + 1) % ringResolution;
+        float rightPart = std::fmod(relativeIndex, 1.0f);
+        float leftPart = 1.0f - rightPart;
 
-            auto leftPixel = concentricScreen[leftIndex + ringIndex];
-            auto rightPixel = concentricScreen[rightIndex + ringIndex];
+        auto leftPixel = concentricScreen[leftIndex + ringArrayIndex];
+        auto rightPixel = concentricScreen[rightIndex + ringArrayIndex];
 
-            leds[(count - 1) * (1 - polarity) + ring * pDirection] = CRGB(
-                leftPixel.r * ilerp + rightPixel.r * lerp,
-                leftPixel.g * ilerp + rightPixel.g * lerp,
-                leftPixel.b * ilerp + rightPixel.b * lerp
-            );
+        leds[centerLEDIndex + ((ring + 1) / 2) * polarity] = CRGB(
+                leftPixel.r * leftPart + rightPixel.r * rightPart,
+                leftPixel.g * leftPart + rightPixel.g * rightPart,
+                leftPixel.b * leftPart + rightPixel.b * rightPart
+        );
 
-            ringIndex += ringResolution;
-        }
+        ringArrayIndex += ringResolution;
     }
 }
 

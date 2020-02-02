@@ -14,7 +14,7 @@ public:
         demo, screen, concentric
     };
 
-    int count;
+    int ledCount;
     CRGB *leds;
 
     Mode mode = demo;

@@ -22,3 +22,16 @@ Run
     platformio run --target upload --upload-port IP-ADDRESS
     
 as per http://docs.platformio.org/en/latest/platforms/espressif32.html#over-the-air-ota-update.
+
+
+## Build
+
+The chip expects a single LED strip to be layout down across the whole fan blade, with the center LED being offset by 0.25 LEDs away from data cable (end). This will place LEDs on each side at 0.5 offset from the other side.
+
+#### Reasoning
+
+**Why not just one blade?** Two fan blades will balance out the rotation at high speeds.
+
+**Why not just on one blade?** By placing the LEDs across both blade edges and not just one, the rotation speed can be halved, which both conserves energy, noise and stabilizes across lower clock speeds.
+
+**Why not mirrored across the center?** By offsetting the pixels, a larger area can be covered with light, eliminating holes in the picture. This also doubles the resolution, which makes for a higher-fidelity picture. If a lower resolution is desired for FPS or bandwidth purposes, target 2x or 4x API endpoints (WIP).
