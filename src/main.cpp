@@ -4,6 +4,7 @@
 
 #include <HardwareSerial.h>
 #include <SPIFFS.h>
+#include <network/ArtnetServer.h>
 #include "screen/Screen.h"
 #include "sensor/SensorSwitch.h"
 #include "sensor/RotationSensor.h"
@@ -20,6 +21,7 @@
 Screen *screen;
 RotationSensor *rotationSensor;
 HttpServer *server;
+ArtnetServer *artnetServer;
 
 void setup() {
     // Enable Monitoring
@@ -41,6 +43,11 @@ void setup() {
     Network::connectToPreset();
 
     server = new HttpServer(screen, rotationSensor);
+
+    artnetServer = new ArtnetServer(
+        server->videoInterface,
+        new AsyncArtnet()
+    );
 }
 
 void loop() {
