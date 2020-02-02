@@ -50,7 +50,7 @@ artnet_provider = ArtnetProvider(
 
 seconds_per_frame = 1.0 / 30.0
 
-print("Sending Data!")
+print("Sending Art-Net Data!")
 sequence_start = datetime.now()
 
 while True:
@@ -75,7 +75,7 @@ while True:
         ("192.168.2.126", 1234)
     )
     if artnet_provider.sequence == 0:
-        print(f"Sequence Pushed! FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
+        print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
         sequence_start = frame_start
 
     # r = requests.post(
