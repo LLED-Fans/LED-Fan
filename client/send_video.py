@@ -25,14 +25,14 @@ def get_image_file(path) -> Image:
 
 def pixel_at(image: Image, x: float, y: float):
     r = bilinear(image, x * (image.width - 1), y * (image.height - 1))
-    print(r)
     return r
 
 print("Getting Server Info")
 
 server_info = requests.get("http://192.168.2.126/i/cc").json()
-pixels = grouper(2, server_info["pixels"])
-print(f"Remote Pixels: {pixels}")
+pixels = list(grouper(2, server_info["pixels"]))
+print(server_info)
+print(f"Remote Pixels ({len(pixels)}): {pixels}")
 
 
 while True:
@@ -43,7 +43,7 @@ while True:
     # data = img.tobytes("raw")
     data = io.BytesIO(
         bytes(flatmap(
-            lambda x, y: pixel_at(img, x, y),
+            lambda t: pixel_at(img, *t),
             pixels
         ))
     )

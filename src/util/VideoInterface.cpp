@@ -81,7 +81,7 @@ DynamicJsonDocument VideoInterface::info() {
     DynamicJsonDocument doc(
             JSON_OBJECT_SIZE(1)
             + JSON_ARRAY_SIZE(concentricResolution->count)
-            + JSON_ARRAY_SIZE(pixelCount)
+            + JSON_ARRAY_SIZE(pixelCount * 2)
     );
 
     JsonArray pixels = doc.createNestedArray("pixels");
