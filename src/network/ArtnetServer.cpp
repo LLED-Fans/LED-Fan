@@ -35,8 +35,11 @@ ArtnetServer::ArtnetServer(Screen *screen)
 
 void ArtnetServer::acceptDMX(int endpoint, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *data, IPAddress remoteIP) {
     int offset = (int) universe << 9;
-    uint8_t *array = endpoints[endpoint].array + offset;
     int arrayCount = endpoints[endpoint].arraySize - offset;
+    if (arrayCount <= 0) {
+        return; // Out of scope
+    }
+    uint8_t *array = endpoints[endpoint].array + offset;
 
     memcpy(data, array, _min(arrayCount, length));
 }
