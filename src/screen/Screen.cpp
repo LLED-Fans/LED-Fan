@@ -61,7 +61,6 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
 
 void Screen::determineMode(unsigned long milliseconds) {
     if (milliseconds > inputTimestamps[mode] + 5000) {
-        ping();
         // No recent signal on input
 
         Mode mostRecentInput = Mode::count;
