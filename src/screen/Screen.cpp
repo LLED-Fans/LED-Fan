@@ -132,7 +132,7 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
         int ringResolution = (*concentricResolution)[ring];
         int polarity = (ring % 2) == 0 ? 1 : -1;
 
-        float ledRotation = rotation - (polarity - 1) * 0.25;
+        float ledRotation = rotation;
         if (polarity < 0)
             ledRotation = std::fmod(ledRotation + 0.5f, 1.0f);
 
@@ -154,9 +154,11 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
 
         ringArrayIndex += ringResolution;
     }
+
+    FastLED.show();
 }
 
 int Screen::ping() {
-    millisecondsPingLeft = 1500;
-    return 1500;
+    millisecondsPingLeft = 200;
+    return 200;
 }
