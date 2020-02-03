@@ -38,8 +38,8 @@ ArtnetServer::ArtnetServer(Screen *screen)
 void ArtnetServer::acceptDMX(int endpointIndex, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *data, IPAddress remoteIP) {
     ArtnetEndpoint &endpoint = endpoints[endpointIndex];
 
-    int offset = universe << (uint8_t) 9;
-    int arrayCount = endpoint.arraySize - offset;
+    unsigned int offset = (unsigned int) universe << (uint8_t) 9;
+    int arrayCount = endpoint.arraySize - (int) offset;
     if (arrayCount <= 0) {
         return; // Out of scope
     }

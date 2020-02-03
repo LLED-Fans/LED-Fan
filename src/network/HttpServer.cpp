@@ -70,6 +70,9 @@ String HttpServer::processTemplates(const String &var) {
         }
         return rotationSensor->isReliable ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
     }
+    if (var == "UPTIME") {
+        return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
+    }
 
     return String("ERROR");
 }

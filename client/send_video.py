@@ -33,7 +33,7 @@ def pixel_at(image: Image, x: float, y: float):
 print("Getting Server Info")
 
 ip = "192.168.2.126"
-endpoint = "cartesian"
+endpoint = "concentric"
 
 server_info = requests.get(f"http://{ip}/i/cc").json()
 #print(server_info)

@@ -20,7 +20,7 @@ Screen::Screen(int ledCount, int cartesianSize): ledCount(ledCount), cartesianSi
     memset(cartesianScreen, 0x00, cartesianSize * cartesianSize * 3);
 
     concentricResolution = ConcentricCoordinates::resolution(ledCount);
-    concentricScreen = new CRGB[concentricResolution->sum() * 3];
+    concentricScreen = new CRGB[concentricResolution->sum()];
     memset(concentricScreen, 0x00, concentricResolution->sum() * 3);
 
     for (int i = 0; i < Mode::count; ++i)
