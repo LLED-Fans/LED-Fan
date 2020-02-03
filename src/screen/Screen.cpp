@@ -21,7 +21,8 @@ Screen::Screen(int ledCount, int virtualSize): ledCount(ledCount), virtualSize(v
     concentricResolution = ConcentricCoordinates::resolution(ledCount);
     concentricScreen = new CRGB[concentricResolution->sum()];
 
-    memset(inputTimestamps, 0, sizeof(inputTimestamps));
+    for (int i = 0; i < Mode::count; ++i)
+        inputTimestamps[i] = 0;
 }
 
 void Screen::draw(unsigned long milliseconds, float rotation) {

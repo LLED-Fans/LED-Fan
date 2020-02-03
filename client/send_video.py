@@ -32,9 +32,10 @@ def pixel_at(image: Image, x: float, y: float):
 
 print("Getting Server Info")
 
-endpoint = "concentric"
+ip = "192.168.2.126"
+endpoint = "cartesian"
 
-server_info = requests.get("http://192.168.2.126/i/cc").json()
+server_info = requests.get(f"http://{ip}/i/cc").json()
 #print(server_info)
 
 artnet_info = server_info[endpoint]
@@ -57,7 +58,7 @@ artnet_provider = ArtnetProvider(
 seconds_per_frame = 1.0 / 30.0
 simulated_rotation_seconds = 3
 
-print("Sending Art-Net Data!")
+print(f"Sending Art-Net Data to: {ip}:{port}!")
 sequence_start = datetime.now()
 
 simulated_rotation = 0
@@ -86,7 +87,7 @@ try:
         for packet in packets:
             sock.sendto(
                 bytes(packet),
-                ("192.168.2.126", port)
+                (ip, port)
             )
 
         if artnet_provider.sequence == 0:
@@ -94,11 +95,11 @@ try:
             sequence_start = frame_start
 
         if simulated_rotation_seconds > 0:
-            requests.post("http://192.168.2.126/rotation/set", data={"rotation": "0.5"})
+            requests.post(f"http://{ip}/rotation/set", data={"rotation": simulated_rotation})
             simulated_rotation = (simulated_rotation + seconds_per_frame / simulated_rotation_seconds) % 1.0
 
         # r = requests.post(
-        #     "http://192.168.2.126/i/cc/rgb",
+        #     f"http://{url}/i/cc/rgb",
         #     data=data
         # )
         # print(r)
@@ -108,4 +109,4 @@ try:
             time.sleep(seconds_per_frame - time_this_frame.total_seconds())
 finally:
     if simulated_rotation_seconds > 0:
-        requests.post("http://192.168.2.126/rotation/set", data={"rotation": "-1"})
+        requests.post(f"http://{ip}/rotation/set", data={"rotation": "-1"})

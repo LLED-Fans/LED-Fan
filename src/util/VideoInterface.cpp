@@ -76,7 +76,7 @@ DynamicJsonDocument VideoInterface::info() {
     {
         auto object = doc.createNestedObject("cartesian");
 
-        object["port"] = artnetServer->endpoints[0].port;
+        object["port"] = artnetServer->endpoints[1].port;
         object["width"] = screen->virtualSize;
         object["height"] = screen->virtualSize;
     }
@@ -88,7 +88,7 @@ DynamicJsonDocument VideoInterface::info() {
     {
         auto object = doc.createNestedObject("concentric");
 
-        object["port"] = artnetServer->endpoints[1].port;
+        object["port"] = artnetServer->endpoints[0].port;
 
         JsonArray pixels = object.createNestedArray("pixels");
         for (int i = 0; i < pixelCount * 2; ++i) {
