@@ -21,8 +21,8 @@ public:
 
     unsigned long lastFrameTime = 0;
 
-    int virtualSize;
-    CRGB *virtualScreen;
+    int cartesianSize;
+    CRGB *cartesianScreen;
 
     IntRoller *concentricResolution;
     CRGB *concentricScreen;
@@ -31,7 +31,7 @@ public:
     unsigned long millisecondsPingLeft = 0;
     unsigned long inputTimestamps[Mode::count];
 
-    Screen(int ledCount, int virtualSize);
+    Screen(int ledCount, int cartesianSize);
 
     void draw(unsigned long milliseconds, float rotation);
 

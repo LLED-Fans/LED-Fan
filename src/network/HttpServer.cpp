@@ -57,7 +57,7 @@ String HttpServer::processTemplates(const String &var) {
         return screen->mode == Screen::concentric ? "mdl-button--accent" : "";
     }
     if (var == "VIRTUAL_SCREEN_SIZE") {
-        return String(screen->virtualSize);
+        return String(screen->cartesianSize);
     }
     if (var == "MAGNET_VALUE") {
         return String(rotationSensor->sensorSwitch->peaks->lower)

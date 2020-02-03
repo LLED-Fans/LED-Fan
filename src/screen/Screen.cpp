@@ -11,12 +11,12 @@
 #define COLOR_ORDER GRB
 #define LED_PIN 25
 
-Screen::Screen(int ledCount, int virtualSize): ledCount(ledCount), virtualSize(virtualSize) {
+Screen::Screen(int ledCount, int cartesianSize): ledCount(ledCount), cartesianSize(cartesianSize) {
     this->leds = new CRGB[ledCount];
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, ledCount)
             .setCorrection(TypicalLEDStrip);
 
-    virtualScreen = new CRGB[virtualSize * virtualSize];
+    cartesianScreen = new CRGB[cartesianSize * cartesianSize];
 
     concentricResolution = ConcentricCoordinates::resolution(ledCount);
     concentricScreen = new CRGB[concentricResolution->sum()];
@@ -109,11 +109,11 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
             true
         );
 
-        // 0 to virtualSize - 1
-        int x = int(relativeX * (virtualSize - 1) + 0.5f);
-        int y = int(relativeY * (virtualSize - 1) + 0.5f);
+        // 0 to cartesianSize - 1
+        int x = int(relativeX * (cartesianSize - 1) + 0.5f);
+        int y = int(relativeY * (cartesianSize - 1) + 0.5f);
 
-        leds[i] = virtualScreen[x * virtualSize + y];
+        leds[i] = cartesianScreen[x * cartesianSize + y];
     }
     FastLED.show();
 }

@@ -18,7 +18,7 @@ bool VideoInterface::acceptJpeg(File file) {
         return false;
     }
 
-    if (jpegDecoder->width != screen->virtualSize || jpegDecoder->height != screen->virtualSize) {
+    if (jpegDecoder->width != screen->cartesianSize || jpegDecoder->height != screen->cartesianSize) {
         Printf::ln("Got image of invalid size; resizing unsupported! (%d, %d)", jpegDecoder->width, jpegDecoder->height);
         return false;
     }
@@ -43,7 +43,7 @@ bool VideoInterface::acceptJpeg(File file) {
                 auto pixelX = mcu_x + x;
                 auto pixelY = mcu_y + y;
 
-                screen->virtualScreen[pixelX * screen->virtualSize + pixelY] =
+                screen->cartesianScreen[pixelX * screen->cartesianSize + pixelY] =
                         CRGB(pixel, pixel + 1, pixel + 2);
             }
         }
@@ -77,8 +77,8 @@ DynamicJsonDocument VideoInterface::info() {
         auto object = doc.createNestedObject("cartesian");
 
         object["port"] = artnetServer->endpoints[1].port;
-        object["width"] = screen->virtualSize;
-        object["height"] = screen->virtualSize;
+        object["width"] = screen->cartesianSize;
+        object["height"] = screen->cartesianSize;
     }
 
     // ==============================================

@@ -17,8 +17,8 @@ ArtnetServer::ArtnetServer(Screen *screen)
     endpoints[0].mode = Screen::Mode::concentric;
 
     endpoints[1].port = 1201;
-    endpoints[1].array = reinterpret_cast<uint8_t *>(screen->virtualScreen);
-    endpoints[1].arraySize = screen->virtualSize * screen->virtualSize * 3;
+    endpoints[1].array = reinterpret_cast<uint8_t *>(screen->cartesianScreen);
+    endpoints[1].arraySize = screen->cartesianSize * screen->cartesianSize * 3;
     endpoints[1].mode = Screen::Mode::screen;
 
     artnets = new AsyncArtnet*[endpointCount];
