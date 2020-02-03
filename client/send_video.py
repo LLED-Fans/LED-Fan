@@ -1,10 +1,12 @@
 import io
 import random
 import time
+from typing import Callable
 
 import requests
 import socket
 from PIL import Image
+from mss import mss
 
 from artnet import ArtnetProvider
 from util import grouper, flatmap, bilinear
@@ -24,16 +26,12 @@ def get_white_noise_image(width, height):
     return pil_map
 
 
-def get_image_file(path) -> Image:
-    return Image.open(path)
-
-
 def pixel_at(image: Image, x: float, y: float):
     r = bilinear(image, x * (image.width - 1), y * (image.height - 1))
     return r
 
 
-def run(ip: str, endpoint: str, img: Image, simulate_rotation: bool = False):
+def run(ip: str, endpoint: str, image_provider: Callable[[], Image.Image], simulate_rotation: bool = False):
     print("Getting Server Info")
 
     server_info = requests.get(f"http://{ip}/i/cc").json()
@@ -69,7 +67,7 @@ def run(ip: str, endpoint: str, img: Image, simulate_rotation: bool = False):
             frame_start = datetime.now()
 
             #img = get_white_noise_image(64, 64)
-            img = get_image_file("two_color_square.png")
+            img = image_provider()
 
             if endpoint == "concentric":
                 data = bytes(flatmap(
@@ -126,15 +124,34 @@ command_parser.add_argument(
     "--image", "-i",
     default="two_color_square.png"
 )
+command_parser.add_argument(
+    "--capture-screen", "-c",
+    help="Capture Screen Recording. Input: top,left,width,height"
+)
 command_parser.add_argument("--simulate-rotation", action="store_true")
 
 
 if __name__ == "__main__":
     args = command_parser.parse_args()
 
+    if args.capture_screen:
+        top, left, width, height = list(map(int, args.capture_screen.split(",")))
+
+        capturer = mss()
+        monitor = {'top': top, 'left': left, 'width': width, 'height': height}
+
+        def capture_image():
+            image = capturer.grab(monitor)
+            return Image.frombytes('RGB', (monitor["width"], monitor["height"]), bytes(image.raw))
+
+        image_provider = capture_image
+    else:
+        image = Image.open("two_color_square.png")
+        image_provider = lambda: image
+
     run(
         ip=args.ip,
         endpoint=args.endpoint,
-        img=args.image,
+        image_provider=image_provider,
         simulate_rotation=args.simulate_rotation
     )
