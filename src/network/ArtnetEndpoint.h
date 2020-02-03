@@ -7,6 +7,7 @@
 
 
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/stdint.h"
+#include <screen/Screen.h>
 
 struct ArtnetEndpoint {
     int port;

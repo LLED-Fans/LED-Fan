@@ -66,7 +66,7 @@ String HttpServer::processTemplates(const String &var) {
     }
     if (var == "ROTATION_SPEED") {
         if (screen->fixedRotation >= 0) {
-            return "Fixed: " + String(screen->fixedRotation)
+            return "Fixed: " + String(screen->fixedRotation);
         }
         return rotationSensor->isReliable ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
     }
