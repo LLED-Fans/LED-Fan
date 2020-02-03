@@ -20,10 +20,14 @@ Screen::Screen(int ledCount, int virtualSize): ledCount(ledCount), virtualSize(v
 
     concentricResolution = ConcentricCoordinates::resolution(ledCount);
     concentricScreen = new CRGB[concentricResolution->sum()];
+
+    memset(inputTimestamps, 0, Mode::count);
 }
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
     auto frameTime = milliseconds - lastFrameTime;
+
+    determineMode(milliseconds);
 
     if (millisecondsPingLeft > 0) {
         drawRGB(((millisecondsPingLeft / 500) % 2) == 0 ? 1 : 0);
@@ -52,6 +56,24 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
         case concentric:
             drawConcentric(milliseconds, rotation);
             break;
+    }
+}
+
+void Screen::determineMode(unsigned long milliseconds) {
+    if (milliseconds > inputTimestamps[mode] + 5000) {
+        // No recent signal on input
+
+        Mode mostRecentInput = Mode::count;
+        unsigned long mostRecentInputTimestamp = milliseconds - 5000;
+        for (int i = 0; i < count; i++) {
+            if (inputTimestamps[i] > mostRecentInputTimestamp) {
+                mostRecentInput = static_cast<Mode>(i);
+                mostRecentInputTimestamp = inputTimestamps[i];
+            }
+        }
+        if (mostRecentInput != Mode::count) {
+            mode = mostRecentInput;
+        }
     }
 }
 

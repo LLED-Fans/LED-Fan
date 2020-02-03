@@ -14,10 +14,12 @@ ArtnetServer::ArtnetServer(Screen *screen)
     endpoints[0].port = 1200;
     endpoints[0].array = reinterpret_cast<uint8_t *>(screen->concentricScreen);
     endpoints[0].arraySize = screen->concentricResolution->sum() * 3;
+    endpoints[0].mode = Screen::Mode::concentric;
 
     endpoints[1].port = 1201;
     endpoints[1].array = reinterpret_cast<uint8_t *>(screen->virtualScreen);
     endpoints[1].arraySize = screen->virtualSize * screen->virtualSize * 3;
+    endpoints[1].mode = Screen::Mode::screen;
 
     artnets = new AsyncArtnet*[endpointCount];
     for (int i = 0; i < endpointCount; i++) {
@@ -33,15 +35,18 @@ ArtnetServer::ArtnetServer(Screen *screen)
     }
 }
 
-void ArtnetServer::acceptDMX(int endpoint, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *data, IPAddress remoteIP) {
+void ArtnetServer::acceptDMX(int endpointIndex, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t *data, IPAddress remoteIP) {
+    ArtnetEndpoint &endpoint = endpoints[endpointIndex];
+
     int offset = (int) universe << 9;
-    int arrayCount = endpoints[endpoint].arraySize - offset;
+    int arrayCount = endpoint.arraySize - offset;
     if (arrayCount <= 0) {
         return; // Out of scope
     }
-    uint8_t *array = endpoints[endpoint].array + offset;
+    uint8_t *array = endpoint.array + offset;
 
     memcpy(data, array, _min(arrayCount, length));
+    screen->inputTimestamps[endpoint.mode] = screen->lastFrameTime;
 }
 
 void ArtnetServer::acceptSync(int endpoint, IPAddress remoteIP) {

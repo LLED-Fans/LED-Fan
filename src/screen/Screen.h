@@ -11,7 +11,7 @@
 class Screen {
 public:
     enum Mode {
-        demo, screen, concentric
+        demo, screen, concentric, count
     };
 
     int ledCount;
@@ -29,6 +29,7 @@ public:
 
     float fixedRotation = -1;
     unsigned long millisecondsPingLeft = 0;
+    unsigned long inputTimestamps[Mode::count];
 
     Screen(int ledCount, int virtualSize);
 
@@ -44,6 +45,8 @@ public:
     void drawRGB(float red, float green = 0, float blue = 0);
 
     int ping();
+
+    void determineMode(unsigned long milliseconds);
 };
 
 

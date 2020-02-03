@@ -12,6 +12,7 @@ struct ArtnetEndpoint {
     int port;
     uint8_t *array;
     int arraySize;
+    Screen::Mode mode;
 };
 
 #endif //LED_FAN_ARTNETENDPOINT_H

@@ -20,7 +20,7 @@ public:
 
     ArtnetServer(Screen *screen);
 
-    void acceptDMX(int endpoint, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+    void acceptDMX(int endpointIndex, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
     void acceptSync(int endpoint, IPAddress remoteIP);
 };
 
