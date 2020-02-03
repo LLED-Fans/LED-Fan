@@ -8,6 +8,10 @@ def split_bytes(number: int, count: int) -> List[int]:
         range(count)
     ))
 
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 
 @dataclass
 class ArtnetProvider:
@@ -17,7 +21,7 @@ class ArtnetProvider:
 
     sequence: int = 0
 
-    def generate(self, payload: bytearray) -> bytearray:
+    def generate(self, payload: bytearray, universe_offset: int = 0) -> bytearray:
         packet = bytearray()
         packet.extend(bytearray('Art-Net', 'utf8'))
         packet.append(0x0)
@@ -41,8 +45,9 @@ class ArtnetProvider:
         # this means 16 * 16 * 128 = 32768 universes per port
         # a subnet is a group of 16 Universes
         # 16 subnets will make a net, there are 128 of them
-        packet.append(self.subnet << 4 | self.universe)
-        packet.append(self.net & 0xFF)
+        total_universe = self.net << 8 | self.subnet << 4 | self.universe
+        total_universe += universe_offset
+        packet.extend(split_bytes(total_universe, count=2))
 
         # 16 - packet size (2 x 8 high byte first)
         packet.extend(reversed(split_bytes(len(payload), count=2)))
@@ -52,6 +57,9 @@ class ArtnetProvider:
         return packet
 
     def __call__(self, *args, **kwargs):
-        packet = self.generate(args[0])
+        total_bytes = args[0]
+        payloads = chunks(total_bytes, 512)
+
+        packets = list(map(lambda t: self.generate(t[1], t[0]), enumerate(payloads)))
         self.sequence = (self.sequence + 1) % 256
-        return packet
+        return packets

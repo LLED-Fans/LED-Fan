@@ -78,12 +78,15 @@ while True:
     # img.save(data, format='JPEG', progression=False)
     # print(data.tell())
     # data.seek(0, 0)
-    r = sock.sendto(
-        bytes(artnet_provider(data)),
-        ("192.168.2.126", port)
-    )
+    packets = artnet_provider(data)
+    for packet in packets:
+        sock.sendto(
+            bytes(packet),
+            ("192.168.2.126", port)
+        )
+
     if artnet_provider.sequence == 0:
-        print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
+        print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, Packets p.f.: {len(packets)}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
         sequence_start = frame_start
 
     # r = requests.post(
