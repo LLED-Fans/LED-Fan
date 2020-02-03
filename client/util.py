@@ -2,6 +2,8 @@ import math
 from typing import Iterable, TypeVar, List, Callable
 from itertools import zip_longest
 
+from PIL import Image
+
 # Declare type variables
 T = TypeVar('T')
 U = TypeVar('U')
@@ -29,9 +31,9 @@ def lerp(a, b, coord):
     return int(round(a * (1.0 - ratio) + b * ratio))
 
 
-def bilinear(im, x, y):
+def bilinear(im: Image, x, y):
     x1, y1 = int(math.floor(x)), int(math.floor(y))
-    x2, y2 = x1 + 1, y1 + 1
+    x2, y2 = int(math.ceil(x1)), int(math.ceil(y))
     left = lerp(im.getpixel((x1, y1)), im.getpixel((x1, y2)), y)
     right = lerp(im.getpixel((x2, y1)), im.getpixel((x2, y2)), y)
     return lerp(left, right, x)
