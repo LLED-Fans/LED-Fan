@@ -27,6 +27,7 @@ public:
     IntRoller *concentricResolution;
     CRGB *concentricScreen;
 
+    float fixedRotation = -1;
     unsigned long millisecondsPingLeft = 0;
 
     Screen(int ledCount, int virtualSize);

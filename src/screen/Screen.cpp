@@ -33,6 +33,10 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
         return;
     }
 
+    if (fixedRotation >= 0) {
+        rotation = fixedRotation;
+    }
+
     if (rotation < 0) {
         drawRGB(0);
         return;

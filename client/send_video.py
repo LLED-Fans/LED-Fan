@@ -55,46 +55,57 @@ artnet_provider = ArtnetProvider(
 )
 
 seconds_per_frame = 1.0 / 30.0
+simulated_rotation_seconds = 3
 
 print("Sending Art-Net Data!")
 sequence_start = datetime.now()
 
-while True:
-    frame_start = datetime.now()
+simulated_rotation = 0
 
-    #img = get_white_noise_image(64, 64)
-    img = get_image_file("two_color_square.png")
+try:
+    while True:
+        frame_start = datetime.now()
 
-    if endpoint == "concentric":
-        data = bytes(flatmap(
-            lambda t: pixel_at(img, *t),
-            pixels
-        ))
-    else:
-        img = img.resize((64, 64))
-        data = img.tobytes("raw")
+        #img = get_white_noise_image(64, 64)
+        img = get_image_file("two_color_square.png")
 
-    # data = io.BytesIO()
-    # img.save(data, format='JPEG', progression=False)
-    # print(data.tell())
-    # data.seek(0, 0)
-    packets = artnet_provider(data)
-    for packet in packets:
-        sock.sendto(
-            bytes(packet),
-            ("192.168.2.126", port)
-        )
+        if endpoint == "concentric":
+            data = bytes(flatmap(
+                lambda t: pixel_at(img, *t),
+                pixels
+            ))
+        else:
+            img = img.resize((64, 64))
+            data = img.tobytes("raw")
 
-    if artnet_provider.sequence == 0:
-        print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, Packets p.f.: {len(packets)}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
-        sequence_start = frame_start
+        # data = io.BytesIO()
+        # img.save(data, format='JPEG', progression=False)
+        # print(data.tell())
+        # data.seek(0, 0)
+        packets = artnet_provider(data)
+        for packet in packets:
+            sock.sendto(
+                bytes(packet),
+                ("192.168.2.126", port)
+            )
 
-    # r = requests.post(
-    #     "http://192.168.2.126/i/cc/rgb",
-    #     data=data
-    # )
-    # print(r)
+        if artnet_provider.sequence == 0:
+            print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, Packets p.f.: {len(packets)}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
+            sequence_start = frame_start
 
-    time_this_frame = datetime.now() - frame_start
-    if time_this_frame.total_seconds() < seconds_per_frame:
-        time.sleep(seconds_per_frame - time_this_frame.total_seconds())
+        if simulated_rotation_seconds > 0:
+            requests.post("http://192.168.2.126/rotation/set", data={"rotation": "0.5"})
+            simulated_rotation = (simulated_rotation + seconds_per_frame / simulated_rotation_seconds) % 1.0
+
+        # r = requests.post(
+        #     "http://192.168.2.126/i/cc/rgb",
+        #     data=data
+        # )
+        # print(r)
+
+        time_this_frame = datetime.now() - frame_start
+        if time_this_frame.total_seconds() < seconds_per_frame:
+            time.sleep(seconds_per_frame - time_this_frame.total_seconds())
+finally:
+    if simulated_rotation_seconds > 0:
+        requests.post("http://192.168.2.126/rotation/set", data={"rotation": "-1"})

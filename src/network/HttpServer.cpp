@@ -65,6 +65,9 @@ String HttpServer::processTemplates(const String &var) {
             + " < " +  String(rotationSensor->sensorSwitch->peaks->upper);
     }
     if (var == "ROTATION_SPEED") {
+        if (screen->fixedRotation >= 0) {
+            return "Fixed: " + String(screen->fixedRotation)
+        }
         return rotationSensor->isReliable ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
     }
 
@@ -146,6 +149,16 @@ void HttpServer::setupRoutes() {
 
     _server.on("/ping", HTTP_POST, [screen](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", String(screen->ping()));
+    });
+
+    _server.on("/rotation/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+        if (!request->hasParam("rotation", true)) {
+            request_result(false);
+        }
+        auto rotation = request->getParam("rotation", true)->value().toFloat();
+        screen->fixedRotation = rotation;
+
+        request_result(true);
     });
 
     // -----------------------------------------------
