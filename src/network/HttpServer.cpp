@@ -65,10 +65,13 @@ String HttpServer::processTemplates(const String &var) {
             + " < " +  String(rotationSensor->sensorSwitch->peaks->upper);
     }
     if (var == "ROTATION_SPEED") {
-        if (screen->fixedRotation >= 0) {
+        if (screen->fixedRotation >= 0)
             return "Fixed: " + String(screen->fixedRotation);
-        }
-        return rotationSensor->isReliable ? (String(rotationSensor->timePerRotation) + "ms") : "Unreliable";
+
+        if (rotationSensor->isReliable)
+            return String(rotationSensor->timePerRotation) + "ms / At: " + String(rotationSensor->rotation);
+
+        return "Unreliable";
     }
     if (var == "UPTIME") {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
