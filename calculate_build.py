@@ -54,8 +54,9 @@ if __name__ == "__main__":
     print()
 
     rings = total_leds * (0.5 if mirror else 1)
+    ring_distance = radius / rings
     print(f"Rings: {rings}")
-    print(f"Ring Distance: {radius / rings : .5}cm")
+    print(f"Ring Distance: {ring_distance : .5}cm")
 
     print(f"Pixel Passes: {rpm / 60.0 * (pixel_density) : .5} / s")
     print(f"Any Pixel Passes: {rpm / 60.0 * blades : .5} / s")
@@ -67,4 +68,4 @@ if __name__ == "__main__":
     print(f"Outside Speed: {outside_speed : .5} m/s")
     print(f"Outside Motion: {outside_speed / led_clock * 100 : .5} cm/tick")
     print(f"Outside Pixel Lightness: {pixel_density / (circumference / 100) : .5} l/m")
-    print(f"Outside Pixel Distance: {circumference / pixel_density : .5} cm")
+    print(f"Outside Pixel Distance: {pixel_density / (circumference * ring_distance) : .5} l/cm^2")
