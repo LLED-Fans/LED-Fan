@@ -48,7 +48,7 @@ if __name__ == "__main__":
     print()
 
     print(f"Total LEDs: {total_leds}")
-    print(f"Total Power Needed: {total_ampere * led_voltage}W = {total_ampere}A x {led_voltage}v")
+    print(f"Total Power Needed: {total_ampere * led_voltage : .5}W = {total_ampere : .5}A x {led_voltage}v")
     print(f"Pixel Lightness: {pixel_density}")
 
     print()
