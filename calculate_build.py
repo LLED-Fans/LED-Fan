@@ -67,3 +67,4 @@ if __name__ == "__main__":
     print(f"Outside Speed: {outside_speed : .5} m/s")
     print(f"Outside Motion: {outside_speed / led_clock * 100 : .5} cm/tick")
     print(f"Outside Pixel Lightness: {pixel_density / (circumference / 100) : .5} l/m")
+    print(f"Outside Pixel Distance: {circumference / pixel_density : .5} cm")
