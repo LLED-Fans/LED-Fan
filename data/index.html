@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <script>
-        function pingLEDs(element) {
+        function accentButton(element, url) {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState !== 4 || this.status !== 200) return;
@@ -34,7 +34,7 @@
                     element.classList.remove("mdl-button--accent");
                 }, pingTime);
             };
-            xhttp.open("POST", "ping", true);
+            xhttp.open("POST", url, true);
             xhttp.send();
         }
     </script>
@@ -79,8 +79,12 @@
                         <p><b>Rotation Speed:</b> %ROTATION_SPEED%</p>
                         <h4>Actions</h4>
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                name="mode" value="screen" onclick="pingLEDs(this)">
+                                name="mode" value="screen" onclick="pingLEDs(this, 'ping')">
                             Ping
+                        </button>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                name="mode" value="screen" onclick="pingLEDs(this, 'reboot')">
+                            Reboot
                         </button>
                     </div>
                 </div>

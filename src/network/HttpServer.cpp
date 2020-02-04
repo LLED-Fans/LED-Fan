@@ -154,6 +154,11 @@ void HttpServer::setupRoutes() {
         request->send(200, "text/plain", String(screen->ping()));
     });
 
+    _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", "1000");
+        ESP.restart();
+    });
+
     _server.on("/rotation/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
         if (!request->hasParam("rotation", true)) {
             request_result(false);
