@@ -14,7 +14,7 @@
 #define HOST_NETWORK_SSID "LLED Fan"
 #define HOST_NETWORK_PASSWORD "We love LED"
 
-#define MICROSECONDS_PER_FRAME 1000
+#define MICROSECONDS_PER_FRAME 500
 
 RotationSensor *rotationSensor;
 Screen *screen;
