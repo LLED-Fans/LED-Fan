@@ -11,7 +11,7 @@ command_parser.add_argument(
     required=True
 )
 command_parser.add_argument(
-    "--leds-per-blade",
+    "--leds-per-m",
     required=True
 )
 command_parser.add_argument(
@@ -30,12 +30,12 @@ if __name__ == "__main__":
     args = command_parser.parse_args()
 
     blades = int(args.blades)
-    leds_per_blade = int(args.leds_per_blade)
+    leds_per_m = int(args.leds_per_m)
     mirror = bool(args.mirror)
     radius = int(args.radius)
     rpm = float(args.rpm)
 
-    total_leds = blades * leds_per_blade
+    total_leds = int(blades * radius * leds_per_m / 100)
     total_ampere = AMPERE_PER_LED * total_leds
 
     print(f"Total LEDs: {total_leds}")
