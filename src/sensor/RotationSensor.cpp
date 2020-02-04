@@ -28,5 +28,5 @@ void RotationSensor::update(unsigned long currentTime) {
     float rawRotation = (float) (currentTime - lastRotationMillis) / (float) timePerRotation;
 
     isReliable &= rawRotation < 4 && sensorSwitch->isReliable;
-    rotation = std::fmod(rotation, 1.0f);
+    rotation = std::fmod(rawRotation, 1.0f);
 }
