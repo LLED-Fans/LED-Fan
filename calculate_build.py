@@ -37,10 +37,11 @@ if __name__ == "__main__":
 
     total_leds = int(blades * radius * leds_per_m / 100)
     total_ampere = AMPERE_PER_LED * total_leds
+    pixel_density = 2 if mirror else 1
 
     print(f"Total LEDs: {total_leds}")
     print(f"Total Power Needed: {total_ampere * LED_VOLTAGE}W = {total_ampere}A x {LED_VOLTAGE}v")
-    print(f"Pixel Lightness: {2 if mirror else 1}")
+    print(f"Pixel Lightness: {pixel_density}")
 
     print()
 
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     print(f"Rings: {rings}")
     print(f"Ring Distance: {radius / rings : .5}cm")
 
-    print(f"Pixel Passes: {rpm / 60.0 * (2 if mirror else 1) : .5} / s")
+    print(f"Pixel Passes: {rpm / 60.0 * (pixel_density) : .5} / s")
     print(f"Any Pixel Passes: {rpm / 60.0 * blades : .5} / s")
 
     print()
@@ -56,3 +57,4 @@ if __name__ == "__main__":
     outside_speed = 2 * 3.141 * radius / 100 * (rpm / 60)
     print(f"Outside Speed: {outside_speed : .5} m/s")
     print(f"Outside Motion: {outside_speed / CLOCK_HZ * 100 : .5} cm/tick")
+    print(f"Outside Pixel Lightness: {pixel_density / outside_speed : .5}")
