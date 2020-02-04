@@ -155,7 +155,7 @@ void HttpServer::setupRoutes() {
     });
 
     _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", "1000");
+        request->send(200, "text/plain", "5000");
         ESP.restart();
     });
 
