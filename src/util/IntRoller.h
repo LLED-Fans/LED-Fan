@@ -32,7 +32,7 @@ public:
         int solidSum = 0;
         int solidCount = 0;
         for (int i = 0; i < count; ++i) {
-            if (abs(data[i] - mean) / mean < threshold) {
+            if (abs((data[i] - mean) / mean) < threshold) {
                 solidSum += data[i];
                 solidCount ++;
             }
@@ -40,7 +40,7 @@ public:
 
         if (sCount) *sCount = solidCount;
 
-        return solidSum;
+        return solidSum / solidCount;
     }
 
     int last() {

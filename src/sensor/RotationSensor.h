@@ -16,7 +16,7 @@ public:
     unsigned long lastRotationMillis;
     IntRoller rotationHistory = IntRoller(5);
 
-    int timePerRotation;
+    unsigned long timePerRotation;
     float rotation;
     bool isReliable;
 
