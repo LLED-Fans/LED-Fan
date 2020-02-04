@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <script>
-        function accentButton(element, url) {
+        function accentAction(element, url) {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState !== 4 || this.status !== 200) return;
@@ -78,14 +78,20 @@
                         <p><b>Magnet Read:</b> %MAGNET_VALUE%</p>
                         <p><b>Rotation Speed:</b> %ROTATION_SPEED%</p>
                         <h4>Actions</h4>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                name="mode" value="screen" onclick="pingLEDs(this, 'ping')">
-                            Ping
-                        </button>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                name="mode" value="screen" onclick="pingLEDs(this, 'reboot')">
-                            Reboot
-                        </button>
+                        <div class="mdl-grid controls">
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                        name="mode" value="screen" onclick="accentAction(this, 'ping')">
+                                    Ping
+                                </button>
+                            </div>
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                        name="mode" value="screen" onclick="accentAction(this, 'reboot')">
+                                    Reboot
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
