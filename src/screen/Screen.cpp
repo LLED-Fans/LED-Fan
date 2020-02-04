@@ -124,7 +124,13 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
 }
 
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
-    fill_rainbow(leds, ledCount, milliseconds * 255 / 1000 / 10 + (int)(rotation * 255), 7);
+    for (int i = 0; i < ledCount; ++i) {
+        int distanceFromCenter = abs(i - (ledCount / 2));
+        fill_rainbow(&leds[i], 1,
+        distanceFromCenter * 10 + milliseconds * 255 / 1000 / 10 + (int)(rotation * 255),
+        0
+        );
+    }
     FastLED.show();
 }
 
