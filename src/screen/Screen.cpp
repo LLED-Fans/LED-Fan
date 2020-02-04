@@ -124,10 +124,14 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
 }
 
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
+    int centerLED = ledCount / 2;
+
     for (int i = 0; i < ledCount; ++i) {
-        int distanceFromCenter = abs(i - (ledCount / 2));
+        int distanceFromCenter = abs(i - centerLED);
+        auto ledRotation = std::fmod(rotation + (i > centerLED ? 0.5f : 0.0f), 1.0f);
+
         fill_rainbow(&leds[i], 1,
-        distanceFromCenter * 10 + milliseconds * 255 / 1000 / 10 + (int)(rotation * 255),
+        distanceFromCenter * 10 + milliseconds * 255 / 1000 / 10 + (int)(ledRotation * 255),
         0
         );
     }
