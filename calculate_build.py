@@ -54,7 +54,8 @@ if __name__ == "__main__":
 
     print()
 
-    outside_speed = 2 * 3.141 * radius / 100 * (rpm / 60)
+    circumference = 2 * 3.141 * radius
+    outside_speed = circumference / 100 * (rpm / 60)
     print(f"Outside Speed: {outside_speed : .5} m/s")
     print(f"Outside Motion: {outside_speed / CLOCK_HZ * 100 : .5} cm/tick")
-    print(f"Outside Pixel Lightness: {pixel_density / outside_speed : .5}")
+    print(f"Outside Pixel Lightness: {pixel_density / (circumference / 100) : .5} l/m")
