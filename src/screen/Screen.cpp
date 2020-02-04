@@ -29,6 +29,7 @@ Screen::Screen(int ledCount, int cartesianSize): ledCount(ledCount), cartesianSi
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
     auto duration = milliseconds - lastFrameTime;
+    frameDurations->append(duration);
 
     determineMode(milliseconds);
 

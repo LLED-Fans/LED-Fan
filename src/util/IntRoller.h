@@ -26,7 +26,7 @@ public:
         data[head] = value;
     }
 
-    int solidMean(float threshold, int *sCount) {
+    float solidMean(float threshold, int *sCount) {
         int mean = sum() / count;
 
         int solidSum = 0;
@@ -40,7 +40,7 @@ public:
 
         if (sCount) *sCount = solidCount;
 
-        return solidSum / solidCount;
+        return (float) solidSum / (float) solidCount;
     }
 
     int last() {
@@ -57,6 +57,10 @@ public:
 
     int sum() {
         return std::accumulate(data, data + count, 0);
+    }
+
+    float mean() {
+        return (float) sum() / (float) count;
     }
 private:
     int head;

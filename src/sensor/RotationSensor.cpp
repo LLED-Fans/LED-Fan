@@ -14,10 +14,10 @@ void RotationSensor::update(unsigned long currentTime) {
     if (sensorSwitch->test() && sensorSwitch->isReliable) {
         if (!sensorSwitch->isOn()) {
             // Full Rotation
-            rotationHistory.append(currentTime - lastRotationMillis);
+            rotationHistory.append((int) (currentTime - lastRotationMillis));
 
             lastRotationMillis = currentTime;
-            timePerRotation = rotationHistory.solidMean(0.5f, &trustableRotations);
+            timePerRotation = (unsigned long) rotationHistory.solidMean(0.5f, &trustableRotations);
 
             isReliable = trustableRotations >= 2 && timePerRotation < 2000;
             //Printf::ln("Rotation! Took %f", timePerRotation);

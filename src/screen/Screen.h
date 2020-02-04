@@ -20,6 +20,7 @@ public:
     Mode mode = demo;
 
     unsigned long lastFrameTime = 0;
+    IntRoller *frameDurations = new IntRoller(10);
 
     int cartesianSize;
     CRGB *cartesianScreen;

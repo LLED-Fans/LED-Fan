@@ -73,6 +73,9 @@ String HttpServer::processTemplates(const String &var) {
     if (var == "UPTIME") {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
     }
+    if (var == "FPS") {
+        return String(1000 / screen->frameDurations->mean());
+    }
 
     return String("ERROR");
 }
