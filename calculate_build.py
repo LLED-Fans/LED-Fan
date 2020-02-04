@@ -1,9 +1,5 @@
 import argparse
 
-AMPERE_PER_LED = 0.06
-LED_VOLTAGE = 5
-CLOCK_HZ = 2000
-
 command_parser = argparse.ArgumentParser()
 
 command_parser.add_argument(
@@ -26,6 +22,10 @@ command_parser.add_argument(
     "--mirror", action="store_true"
 )
 
+command_parser.add_argument("--led-ampere", default=0.06)
+command_parser.add_argument("--led-voltage", default=5)
+command_parser.add_argument("--led-clock", default=2000)
+
 if __name__ == "__main__":
     args = command_parser.parse_args()
 
@@ -35,12 +35,20 @@ if __name__ == "__main__":
     radius = int(args.radius)
     rpm = float(args.rpm)
 
+    led_ampere = float(args.led_ampere)
+    led_voltage = float(args.led_voltage)
+    led_clock = float(args.led_clock)
+
     total_leds = int(blades * radius * leds_per_m / 100)
-    total_ampere = AMPERE_PER_LED * total_leds
+    total_ampere = led_ampere * total_leds
     pixel_density = 2 if mirror else 1
 
+    print(f"LED Specs: {led_ampere}A, {led_voltage}v, {led_clock}Hz")
+
+    print()
+
     print(f"Total LEDs: {total_leds}")
-    print(f"Total Power Needed: {total_ampere * LED_VOLTAGE}W = {total_ampere}A x {LED_VOLTAGE}v")
+    print(f"Total Power Needed: {total_ampere * led_voltage}W = {total_ampere}A x {led_voltage}v")
     print(f"Pixel Lightness: {pixel_density}")
 
     print()
@@ -57,5 +65,5 @@ if __name__ == "__main__":
     circumference = 2 * 3.141 * radius
     outside_speed = circumference / 100 * (rpm / 60)
     print(f"Outside Speed: {outside_speed : .5} m/s")
-    print(f"Outside Motion: {outside_speed / CLOCK_HZ * 100 : .5} cm/tick")
+    print(f"Outside Motion: {outside_speed / led_clock * 100 : .5} cm/tick")
     print(f"Outside Pixel Lightness: {pixel_density / (circumference / 100) : .5} l/m")
