@@ -8,10 +8,10 @@
 
 float *ConcentricCoordinates::ringRadii(float *result, int count) {
     // a * 0 + b = (1 / 4) / (count - 1)
-    // a * count + b = 1
+    // a * (count - 1) + b = 1
 
     float b = 0.25f / (float) (count - 1);
-    float a = (1 - b) / (float) count;
+    float a = (1 - b) / (float) (count - 1);
 
     for (int i = 0; i < count; i++) {
         // -1 to 1

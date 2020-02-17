@@ -8,12 +8,12 @@
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
 
 void PolarCoordinates::asCartesian(float theta, float r, float *x, float *y, bool positive) {
-    // -1 to 1
+    // -r to r
     *x = std::sin(theta) * r;
     *y = std::cos(theta) * r;
 
     if (positive) {
-        // 0 to 1
+        // 0 to 1, assuming -1 < r < 1
         *x = *x * 0.5f + 0.5f;
         *y = *y * 0.5f + 0.5f;
     }

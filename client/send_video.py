@@ -31,7 +31,13 @@ def pixel_at(image: Image, x: float, y: float):
     return r
 
 
-def run(ip: str, endpoint: str, image_provider: Callable[[], Image.Image], simulate_rotation: bool = False):
+def run(
+    ip: str,
+    endpoint: str,
+    image_provider: Callable[[], Image.Image],
+    simulated_rotation_seconds: int = 0,
+    frames_per_second: int = 30
+):
     print("Getting Server Info")
 
     server_info = requests.get(f"http://{ip}/i/cc").json()
@@ -54,8 +60,7 @@ def run(ip: str, endpoint: str, image_provider: Callable[[], Image.Image], simul
         net=0
     )
 
-    seconds_per_frame = 1.0 / 30.0
-    simulated_rotation_seconds = 3 if simulate_rotation else 0
+    seconds_per_frame = 1.0 / frames_per_second
 
     print(f"Sending Art-Net Data to: {ip}:{port}!")
     sequence_start = datetime.now()
@@ -97,11 +102,14 @@ def run(ip: str, endpoint: str, image_provider: Callable[[], Image.Image], simul
                 requests.post(f"http://{ip}/rotation/set", data={"rotation": simulated_rotation})
                 simulated_rotation = (simulated_rotation + seconds_per_frame / simulated_rotation_seconds) % 1.0
 
-            # r = requests.post(
-            #     f"http://{url}/i/cc/rgb",
-            #     data=data
-            # )
-            # print(r)
+            # For plotting coords
+            # log = requests.get(f"http://{ip}/log")
+            # img2 = img.copy()
+            # for idx, x, y in grouper(3, log.text.split("\n")):
+            #     if x and y:
+            #         print(idx, x, y)
+            #         img2.putpixel((int(x), int(y)), (int(idx) * 14, 0, 255))
+            # img2.save("rs.png")
 
             time_this_frame = datetime.now() - frame_start
             if time_this_frame.total_seconds() < seconds_per_frame:
@@ -128,7 +136,15 @@ command_parser.add_argument(
     "--capture-screen", "-c",
     help="Capture Screen Recording. Input: top,left,width,height"
 )
-command_parser.add_argument("--simulate-rotation", action="store_true")
+command_parser.add_argument(
+    "--simulated_rotation_seconds",
+    help="Simulate a rotation that takes x seconds.",
+    type=int, default=0
+)
+command_parser.add_argument(
+    "--frames_per_second",
+    type=int, default=30
+)
 
 
 if __name__ == "__main__":
@@ -153,5 +169,6 @@ if __name__ == "__main__":
         ip=args.ip,
         endpoint=args.endpoint,
         image_provider=image_provider,
-        simulate_rotation=args.simulate_rotation
+        simulated_rotation_seconds=args.simulated_rotation_seconds,
+        frames_per_second=args.frames_per_second
     )

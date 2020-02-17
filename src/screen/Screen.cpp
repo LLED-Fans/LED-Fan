@@ -2,6 +2,7 @@
 // Created by Lukas Tenbrink on 20.01.20.
 //
 
+#include <util/Logger.h>
 #include "Screen.h"
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
@@ -105,7 +106,7 @@ int Screen::pin() {
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
     for (int i = 0; i < ledCount; i++) {
-        int ringIndex =  abs((i - (ledCount / 2)) * 2 + 0.5f);
+        int ringIndex =  (int) abs((float) (i - (ledCount / 2)) * 2 + 0.5f);
         int ledPolarity = i < (ledCount / 2) ? -1 : 1;
 
         // 0 to 1
@@ -120,6 +121,11 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
         // 0 to cartesianSize - 1
         int x = int(relativeX * (cartesianSize - 1) + 0.5f);
         int y = int(relativeY * (cartesianSize - 1) + 0.5f);
+
+        // For plotting coords
+//        Logger::println(ringIndex);
+//        Logger::println(x);
+//        Logger::println(y);
 
         leds[i] = cartesianScreen[x + y * cartesianSize];
     }
