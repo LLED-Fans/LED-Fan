@@ -8,6 +8,7 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <esp_wifi.h>
+#include <util/Logger.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -163,6 +164,10 @@ void HttpServer::setupRoutes() {
     _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", "5000");
         ESP.restart();
+    });
+
+    _server.on("/log", HTTP_GET, [screen](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", Logger::string());
     });
 
     _server.on("/rotation/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {

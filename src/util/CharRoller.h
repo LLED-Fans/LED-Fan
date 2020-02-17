@@ -1,0 +1,28 @@
+//
+// Created by Lukas Tenbrink on 17.02.20.
+//
+
+#ifndef LED_FAN_CHARROLLER_H
+#define LED_FAN_CHARROLLER_H
+
+#include <WString.h>
+
+class CharRoller {
+public:
+    const unsigned int count;
+    char *data;
+
+    CharRoller(const int count);
+
+    void clear();
+
+    void append(char *data);
+    void append(char *d, unsigned int length);
+
+    String toString();
+private:
+    unsigned int head;
+};
+
+
+#endif //LED_FAN_CHARROLLER_H

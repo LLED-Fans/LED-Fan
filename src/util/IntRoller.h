@@ -10,7 +10,7 @@
 
 class IntRoller {
 public:
-    const int count;
+    const unsigned int count;
     int *data;
 
     IntRoller(int c): count(c), head(c - 1) {
@@ -63,7 +63,7 @@ public:
         return (float) sum() / (float) count;
     }
 private:
-    int head;
+    int head = 0;
 };
 
 #endif //LED_FAN_INTROLLER_H
