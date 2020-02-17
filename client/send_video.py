@@ -142,11 +142,11 @@ if __name__ == "__main__":
 
         def capture_image():
             image = capturer.grab(monitor)
-            return Image.frombytes('RGB', (monitor["width"], monitor["height"]), bytes(image.raw))
+            return Image.frombytes('RGB', (monitor["width"], monitor["height"]), bytes(image.rgb))
 
         image_provider = capture_image
     else:
-        image = Image.open("two_color_square.png")
+        image = Image.open(args.image)
         image_provider = lambda: image
 
     run(
