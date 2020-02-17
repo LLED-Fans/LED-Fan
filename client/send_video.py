@@ -122,7 +122,7 @@ command_parser.add_argument(
 )
 command_parser.add_argument(
     "--image", "-i",
-    default="two_color_square.png"
+    default="test_image.png"
 )
 command_parser.add_argument(
     "--capture-screen", "-c",
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
         image_provider = capture_image
     else:
-        image = Image.open(args.image)
+        image = Image.open(args.image).convert("RGB")
         image_provider = lambda: image
 
     run(
