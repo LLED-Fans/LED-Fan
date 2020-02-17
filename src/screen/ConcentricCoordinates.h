@@ -10,7 +10,8 @@
 
 class ConcentricCoordinates {
 public:
-    static float * sampledCartesian(IntRoller *resolution, int* count);
+    static float *ringRadii(float *result, int count);
+    static float *sampledCartesian(IntRoller *resolution, float *radii, int *count);
 
     static IntRoller *resolution(int ringCount);
     static int ringResolution(int ring);

@@ -18,6 +18,9 @@ Screen::Screen(int ledCount, int cartesianSize): ledCount(ledCount), cartesianSi
     // WS2813 support 2000hz, but FastLED doesn't like it
     FastLED.setMaxRefreshRate(2000);
 
+    this->ringRadii = new float[ledCount];
+    ConcentricCoordinates::ringRadii(this->ringRadii, ledCount);
+
     cartesianScreen = new CRGB[cartesianSize * cartesianSize];
     memset(cartesianScreen, 0x00, cartesianSize * cartesianSize * 3);
 
@@ -101,21 +104,12 @@ int Screen::pin() {
 }
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
-    // a * (ledCount / 2) + b = (1 / 4) / (ledCount - 1)
-    // a * 0 + b = -1
-
-    float b = -1;
-    float a = (float) (4 * ledCount - 3) / (float) (2 * (ledCount - 1) * ledCount);
-
     for (int i = 0; i < ledCount; i++) {
-        // -1 to 1
-        float pixelOffcenter = a * (float) i + b;
-
         // 0 to 1
         float relativeX, relativeY;
         PolarCoordinates::asCartesian(
             rotation * M_TWOPI,
-            pixelOffcenter,
+            ringRadii[i],
             &relativeX, &relativeY,
             true
         );

@@ -16,6 +16,7 @@ public:
 
     int ledCount;
     CRGB *leds;
+    float *ringRadii; // -1 to 1
 
     Mode mode = demo;
 

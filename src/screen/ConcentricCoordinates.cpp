@@ -6,7 +6,20 @@
 #include "PolarCoordinates.h"
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
 
-float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, int* count) {
+float *ConcentricCoordinates::ringRadii(float *result, int count) {
+    // a * (count / 2) + b = (1 / 4) / (count - 1)
+    // a * 0 + b = -1
+
+    float b = -1;
+    float a = (float) (4 * count - 3) / (float) (2 * (count - 1) * count);
+
+    for (int i = 0; i < count; i++) {
+        // -1 to 1
+        result[i] = a * (float) i + b;
+    }
+}
+
+float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, float *radii, int* count) {
     *count = resolution->sum();
     auto result = new float[*count * 2];
 
@@ -16,7 +29,7 @@ float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, int* count
         for (int pixel = 0; pixel < ringResolution; pixel++) {
             PolarCoordinates::asCartesian(
                 (pixel / (float) ringResolution) * M_TWOPI,
-                (ring + 0.5) / (float) (resolution->count - 0.5),
+                radii[ring],
                 &result[i],
                 &result[i + 1],
                 true
