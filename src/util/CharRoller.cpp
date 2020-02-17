@@ -11,7 +11,7 @@ CharRoller::CharRoller(const int c) : count(c), head(c - 1) {
     clear();
 }
 
-void CharRoller::append(char) {
+void CharRoller::append(char c) {
     head = (head + 1) % count;
     data[head] = c;
 }
