@@ -19,7 +19,7 @@ void Logger::println(String value) {
 }
 
 void Logger::clear() {
-
+    data->clear();
 }
 
 String Logger::string() {
