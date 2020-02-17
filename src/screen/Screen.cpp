@@ -105,11 +105,14 @@ int Screen::pin() {
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
     for (int i = 0; i < ledCount; i++) {
+        int ringIndex =  abs((i - (ledCount / 2)) * 2 + 0.5f);
+        int ledPolarity = i < (ledCount / 2) ? -1 : 1;
+
         // 0 to 1
         float relativeX, relativeY;
         PolarCoordinates::asCartesian(
             rotation * M_TWOPI,
-            ringRadii[i],
+            ringRadii[ringIndex] * ledPolarity,
             &relativeX, &relativeY,
             true
         );

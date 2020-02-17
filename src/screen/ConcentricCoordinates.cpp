@@ -7,11 +7,11 @@
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
 
 float *ConcentricCoordinates::ringRadii(float *result, int count) {
-    // a * (count / 2) + b = (1 / 4) / (count - 1)
-    // a * 0 + b = -1
+    // a * 0 + b = (1 / 4) / (count - 1)
+    // a * count + b = 1
 
-    float b = -1;
-    float a = (float) (4 * count - 3) / (float) (2 * (count - 1) * count);
+    float b = 0.25f / (float) (count - 1);
+    float a = (1 - b) / (float) count;
 
     for (int i = 0; i < count; i++) {
         // -1 to 1
