@@ -54,7 +54,7 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
 
     switch (mode) {
         default:
-            drawScreen(milliseconds, rotation);
+            drawCartesian(milliseconds, rotation);
             break;
         case demo:
             drawDemo(milliseconds, rotation);
@@ -100,16 +100,22 @@ int Screen::pin() {
     return LED_PIN;
 }
 
-void Screen::drawScreen(unsigned long milliseconds, float rotation) {
+void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
+    // a * (ledCount / 2) + b = (1 / 4) / (ledCount - 1)
+    // a * 0 + b = -1
+
+    float b = -1;
+    float a = (float) (4 * ledCount - 3) / (float) (2 * (ledCount - 1) * ledCount);
+
     for (int i = 0; i < ledCount; i++) {
-        // -0.5 to 0.5
-        float pixelOffcenter = ((float) i / (float) (ledCount - 1)) - 0.5;
+        // -1 to 1
+        float pixelOffcenter = a * (float) i + b;
 
         // 0 to 1
         float relativeX, relativeY;
         PolarCoordinates::asCartesian(
             rotation * M_TWOPI,
-            pixelOffcenter * 2,
+            pixelOffcenter,
             &relativeX, &relativeY,
             true
         );
@@ -118,7 +124,7 @@ void Screen::drawScreen(unsigned long milliseconds, float rotation) {
         int x = int(relativeX * (cartesianSize - 1) + 0.5f);
         int y = int(relativeY * (cartesianSize - 1) + 0.5f);
 
-        leds[i] = cartesianScreen[x * cartesianSize + y];
+        leds[i] = cartesianScreen[x + y * cartesianSize];
     }
     FastLED.show();
 }

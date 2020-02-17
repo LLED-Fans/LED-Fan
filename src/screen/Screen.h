@@ -37,7 +37,7 @@ public:
     void draw(unsigned long milliseconds, float rotation);
 
     void drawDemo(unsigned long milliseconds, float rotation);
-    void drawScreen(unsigned long milliseconds, float rotation);
+    void drawCartesian(unsigned long milliseconds, float rotation);
     void drawConcentric(unsigned long milliseconds, float rotation);
     void drawError();
 
