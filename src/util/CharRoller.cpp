@@ -15,6 +15,10 @@ void CharRoller::append(char *d) {
     append(d, String(d).length());
 }
 
+void CharRoller::append(String data) {
+    append(data.begin(), data.length());
+}
+
 void CharRoller::append(char *d, unsigned int length) {
     if (length > count) {
         memcpy(data, d + (length - count), count);
@@ -24,6 +28,7 @@ void CharRoller::append(char *d, unsigned int length) {
 
     int fromHead = _min(length, count - head);
     memcpy(data + head, d, fromHead);
+    head += fromHead;
 
     if (length + head >= count) {
         // Roll Over

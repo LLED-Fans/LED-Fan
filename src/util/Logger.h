@@ -16,6 +16,11 @@ public:
 
     static void clear();
     static void println(char *value);
+
+    static void println(int v);
+    static void println(long v);
+    static void println(float v);
+    static void println(double v);
 };
 
 

@@ -18,3 +18,11 @@ void Logger::clear() {
 String Logger::string() {
     return data->toString();
 }
+
+void Logger::println(int v) { data->append(String(v)); }
+
+void Logger::println(long v) { data->append(String(v)); }
+
+void Logger::println(float v) { data->append(String(v)); }
+
+void Logger::println(double v) { data->append(String(v)); }

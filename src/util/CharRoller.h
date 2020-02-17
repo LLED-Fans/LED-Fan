@@ -17,6 +17,7 @@ public:
     void clear();
 
     void append(char *data);
+    void append(String data);
     void append(char *d, unsigned int length);
 
     String toString();
