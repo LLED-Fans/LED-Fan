@@ -16,6 +16,7 @@ public:
 
     static void clear();
     static void println(char *value);
+    static void println(String value);
 
     static void println(int v);
     static void println(long v);

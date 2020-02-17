@@ -11,6 +11,11 @@ CharRoller::CharRoller(const int c) : count(c), head(c - 1) {
     clear();
 }
 
+void CharRoller::append(char) {
+    head = (head + 1) % count;
+    data[head] = c;
+}
+
 void CharRoller::append(char *d) {
     append(d, String(d).length());
 }

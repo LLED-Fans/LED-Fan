@@ -16,6 +16,8 @@ public:
 
     void clear();
 
+    void append(char c);
+
     void append(char *data);
     void append(String data);
     void append(char *d, unsigned int length);
