@@ -3,6 +3,7 @@
 //
 
 #include <util/Logger.h>
+#include <util/Image.h>
 #include "Screen.h"
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
@@ -118,16 +119,23 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
             true
         );
 
-        // 0 to cartesianSize - 1
-        int x = int(relativeX * (cartesianSize - 1) + 0.5f);
-        int y = int(relativeY * (cartesianSize - 1) + 0.5f);
+        if (cartesianSampling == bilinear) {
+            Image::bilinearSample([this](int x, int y){
+                return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianSize]);
+            }, reinterpret_cast<uint8_t*>(&leds[i]), 3, relativeX, relativeY);
+        }
+        else {
+            // 0 to cartesianSize - 1
+            int x = int(relativeX * (cartesianSize - 1) + 0.5f);
+            int y = int(relativeY * (cartesianSize - 1) + 0.5f);
 
-        // For plotting coords
+            // For plotting coords
 //        Logger::println(ringIndex);
 //        Logger::println(x);
 //        Logger::println(y);
 
-        leds[i] = cartesianScreen[x + y * cartesianSize];
+            leds[i] = cartesianScreen[x + y * cartesianSize];
+        }
     }
     FastLED.show();
 }

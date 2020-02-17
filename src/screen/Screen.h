@@ -14,6 +14,10 @@ public:
         demo, screen, concentric, count
     };
 
+    enum CartesianSampling {
+        nearest, bilinear
+    };
+
     int ledCount;
     CRGB *leds;
     float *ringRadii; // -1 to 1
@@ -25,6 +29,7 @@ public:
 
     int cartesianSize;
     CRGB *cartesianScreen;
+    CartesianSampling cartesianSampling = bilinear;
 
     IntRoller *concentricResolution;
     CRGB *concentricScreen;
