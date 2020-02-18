@@ -7,6 +7,8 @@
 
 
 #include <algorithm>
+#include <cstring>
+#include <climits>
 #include "RollerIterator.h"
 
 class IntRoller {
@@ -27,21 +29,29 @@ public:
         data[head] = value;
     }
 
-    float solidMean(float threshold, int *sCount) {
+    void fill(int value) {
+        for (int i = 0; i < count; i++)
+            data[i] = value;
+    }
+
+    float scalesolidMean(float threshold, int *sCount) {
         int mean = sum() / count;
 
         int solidSum = 0;
         int solidCount = 0;
-        for (int i = 0; i < count; ++i) {
-            if (abs((data[i] - mean) / mean) < threshold) {
-                solidSum += data[i];
-                solidCount ++;
+
+        if (mean != 0) {
+            for (int i = 0; i < count; ++i) {
+                if (abs((data[i] - mean) / mean) < threshold) {
+                    solidSum += data[i];
+                    solidCount ++;
+                }
             }
         }
 
         if (sCount) *sCount = solidCount;
 
-        return (float) solidSum / (float) solidCount;
+        return solidCount > 0 ? (float) solidSum / (float) solidCount : INT_MAX;
     }
 
     int last() {

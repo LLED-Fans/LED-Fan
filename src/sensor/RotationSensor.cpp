@@ -19,20 +19,34 @@ void RotationSensor::update(unsigned long time) {
                 // Full Rotation
                 history.append((int) (time - lastCheckpointTime));
 
+                if (history.last() > 2000 * 1000) {
+                    // We were paused, clear history
+                    history.fill(0);
+                }
+
                 lastCheckpoint = i;
                 lastCheckpointTime = time;
-                timePerCheckpoint = (unsigned long) history.solidMean(0.5f, &trustableRotations);
+                timePerCheckpoint = (unsigned long) history.scalesolidMean(0.5f, &trustableRotations);
 
-                isReliable = trustableRotations >= 2 && timePerCheckpoint < 2000 * 1000 && timePerCheckpoint > 5 * 1000;
+                isReliable =
+                    // Can determine some kind of mean
+                    trustableRotations >= 2
+                    // Rotation is sensible
+                    && timePerCheckpoint < 2000 * 1000 && timePerCheckpoint > 5 * 1000;
             }
         }
 
-        float rawRotation = (float(lastCheckpoint) / switches.size())
-                + (float) (time - lastCheckpointTime) / (float) timePerCheckpoint;
-
-        isReliable &= rawRotation < 4 && sensorSwitch->isReliable;
-        rotation = std::fmod(rawRotation, 1.0f);
+        isReliable &= sensorSwitch->isReliable;
     }
+
+    if (!isReliable)
+        return;
+
+    float rawRotation = (float(lastCheckpoint) / switches.size())
+                        + (float) (time - lastCheckpointTime) / (float) timePerCheckpoint;
+
+    isReliable &= rawRotation < 4;
+    rotation = std::fmod(rawRotation, 1.0f);
 }
 
 int RotationSensor::rotationsPerSecond() {
