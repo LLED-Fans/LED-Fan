@@ -84,7 +84,7 @@ void loop() {
     unsigned long microseconds = micros();
     auto milliseconds = microseconds / 1000;
 
-    rotationSensor->update(milliseconds);
+    rotationSensor->update(microseconds);
 
     screen->draw(
         milliseconds,

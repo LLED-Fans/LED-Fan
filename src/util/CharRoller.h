@@ -6,6 +6,7 @@
 #define LED_FAN_CHARROLLER_H
 
 #include <WString.h>
+#include "RollerIterator.h"
 
 class CharRoller {
 public:

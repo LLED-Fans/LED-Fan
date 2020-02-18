@@ -9,7 +9,7 @@ RotationSensor::RotationSensor(const std::vector<SensorSwitch*> & switches) : sw
 
 }
 
-void RotationSensor::update(unsigned long currentTime) {
+void RotationSensor::update(unsigned long time) {
     for (int i = 0; i < switches.size(); ++i) {
         SensorSwitch *sensorSwitch = switches[i];
 
@@ -17,20 +17,24 @@ void RotationSensor::update(unsigned long currentTime) {
         if (sensorSwitch->test() && sensorSwitch->isReliable) {
             if (!sensorSwitch->isOn()) {
                 // Full Rotation
-                history.append((int) (currentTime - lastCheckpointMillis));
+                history.append((int) (time - lastCheckpointTime));
 
                 lastCheckpoint = i;
-                lastCheckpointMillis = currentTime;
+                lastCheckpointTime = time;
                 timePerCheckpoint = (unsigned long) history.solidMean(0.5f, &trustableRotations);
 
-                isReliable = trustableRotations >= 2 && timePerCheckpoint < 2000 && timePerCheckpoint > 5;
+                isReliable = trustableRotations >= 2 && timePerCheckpoint < 2000 * 1000 && timePerCheckpoint > 5 * 1000;
             }
         }
 
         float rawRotation = (float(lastCheckpoint) / switches.size())
-                + (float) (currentTime - lastCheckpointMillis) / (float) timePerCheckpoint;
+                + (float) (time - lastCheckpointTime) / (float) timePerCheckpoint;
 
         isReliable &= rawRotation < 4 && sensorSwitch->isReliable;
         rotation = std::fmod(rawRotation, 1.0f);
     }
+}
+
+int RotationSensor::rotationsPerSecond() {
+    return 1000 * 1000 / (timePerCheckpoint * switches.size());
 }

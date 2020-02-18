@@ -77,10 +77,10 @@ String HttpServer::processTemplates(const String &var) {
         if (!rotationSensor->isReliable)
             return "Unreliable";
 
-        String result = String(rotationSensor->timePerCheckpoint) + "ms (";
+        String result = String(rotationSensor->rotationsPerSecond()) + "r/s (";
 
         for (auto time : rotationSensor->history) {
-            result += String(time) + ", ";
+            result += String(time) + "µs, ";
         }
 
         return result + ")";

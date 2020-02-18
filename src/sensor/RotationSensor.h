@@ -15,7 +15,7 @@ public:
     std::vector<SensorSwitch*> switches;
 
     unsigned int lastCheckpoint;
-    unsigned long lastCheckpointMillis;
+    unsigned long lastCheckpointTime;
     IntRoller history = IntRoller(5);
 
     unsigned long timePerCheckpoint;
@@ -24,7 +24,9 @@ public:
 
     RotationSensor(const std::vector<SensorSwitch*> & switches);
 
-    void update(unsigned long currentTime);
+    void update(unsigned long time);
+
+    int rotationsPerSecond();
 
 private:
     int trustableRotations;
