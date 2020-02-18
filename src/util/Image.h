@@ -9,9 +9,9 @@
 
 class Image {
 public:
-    static inline void bilinearSample(std::function<uint8_t*(int, int)> image, uint8_t *dest, int count, float x, float y);
+    static void bilinearSample(std::function<uint8_t*(int, int)> image, uint8_t *dest, int count, float x, float y);
 
-    static uint8_t bilinearLerp(uint8_t q11, uint8_t q12, uint8_t q21, uint8_t q22, float xr, float yr, float xi, float yi);
+    static inline uint8_t bilinearLerp(uint8_t q11, uint8_t q12, uint8_t q21, uint8_t q22, float xr, float yr, float xi, float yi);
 };
 
 

@@ -2,7 +2,6 @@
 // Created by Lukas Tenbrink on 17.02.20.
 //
 
-#include <functional>
 #include "Image.h"
 
 void Image::bilinearSample(std::function<uint8_t*(int, int)> image, uint8_t *dest, int count, float x, float y) {
