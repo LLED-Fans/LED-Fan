@@ -1,6 +1,20 @@
-//
-// Created by Lukas Tenbrink on 20.01.20.
-//
+// ==================================================================
+// ======================  Setup  ===================================
+// ==================================================================
+
+#define MAGNET_PIN 33
+
+#define HOST_NETWORK_SSID "LLED Fan"
+#define HOST_NETWORK_PASSWORD "We love LED"
+
+#define MAX_FRAMES_PER_SECOND 2000
+
+#define LED_TYPE WS2813
+#define COLOR_ORDER GRB
+#define LED_PIN 25
+
+// ==================================================================
+// ==================================================================
 
 #include <HardwareSerial.h>
 #include <SPIFFS.h>
@@ -9,16 +23,7 @@
 #include <network/HttpServer.h>
 #include <network/Network.h>
 
-#define MAGNET_PIN 33
-
-#define HOST_NETWORK_SSID "LLED Fan"
-#define HOST_NETWORK_PASSWORD "We love LED"
-
-#define MICROSECONDS_PER_FRAME 500
-
-#define LED_TYPE WS2813
-#define COLOR_ORDER GRB
-#define LED_PIN 25
+#define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
 RotationSensor *rotationSensor;
 CLEDController *ledChipset;
