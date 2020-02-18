@@ -19,7 +19,7 @@ public:
     };
 
     CLEDController *controller;
-    int pin; // Just for output
+    const int pin; // Just for output
     int ledCount;
     CRGB *leds;
     float *ringRadii; // -1 to 1
@@ -48,8 +48,6 @@ public:
     void drawCartesian(unsigned long milliseconds, float rotation);
     void drawConcentric(unsigned long milliseconds, float rotation);
     void drawError();
-
-    int pin();
 
     void drawRGB(float red, float green = 0, float blue = 0);
 

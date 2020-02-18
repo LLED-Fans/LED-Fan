@@ -11,7 +11,7 @@
 // FIXME This should definitely be per-instance
 
 Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianSize)
-: pin(pin), controller(controller) {
+: controller(controller), pin(pin) {
     this->leds = new CRGB[ledCount];
     FastLED.addLeds(controller, leds, ledCount)
             .setCorrection(TypicalLEDStrip);
@@ -98,10 +98,6 @@ void Screen::drawRGB(float red, float green, float blue) {
             (int)(blue * 255)
     ));
     FastLED.show();
-}
-
-int Screen::pin() {
-    return pin;
 }
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {

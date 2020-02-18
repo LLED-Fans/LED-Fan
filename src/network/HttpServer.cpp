@@ -44,7 +44,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(WiFi.SSID());
 
     if (var == "LED_PIN")
-        return String(screen->pin());
+        return String(screen->pin);
     if (var == "MAGNET_PIN")
         return String(rotationSensor->sensorSwitch->pin);
 
