@@ -39,7 +39,7 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
     determineMode(milliseconds);
 
     if (millisecondsPingLeft > 0) {
-        drawRGB(((millisecondsPingLeft / 500) % 2) == 0 ? 1 : 0);
+        drawRGB((((millisecondsPingLeft - 1) / 500) % 2) == 0 ? 0 : 1);
         millisecondsPingLeft = millisecondsPingLeft > duration
                 ? millisecondsPingLeft - duration
                 : 0;
