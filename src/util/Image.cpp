@@ -15,8 +15,8 @@ void Image::bilinearSample(std::function<uint8_t*(int, int)> image, uint8_t *des
     float xr = x - x_l;
     float yr = y - y_l;
 
-    float xi = 1.f - yr;
-    float yi = 1.f - xr;
+    float xi = 1.f - xr;
+    float yi = 1.f - yr;
 
     for (int i = 0; i < count; i++) {
         dest[i] = bilinearLerp(q11[i], q12[i], q21[i], q22[i], xr, yr, xi, yi);

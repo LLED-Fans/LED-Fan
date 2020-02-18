@@ -114,9 +114,14 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
         );
 
         if (cartesianSampling == bilinear) {
-            Image::bilinearSample([this](int x, int y){
-                return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianResolution]);
-            }, reinterpret_cast<uint8_t*>(&leds[i]), 3, relativeX, relativeY);
+            Image::bilinearSample(
+                [this](int x, int y){
+                    return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianResolution]);
+                },
+                reinterpret_cast<uint8_t*>(&leds[i]), 3,
+                relativeX * cartesianResolution,
+                relativeY * cartesianResolution
+            );
         }
         else {
             // 0 to cartesianSize - 1
