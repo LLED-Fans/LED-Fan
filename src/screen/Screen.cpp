@@ -10,9 +10,8 @@
 
 // FIXME This should definitely be per-instance
 
-Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianResolution,
-               IntRoller *concentricResolution)
-: controller(controller), pin(pin), cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
+Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianResolution, IntRoller *concentricResolution)
+: controller(controller), pin(pin), ledCount(ledCount), cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
     this->leds = new CRGB[ledCount];
     FastLED.addLeds(controller, leds, ledCount)
             .setCorrection(TypicalLEDStrip);
