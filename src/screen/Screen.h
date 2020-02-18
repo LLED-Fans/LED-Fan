@@ -18,6 +18,8 @@ public:
         nearest, bilinear
     };
 
+    CLEDController *controller;
+    int pin; // Just for output
     int ledCount;
     CRGB *leds;
     float *ringRadii; // -1 to 1
@@ -38,7 +40,7 @@ public:
     unsigned long millisecondsPingLeft = 0;
     unsigned long inputTimestamps[Mode::count];
 
-    Screen(int ledCount, int cartesianSize);
+    Screen(CLEDController *controller, int pin, int ledCount, int cartesianSize);
 
     void draw(unsigned long milliseconds, float rotation);
 

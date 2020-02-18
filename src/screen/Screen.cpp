@@ -9,13 +9,11 @@
 #include "PolarCoordinates.h"
 
 // FIXME This should definitely be per-instance
-#define LED_TYPE WS2813
-#define COLOR_ORDER GRB
-#define LED_PIN 25
 
-Screen::Screen(int ledCount, int cartesianSize): ledCount(ledCount), cartesianSize(cartesianSize) {
+Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianSize)
+: pin(pin), controller(controller) {
     this->leds = new CRGB[ledCount];
-    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, ledCount)
+    FastLED.addLeds(controller, leds, ledCount)
             .setCorrection(TypicalLEDStrip);
     // WS2813 support 2000hz, but FastLED doesn't like it
     FastLED.setMaxRefreshRate(2000);
@@ -33,6 +31,7 @@ Screen::Screen(int ledCount, int cartesianSize): ledCount(ledCount), cartesianSi
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
 }
+
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
     auto duration = milliseconds - lastFrameTime;
@@ -102,7 +101,7 @@ void Screen::drawRGB(float red, float green, float blue) {
 }
 
 int Screen::pin() {
-    return LED_PIN;
+    return pin;
 }
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
@@ -192,3 +191,4 @@ int Screen::ping() {
     millisecondsPingLeft = 200;
     return 200;
 }
+

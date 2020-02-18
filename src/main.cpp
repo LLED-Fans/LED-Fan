@@ -16,7 +16,12 @@
 
 #define MICROSECONDS_PER_FRAME 500
 
+#define LED_TYPE WS2813
+#define COLOR_ORDER GRB
+#define LED_PIN 25
+
 RotationSensor *rotationSensor;
+CLEDController *ledChipset;
 Screen *screen;
 
 HttpServer *server;
@@ -34,7 +39,13 @@ void setup() {
     SPIFFS.begin(false);
 
     // Initialize Screen
-    screen = new Screen(18, 64);
+
+    screen = new Screen(
+        new LED_TYPE<LED_PIN, COLOR_ORDER>(),
+        LED_PIN,
+        18,
+        64
+    );
     rotationSensor = new RotationSensor(
             new SensorSwitch(MAGNET_PIN, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0))
     );
