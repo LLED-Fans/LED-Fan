@@ -183,7 +183,7 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
 }
 
 int Screen::ping() {
-    millisecondsPingLeft = 200;
-    return 200;
+    millisecondsPingLeft = 2000;
+    return 2000;
 }
 
