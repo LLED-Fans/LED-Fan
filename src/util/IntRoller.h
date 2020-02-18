@@ -7,6 +7,7 @@
 
 
 #include <algorithm>
+#include "RollerIterator.h"
 
 class IntRoller {
 public:
@@ -62,8 +63,12 @@ public:
     float mean() {
         return (float) sum() / (float) count;
     }
+
+    RollerIterator<int> begin() {return {data, head, count};}
+    RollerIterator<int> end() {return {};}
+
 private:
-    int head = 0;
+    unsigned int head = 0;
 };
 
 #endif //LED_FAN_INTROLLER_H

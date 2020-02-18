@@ -23,6 +23,9 @@ public:
     void append(char *d, unsigned int length);
 
     String toString();
+
+    RollerIterator<char> begin() {return {data, head, count};}
+    RollerIterator<char> end() {return {};}
 private:
     unsigned int head;
 };
