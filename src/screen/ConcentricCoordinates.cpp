@@ -41,16 +41,12 @@ float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, float *rad
     return result;
 }
 
-IntRoller * ConcentricCoordinates::resolution(int ringCount) {
+IntRoller * ConcentricCoordinates::resolution(int ringCount, int a = 4, int b = 4) {
     auto *resolution = new IntRoller(ringCount);
 
     for (int ring = 0; ring < ringCount; ring++) {
-        resolution->append(ringResolution(ring));
+        resolution->append(a * ring + b);
     }
 
     return resolution;
-}
-
-int ConcentricCoordinates::ringResolution(int ring) {
-    return 2 + ring * 2;
 }

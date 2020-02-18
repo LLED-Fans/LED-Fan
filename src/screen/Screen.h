@@ -29,7 +29,7 @@ public:
     unsigned long lastFrameTime = 0;
     IntRoller *frameDurations = new IntRoller(50);
 
-    int cartesianSize;
+    int cartesianResolution;
     CRGB *cartesianScreen;
     CartesianSampling cartesianSampling = bilinear;
 
@@ -40,7 +40,7 @@ public:
     unsigned long millisecondsPingLeft = 0;
     unsigned long inputTimestamps[Mode::count];
 
-    Screen(CLEDController *controller, int pin, int ledCount, int cartesianSize);
+    Screen(CLEDController *controller, int pin, int ledCount, int cartesianResolution, IntRoller *concentricResolution);
 
     void draw(unsigned long milliseconds, float rotation);
 

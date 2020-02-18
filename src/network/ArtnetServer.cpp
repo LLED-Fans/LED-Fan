@@ -18,7 +18,7 @@ ArtnetServer::ArtnetServer(Screen *screen)
 
     endpoints[1].port = 1201;
     endpoints[1].array = reinterpret_cast<uint8_t *>(screen->cartesianScreen);
-    endpoints[1].arraySize = screen->cartesianSize * screen->cartesianSize * 3;
+    endpoints[1].arraySize = screen->cartesianResolution * screen->cartesianResolution * 3;
     endpoints[1].mode = Screen::Mode::screen;
 
     artnets = new AsyncArtnet*[endpointCount];

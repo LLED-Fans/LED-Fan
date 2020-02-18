@@ -10,8 +10,9 @@
 
 // FIXME This should definitely be per-instance
 
-Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianSize)
-: controller(controller), pin(pin) {
+Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianResolution,
+               IntRoller *concentricResolution)
+: controller(controller), pin(pin), cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
     this->leds = new CRGB[ledCount];
     FastLED.addLeds(controller, leds, ledCount)
             .setCorrection(TypicalLEDStrip);
@@ -21,10 +22,9 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianS
     this->ringRadii = new float[ledCount];
     ConcentricCoordinates::ringRadii(this->ringRadii, ledCount);
 
-    cartesianScreen = new CRGB[cartesianSize * cartesianSize];
-    memset(cartesianScreen, 0x00, cartesianSize * cartesianSize * 3);
+    cartesianScreen = new CRGB[cartesianResolution * cartesianResolution];
+    memset(cartesianScreen, 0x00, cartesianResolution * cartesianResolution * 3);
 
-    concentricResolution = ConcentricCoordinates::resolution(ledCount);
     concentricScreen = new CRGB[concentricResolution->sum()];
     memset(concentricScreen, 0x00, concentricResolution->sum() * 3);
 
@@ -116,20 +116,20 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
 
         if (cartesianSampling == bilinear) {
             Image::bilinearSample([this](int x, int y){
-                return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianSize]);
+                return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianResolution]);
             }, reinterpret_cast<uint8_t*>(&leds[i]), 3, relativeX, relativeY);
         }
         else {
             // 0 to cartesianSize - 1
-            int x = int(relativeX * (cartesianSize - 1) + 0.5f);
-            int y = int(relativeY * (cartesianSize - 1) + 0.5f);
+            int x = int(relativeX * (cartesianResolution - 1) + 0.5f);
+            int y = int(relativeY * (cartesianResolution - 1) + 0.5f);
 
             // For plotting coords
 //        Logger::println(ringIndex);
 //        Logger::println(x);
 //        Logger::println(y);
 
-            leds[i] = cartesianScreen[x + y * cartesianSize];
+            leds[i] = cartesianScreen[x + y * cartesianResolution];
         }
     }
     FastLED.show();

@@ -12,6 +12,11 @@
 #define LED_TYPE WS2813
 #define COLOR_ORDER GRB
 #define LED_PIN 25
+#define LED_COUNT 18
+
+#define VIRTUAL_SCREEN_SIZE 64
+#define CONCENTRIC_RESOLUTION_MIN 4
+#define CONCENTRIC_RESOLUTION_ADD 4
 
 // ==================================================================
 // ==================================================================
@@ -22,6 +27,7 @@
 #include <network/Updater.h>
 #include <network/HttpServer.h>
 #include <network/Network.h>
+#include <screen/ConcentricCoordinates.h>
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
@@ -48,8 +54,9 @@ void setup() {
     screen = new Screen(
         new LED_TYPE<LED_PIN, COLOR_ORDER>(),
         LED_PIN,
-        18,
-        64
+        LED_COUNT,
+        VIRTUAL_SCREEN_SIZE,
+        ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );
 
     std::vector<SensorSwitch *> switches = {};
