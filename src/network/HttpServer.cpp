@@ -45,8 +45,13 @@ String HttpServer::processTemplates(const String &var) {
 
     if (var == "LED_PIN")
         return String(screen->pin);
-    if (var == "MAGNET_PIN")
-        return String(rotationSensor->sensorSwitch->pin);
+    if (var == "MAGNET_PIN") {
+        String r = "";
+        for (SensorSwitch *sensorSwitch : rotationSensor->switches) {
+            r += String(sensorSwitch->pin) + ", ";
+        }
+        return r;
+    }
 
     if (var == "S_MODE_DEMO") {
         return screen->mode == Screen::demo ? "mdl-button--accent" : "";
@@ -61,16 +66,16 @@ String HttpServer::processTemplates(const String &var) {
         return String(screen->cartesianSize);
     }
     if (var == "MAGNET_VALUE") {
-        return String(rotationSensor->sensorSwitch->peaks->lower)
-            + " < " +  String(rotationSensor->sensorSwitch->rawValue())
-            + " < " +  String(rotationSensor->sensorSwitch->peaks->upper);
+        return String(rotationSensor->switches[0]->peaks->lower)
+            + " < " +  String(rotationSensor->switches[0]->rawValue())
+            + " < " +  String(rotationSensor->switches[0]->peaks->upper);
     }
     if (var == "ROTATION_SPEED") {
         if (screen->fixedRotation >= 0)
             return "Fixed: " + String(screen->fixedRotation);
 
         if (rotationSensor->isReliable)
-            return String(rotationSensor->timePerRotation) + "ms / At: " + String(rotationSensor->rotation);
+            return String(rotationSensor->timePerCheckpoint) + "ms / At: " + String(rotationSensor->rotation);
 
         return "Unreliable";
     }

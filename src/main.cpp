@@ -2,7 +2,7 @@
 // ======================  Setup  ===================================
 // ==================================================================
 
-#define MAGNET_PIN 33
+#define MAGNET_PINS 33
 
 #define HOST_NETWORK_SSID "LLED Fan"
 #define HOST_NETWORK_PASSWORD "We love LED"
@@ -51,9 +51,12 @@ void setup() {
         18,
         64
     );
-    rotationSensor = new RotationSensor(
-            new SensorSwitch(MAGNET_PIN, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0))
-    );
+
+    std::vector<SensorSwitch *> switches = {};
+    for (int magnetPin : {MAGNET_PINS}) {
+        switches.push_back(new SensorSwitch(magnetPin, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0)));
+    }
+    rotationSensor = new RotationSensor(switches);
 
     // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);

@@ -8,19 +8,21 @@
 
 #include <util/IntRoller.h>
 #include "SensorSwitch.h"
+#include <list>
 
 class RotationSensor {
 public:
-    SensorSwitch *sensorSwitch;
+    std::vector<SensorSwitch*> switches;
 
-    unsigned long lastRotationMillis;
-    IntRoller rotationHistory = IntRoller(5);
+    unsigned int lastCheckpoint;
+    unsigned long lastCheckpointMillis;
+    IntRoller history = IntRoller(5);
 
-    unsigned long timePerRotation;
+    unsigned long timePerCheckpoint;
     float rotation;
     bool isReliable;
 
-    RotationSensor(SensorSwitch *sensorSwitch);
+    RotationSensor(const std::vector<SensorSwitch*> & switches);
 
     void update(unsigned long currentTime);
 
