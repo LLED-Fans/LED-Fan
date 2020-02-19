@@ -21,13 +21,13 @@
 // ==================================================================
 // ==================================================================
 
-#include <HardwareSerial.h>
 #include <SPIFFS.h>
 #include <network/ArtnetServer.h>
 #include <network/Updater.h>
 #include <network/HttpServer.h>
 #include <network/Network.h>
 #include <screen/ConcentricCoordinates.h>
+#include <util/ClockSynchronizer.h>
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
@@ -40,6 +40,8 @@ ArtnetServer *artnetServer;
 
 Updater *updater;
 
+ClockSynchronizer *clockSynchronizer;
+
 void setup() {
     // Enable Monitoring
     Serial.begin(9600);
@@ -48,6 +50,11 @@ void setup() {
 
     // Mount file system
     SPIFFS.begin(false);
+
+    // Clock Synchronizer
+    clockSynchronizer = new ClockSynchronizer(
+        MICROSECONDS_PER_FRAME
+    );
 
     // Initialize Screen
 
@@ -81,7 +88,7 @@ void setup() {
 }
 
 void loop() {
-    unsigned long microseconds = micros();
+    unsigned long microseconds = clockSynchronizer->sync();
     auto milliseconds = microseconds / 1000;
 
     rotationSensor->update(microseconds);
@@ -96,10 +103,4 @@ void loop() {
         Network::checkStatus();
     }
     updater->check();
-
-    unsigned long frameTime = (micros() - microseconds);
-    if (frameTime < MICROSECONDS_PER_FRAME) {
-        delayMicroseconds(MICROSECONDS_PER_FRAME - frameTime);
-    }
-    // Else we just run with lower framerate
 }
