@@ -111,7 +111,7 @@ void setup() {
     updater = new Updater();
 
 #if ROTATION_SENSOR_TYPE == hall_xtask
-    xTaskCreate( runHallXTask, "SENSOR", 1024, nullptr, 10, &hallXTaskHandle );
+    xTaskCreate( runHallXTask, "RSENSOR", 1024, nullptr, 10, &hallXTaskHandle );
     configASSERT( hallXTaskHandle );
 #endif
 }
