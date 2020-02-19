@@ -33,15 +33,15 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianR
 
 
 void Screen::draw(unsigned long milliseconds, float rotation) {
-    auto duration = milliseconds - lastFrameTime;
-    frameDurations->append(duration);
+    auto delay = milliseconds - lastUpdateTimestamp;
+    lastUpdateTimestamp = milliseconds;
 
     determineMode(milliseconds);
 
     if (millisecondsPingLeft > 0) {
         drawRGB((((millisecondsPingLeft - 1) / 500) % 2) == 0 ? 0 : 1);
-        millisecondsPingLeft = millisecondsPingLeft > duration
-                ? millisecondsPingLeft - duration
+        millisecondsPingLeft = millisecondsPingLeft > delay
+                ? millisecondsPingLeft - delay
                 : 0;
         return;
     }
@@ -187,8 +187,11 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
     FastLED.show();
 }
 
+int Screen::noteInput(Mode mode) {
+    return inputTimestamps[mode] = lastUpdateTimestamp;
+}
+
 int Screen::ping() {
     millisecondsPingLeft = 2000;
     return 2000;
 }
-

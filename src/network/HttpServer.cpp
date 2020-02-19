@@ -21,10 +21,11 @@ using namespace std::placeholders;
 // FIXME This should be per-instance. Or something.
 AsyncWebServer _server(80);
 
-HttpServer::HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor)
+HttpServer::HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, ClockSynchronizer *clockSynchronizer)
         : screen(videoInterface->screen),
           videoInterface(videoInterface),
-          rotationSensor(rotationSensor) {
+          rotationSensor(rotationSensor),
+          clockSynchronizer(clockSynchronizer) {
     setupRoutes();
     _server.begin();
 }
@@ -89,7 +90,7 @@ String HttpServer::processTemplates(const String &var) {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
     }
     if (var == "FPS") {
-        return String(1000 / screen->frameDurations->mean());
+        return String(1000 / clockSynchronizer->frameTimeHistory->mean());
     }
 
     return String("ERROR");

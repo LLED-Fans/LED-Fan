@@ -6,8 +6,8 @@
 #include <HardwareSerial.h>
 #include <climits>
 
-ClockSynchronizer::ClockSynchronizer(unsigned long microsecondsPerFrame)
-: lastSyncTimestamp(INT_MAX), microsecondsPerFrame(microsecondsPerFrame) {}
+ClockSynchronizer::ClockSynchronizer(unsigned long microsecondsPerFrame, int historyLength)
+: lastSyncTimestamp(INT_MAX), microsecondsPerFrame(microsecondsPerFrame), frameTimeHistory(new IntRoller(historyLength)) {}
 
 unsigned long ClockSynchronizer::sync() {
     unsigned long microseconds = micros();
@@ -19,6 +19,7 @@ unsigned long ClockSynchronizer::sync() {
     }
 
     unsigned long frameTime = (microseconds - lastSyncTimestamp);
+    frameTimeHistory->append(frameTime);
 
     if (microsecondsPerFrame > frameTime) {
         delayMicroseconds(microsecondsPerFrame - frameTime);

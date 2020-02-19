@@ -46,7 +46,7 @@ void ArtnetServer::acceptDMX(int endpointIndex, uint16_t universe, uint16_t leng
     uint8_t *array = endpoint.array + offset;
 
     memcpy(array, data, _min(arrayCount, length));
-    screen->inputTimestamps[endpoint.mode] = screen->lastFrameTime;
+    screen->noteInput(endpoint.mode);
 }
 
 void ArtnetServer::acceptSync(int endpoint, IPAddress remoteIP) {

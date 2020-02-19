@@ -24,10 +24,9 @@ public:
     CRGB *leds;
     float *ringRadii; // -1 to 1
 
-    Mode mode = demo;
+    unsigned long lastUpdateTimestamp;
 
-    unsigned long lastFrameTime = 0;
-    IntRoller *frameDurations = new IntRoller(50);
+    Mode mode = demo;
 
     int cartesianResolution;
     CRGB *cartesianScreen;
@@ -51,6 +50,7 @@ public:
 
     void drawRGB(float red, float green = 0, float blue = 0);
 
+    int noteInput(Mode mode);
     int ping();
 
     void determineMode(unsigned long milliseconds);

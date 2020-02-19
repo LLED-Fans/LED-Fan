@@ -53,7 +53,7 @@ void setup() {
 
     // Clock Synchronizer
     clockSynchronizer = new ClockSynchronizer(
-        MICROSECONDS_PER_FRAME
+        MICROSECONDS_PER_FRAME, 50
     );
 
     // Initialize Screen
@@ -80,7 +80,8 @@ void setup() {
 
     server = new HttpServer(
         new VideoInterface(screen, artnetServer),
-        rotationSensor
+        rotationSensor,
+        clockSynchronizer
     );
 
     // Updater
@@ -97,7 +98,6 @@ void loop() {
         milliseconds,
         rotationSensor->isReliable ? rotationSensor->rotation : -1
     );
-    screen->lastFrameTime = milliseconds;
 
     EVERY_N_SECONDS(2) {
         Network::checkStatus();
