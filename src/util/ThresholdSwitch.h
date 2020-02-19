@@ -14,7 +14,7 @@ public:
     ThresholdSwitch(int lower, int upper): lower(lower), upper(upper) {
     }
 
-    inline bool accept(int value);
+    bool accept(int value);
 };
 
 
