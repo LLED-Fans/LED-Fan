@@ -19,15 +19,17 @@ public:
     IntRoller history = IntRoller(5);
 
     unsigned long timePerCheckpoint;
-    float rotation;
     bool isReliable;
 
     RotationSensor(const std::vector<SensorSwitch*> & switches);
 
     void update(unsigned long time);
 
-    int rotationsPerSecond();
+    // Returns a value from 0 to 1
+    // -1 if rotation could not be estimated successfully
+    float estimatedRotation(unsigned long time) const;
 
+    int rotationsPerSecond();
 private:
     int trustableRotations;
 };

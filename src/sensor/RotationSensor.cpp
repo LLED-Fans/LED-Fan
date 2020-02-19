@@ -38,15 +38,21 @@ void RotationSensor::update(unsigned long time) {
 
         isReliable &= sensorSwitch->isReliable;
     }
+}
 
+float RotationSensor::estimatedRotation(unsigned long time) const {
     if (!isReliable)
-        return;
+        return -1;
 
     float rawRotation = (float(lastCheckpoint) / switches.size())
                         + (float) (time - lastCheckpointTime) / (float) timePerCheckpoint;
 
-    isReliable &= rawRotation < 4;
-    rotation = std::fmod(rawRotation, 1.0f);
+    if (rawRotation > 3.5) {
+        // Missed 3, this is not secure at all
+        return -1;
+    }
+
+    return std::fmod(rawRotation, 1.0f);
 }
 
 int RotationSensor::rotationsPerSecond() {

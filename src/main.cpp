@@ -96,7 +96,7 @@ void loop() {
 
     screen->draw(
         milliseconds,
-        rotationSensor->isReliable ? rotationSensor->rotation : -1
+        rotationSensor->estimatedRotation(microseconds)
     );
 
     EVERY_N_SECONDS(2) {
