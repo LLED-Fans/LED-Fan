@@ -18,6 +18,7 @@ public:
 
     IntRoller(int c): count(c), head(c - 1) {
         data = new int[c];
+        fill(0);
     }
 
     int operator[](int index) {
