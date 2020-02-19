@@ -18,6 +18,10 @@
 #define CONCENTRIC_RESOLUTION_MIN 4
 #define CONCENTRIC_RESOLUTION_ADD 4
 
+// hall_synchronized or hall_xtask
+#define ROTATION_SENSOR_TYPE hall_xtask
+#define ROTATION_SENSOR_TICKS 10000
+
 // ==================================================================
 // ==================================================================
 
@@ -41,6 +45,25 @@ ArtnetServer *artnetServer;
 Updater *updater;
 
 ClockSynchronizer *clockSynchronizer;
+
+#if ROTATION_SENSOR_TYPE == hall_xtask
+TaskHandle_t hallXTaskHandle = NULL;
+
+void runHallXTask(void * pvParameters)
+{
+    TickType_t xLastWakeTime;
+
+    xLastWakeTime = xTaskGetTickCount ();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+    for( ;; )
+    {
+        vTaskDelayUntil( &xLastWakeTime, ROTATION_SENSOR_TICKS );
+        rotationSensor->update(micros());
+    }
+#pragma clang diagnostic pop
+}
+#endif
 
 void setup() {
     // Enable Monitoring
@@ -86,13 +109,20 @@ void setup() {
 
     // Updater
     updater = new Updater();
+
+#if ROTATION_SENSOR_TYPE == hall_xtask
+    xTaskCreate( runHallXTask, "SENSOR", 1024, nullptr, 10, &hallXTaskHandle );
+    configASSERT( hallXTaskHandle );
+#endif
 }
 
 void loop() {
     unsigned long microseconds = clockSynchronizer->sync();
     auto milliseconds = microseconds / 1000;
 
+#if ROTATION_SENSOR_TYPE == hall_synchronized
     rotationSensor->update(microseconds);
+#endif
 
     screen->draw(
         milliseconds,
