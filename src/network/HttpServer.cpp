@@ -90,7 +90,10 @@ String HttpServer::processTemplates(const String &var) {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
     }
     if (var == "FPS") {
-        return String(1000 / clockSynchronizer->frameTimeHistory->mean());
+        float meanMicrosPerFrame = clockSynchronizer->frameTimeHistory->mean();
+
+        return String(1000 * 1000 / _max(meanMicrosPerFrame, clockSynchronizer->microsecondsPerFrame))
+            + " (slack: " + String(_max(0, clockSynchronizer->microsecondsPerFrame - meanMicrosPerFrame)) + "µs)";
     }
 
     return String("ERROR");
