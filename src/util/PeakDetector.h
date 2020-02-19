@@ -20,7 +20,7 @@ public:
     PeakDetector(float decay): decay(decay), keep(1.0f - decay) {
     }
 
-    bool accept(int value);
+    inline bool accept(int value);
 };
 
 #endif //LED_FAN_PEAKDETECTOR_H
