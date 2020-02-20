@@ -34,7 +34,7 @@
 #define CONCENTRIC_RESOLUTION_ADD 4
 
 // See ROTATION_SENSOR_TYPE_XXX
-#define ROTATION_SENSOR_TYPE ROTATION_SENSOR_TYPE_HALL_SYNC
+#define ROTATION_SENSOR_TYPE ROTATION_SENSOR_TYPE_HALL_XTASK
 // Comma-Separated list of pins in use
 #define MAGNET_PINS 33
 // If applicable, max framerate of rotation sensor task

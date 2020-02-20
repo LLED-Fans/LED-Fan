@@ -10,24 +10,27 @@
 void runLLTimerTask(void *pvParameters)
 {
     auto *timer = static_cast<XTaskTimer *>(pvParameters);
-    TickType_t xLastWakeTime;
 
-    xLastWakeTime = xTaskGetTickCount ();
+    auto xLastWakeTime = xTaskGetTickCount ();
+    unsigned long lastTimeMicros = micros();
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     for( ;; )
     {
-        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(timer->frameTimeMS));
+        vTaskDelayUntil(&xLastWakeTime, 1);
 
-        unsigned long time = micros();
-        timer->fun(time);
-        timer->frameTimes.append((int) time);
+        unsigned long microseconds = micros();
+        timer->fun(microseconds);
+
+        timer->frameTimes.append((int) (microseconds - lastTimeMicros));
+        lastTimeMicros = microseconds;
     }
 #pragma clang diagnostic pop
 }
 
 XTaskTimer::XTaskTimer(unsigned long frameTime, const char *name, int historySize, std::function<void(unsigned long)> fun)
         : frameTimeMS(frameTime), frameTimes(historySize), fun(std::move(fun)) {
-    xTaskCreate( runLLTimerTask, name, 1024, NULL, 10, &handle );
+    xTaskCreate( runLLTimerTask, name, 1024, this, 10, &handle );
     configASSERT( handle );
 }
