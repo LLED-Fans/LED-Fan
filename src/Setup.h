@@ -5,6 +5,9 @@
 #define ROTATION_SENSOR_TYPE_HALL_SYNC 1
 #define ROTATION_SENSOR_TYPE_HALL_XTASK 2
 
+#define ROTATION_EXTRAPOLATION_STEP 1
+#define ROTATION_EXTRAPOLATION_REGRESSION 2
+
 // ==================================================================
 // ======================  Setup  ===================================
 // ==================================================================
@@ -35,6 +38,8 @@
 
 // See ROTATION_SENSOR_TYPE_XXX
 #define ROTATION_SENSOR_TYPE ROTATION_SENSOR_TYPE_HALL_SYNC
+// See ROTATION_EXTRAPOLATION_XXX
+#define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_STEP
 // Comma-Separated list of pins in use
 #define MAGNET_PINS 33
 // If applicable, max framerate of rotation sensor task

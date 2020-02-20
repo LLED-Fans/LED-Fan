@@ -12,8 +12,8 @@ IntRoller::IntRoller(int c) : count(c), head(c - 1) {
     fill(0);
 }
 
-int IntRoller::operator[](int index) {
-    return data[index];
+int& IntRoller::operator[](unsigned int index) {
+    return data[(((head + index) % count + count) % count)];
 }
 
 void IntRoller::append(int value) {
@@ -24,26 +24,6 @@ void IntRoller::append(int value) {
 void IntRoller::fill(int value) {
     for (int i = 0; i < count; i++)
         data[i] = value;
-}
-
-float IntRoller::scalesolidMean(float threshold, int *sCount) {
-    int mean = sum() / count;
-
-    int solidSum = 0;
-    int solidCount = 0;
-
-    if (mean != 0) {
-        for (int i = 0; i < count; ++i) {
-            if (abs((data[i] - mean) / mean) < threshold) {
-                solidSum += data[i];
-                solidCount ++;
-            }
-        }
-    }
-
-    if (sCount) *sCount = solidCount;
-
-    return solidCount > 0 ? (float) solidSum / (float) solidCount : INT_MAX;
 }
 
 int IntRoller::min() {
@@ -60,4 +40,13 @@ int IntRoller::sum() {
 
 float IntRoller::mean() {
     return (float) sum() / (float) count;
+}
+
+int IntRoller::countOccurrences(int v) {
+    int c = 0;
+    for (int i = 0; i < count; ++i) {
+        if (data[i] == v)
+            c++;
+    }
+    return c;
 }

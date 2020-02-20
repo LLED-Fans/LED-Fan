@@ -7,6 +7,8 @@
 #include <network/Network.h>
 #include <screen/ConcentricCoordinates.h>
 #include <util/ClockSynchronizer.h>
+#include <util/extrapolation/LinearRegressionExtrapolator.h>
+#include <util/extrapolation/StepExtrapolator.h>
 
 using namespace std::placeholders;
 
@@ -55,7 +57,15 @@ void setup() {
     for (int magnetPin : {MAGNET_PINS}) {
         switches.push_back(new SensorSwitch(magnetPin, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0)));
     }
-    rotationSensor = new RotationSensor(switches);
+    rotationSensor = new RotationSensor(
+        switches,
+        10,
+#if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
+        new StepExtrapolator()
+#elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
+        new LinearRegressionExtrapolator()
+#endif
+    );
 
     // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);

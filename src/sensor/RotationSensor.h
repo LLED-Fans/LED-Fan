@@ -9,29 +9,27 @@
 #include <util/IntRoller.h>
 #include "SensorSwitch.h"
 #include <vector>
+#include <util/extrapolation/Extrapolator.h>
 
 class RotationSensor {
 public:
     std::vector<SensorSwitch*> switches;
 
-    unsigned int lastCheckpoint;
-    unsigned long lastCheckpointTime;
-    IntRoller history = IntRoller(5);
+    IntRoller *checkpointTimestamps;
+    IntRoller *checkpointIndices;
 
-    unsigned long timePerCheckpoint;
+    // x = micros, y = rotation 0 to switches.count
+    Extrapolator *extrapolator;
     bool isReliable;
 
-    RotationSensor(const std::vector<SensorSwitch*> & switches);
+    RotationSensor(std::vector<SensorSwitch*> switches, int historySize, Extrapolator *extrapolator);
 
     void update(unsigned long time);
 
-    // Returns a value from 0 to 1
-    // -1 if rotation could not be estimated successfully
-    float estimatedRotation(unsigned long time) const;
+    // Returns a value from 0 to 1, or NAN if unreliable
+    float estimatedRotation(unsigned long time);
 
     int rotationsPerSecond();
-private:
-    int trustableRotations;
 };
 
 

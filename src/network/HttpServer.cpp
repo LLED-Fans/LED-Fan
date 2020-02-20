@@ -79,9 +79,10 @@ String HttpServer::processTemplates(const String &var) {
             return "Unreliable";
 
         String result = String(rotationSensor->rotationsPerSecond()) + "r/s (";
+        IntRoller *timestamps = rotationSensor->checkpointTimestamps;
 
-        for (auto time : rotationSensor->history) {
-            result += String(time) + "µs, ";
+        for (int i = 1; i < timestamps->count; ++i) {
+            result += String(((*timestamps)[i] - (*timestamps)[i - 1]) / 1000) + "ms, ";
         }
 
         return result + ")";

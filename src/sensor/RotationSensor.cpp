@@ -3,36 +3,80 @@
 //
 
 #include <cmath>
+#include <utility>
+#include <numeric>
 #include "RotationSensor.h"
 
-RotationSensor::RotationSensor(const std::vector<SensorSwitch*> & switches) : switches(switches) {
-
-}
+RotationSensor::RotationSensor(std::vector<SensorSwitch*>  switches, int historySize, Extrapolator *extrapolator) :
+    switches(std::move(switches)),
+    checkpointTimestamps(new IntRoller(historySize)),
+    checkpointIndices(new IntRoller(historySize)),
+    extrapolator(extrapolator)  { }
 
 void RotationSensor::update(unsigned long time) {
-    for (int i = 0; i < switches.size(); ++i) {
+    unsigned int checkpointCount = switches.size();
+
+    for (int i = 0; i < checkpointCount; ++i) {
         SensorSwitch *sensorSwitch = switches[i];
 
         // Test the switch
         if (sensorSwitch->test() && sensorSwitch->isReliable) {
             if (!sensorSwitch->isOn()) {
                 // Full Rotation
-                history.append((int) (time - lastCheckpointTime));
 
-                if (history.last() > 2000 * 1000) {
+                checkpointTimestamps->append(time);
+                (*checkpointIndices)[checkpointTimestamps->head] = i;
+
+                if ((*checkpointTimestamps)[0] - (*checkpointTimestamps)[-1] > 2000 * 1000) {
                     // We were paused, clear history
-                    history.fill(0);
+                    checkpointTimestamps->fill(0);
+                    checkpointIndices->fill(-1);
+
+                    isReliable = false;
+                    continue;
                 }
 
-                lastCheckpoint = i;
-                lastCheckpointTime = time;
-                timePerCheckpoint = (unsigned long) history.scalesolidMean(0.5f, &trustableRotations);
+                int n = (int) checkpointIndices->count - checkpointIndices->countOccurrences(-1);
 
-                isReliable =
-                    // Can determine some kind of mean
-                    trustableRotations >= 2
-                    // Rotation is sensible
-                    && timePerCheckpoint < 2000 * 1000 && timePerCheckpoint > 5 * 1000;
+                if (n < 3) {
+                    // Too little data to make meaningful extrapolation
+                    isReliable = false;
+                    continue;
+                }
+
+                // Raw Data Collection
+                std::vector<double> x(n);
+                std::vector<int> estimatedY(n);
+
+                for (int j = 0; j < n; ++j) {
+                    int checkpointIndex = (*checkpointIndices)[j];
+
+                    if (checkpointIndex < 0)
+                        continue; // Not set yet
+
+                    x.push_back((*checkpointTimestamps)[j]);
+                    estimatedY.push_back(checkpointIndex);
+                }
+
+                // Try to estimate if we missed any checkpoints
+                std::vector<double> y(n);
+                double xDiffMean = (x[n - 1] - x[0]) / (x.size() - 1);
+
+                // Go back in reverse, setting reached checkpoint as baseline Y
+                y[n - 1] = estimatedY[n - 1];
+                for (int j = n - 2; j >= 0; ++j) {
+                    unsigned int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
+                    double estimatedSteps = (x[j + 1] - x[j]) / xDiffMean;
+
+                    // Accept +- multiples of checkpointCount
+                    y[j] = y[j + 1] - round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps;
+                }
+
+                extrapolator->adjust(x, y);
+                double rotationsPerSecond = this->rotationsPerSecond();
+
+                // Speed is sensible
+                isReliable = rotationsPerSecond < 100 && rotationsPerSecond > 1;
             }
         }
 
@@ -40,21 +84,20 @@ void RotationSensor::update(unsigned long time) {
     }
 }
 
-float RotationSensor::estimatedRotation(unsigned long time) const {
+float RotationSensor::estimatedRotation(unsigned long time) {
     if (!isReliable)
         return -1;
 
-    float rawRotation = (float(lastCheckpoint) / switches.size())
-                        + (float) (time - lastCheckpointTime) / (float) timePerCheckpoint;
+    float rawRotation = extrapolator->extrapolate(time);
 
-    if (rawRotation > 3.5) {
+    if (rawRotation == NAN || rawRotation > 3.5) {
         // Missed 3, this is not secure at all
-        return -1;
+        return NAN;
     }
 
-    return std::fmod(rawRotation, 1.0f);
+    return std::fmod(rawRotation / switches.size(), 1.0f);
 }
 
 int RotationSensor::rotationsPerSecond() {
-    return 1000 * 1000 / (timePerCheckpoint * switches.size());
+    return (int) (extrapolator->slope() / 1000 / 1000);
 }
