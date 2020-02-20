@@ -15,8 +15,9 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianR
     this->leds = new CRGB[ledCount];
     FastLED.addLeds(controller, leds, ledCount)
             .setCorrection(TypicalLEDStrip);
-    // WS2813 support 2000hz, but FastLED doesn't like it
-    FastLED.setMaxRefreshRate(2000);
+
+    // Disable max refresh rates; we set this in Setup.h.
+    FastLED.setMaxRefreshRate(0);
 
     this->ringRadii = new float[ledCount];
     ConcentricCoordinates::ringRadii(this->ringRadii, ledCount);

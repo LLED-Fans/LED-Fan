@@ -16,7 +16,8 @@
 #define HOST_NETWORK_PASSWORD "We love LED"
 #define WIFI_HOSTNAME "lled.fan"
 
-// Upper cap; depending on chipset and performance this might be lower
+// Upper cap. Consider the chipset of the LEDs' max framerate:
+// WS2812b: 400; WS2813: 2000
 #define MAX_FRAMES_PER_SECOND 2000
 
 // See https://github.com/FastLED/FastLED/blob/master/chipsets.h
