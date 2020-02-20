@@ -20,6 +20,7 @@ public:
 
     static void println(int v);
     static void println(long v);
+    static void println(unsigned long v);
     static void println(float v);
     static void println(double v);
 };

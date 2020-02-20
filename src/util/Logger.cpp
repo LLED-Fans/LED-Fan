@@ -30,6 +30,8 @@ void Logger::println(int v) { println(String(v)); }
 
 void Logger::println(long v) { println(String(v)); }
 
+void Logger::println(unsigned long v) { println(String(v)); }
+
 void Logger::println(float v) { println(String(v)); }
 
 void Logger::println(double v) { println(String(v)); }
