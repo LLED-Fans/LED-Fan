@@ -1,10 +1,3 @@
-// ==================================================================
-// ======================  Constants  ===================================
-// ==================================================================
-
-#define ROTATION_SENSOR_TYPE_HALL_SYNC 1
-#define ROTATION_SENSOR_TYPE_HALL_XTASK 2
-
 #include "Setup.h"
 
 #include <SPIFFS.h>
@@ -67,6 +60,7 @@ void setup() {
     // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
     Network::connectToPreset();
+    Network::setHostname(WIFI_HOSTNAME);
 
     artnetServer = new ArtnetServer(screen);
 

@@ -1,12 +1,20 @@
-//
-// Created by Lukas Tenbrink on 20.02.20.
-//
+// ==================================================================
+// ===================== Constants  =================================
+// ==================================================================
+
+#define ROTATION_SENSOR_TYPE_HALL_SYNC 1
+#define ROTATION_SENSOR_TYPE_HALL_XTASK 2
+
+// ==================================================================
+// ======================  Setup  ===================================
+// ==================================================================
 
 #ifndef LED_FAN_SETUP_H
 #define LED_FAN_SETUP_H
 
 #define HOST_NETWORK_SSID "LLED Fan"
 #define HOST_NETWORK_PASSWORD "We love LED"
+#define WIFI_HOSTNAME "lled.fan"
 
 // Upper cap; depending on chipset and performance this might be lower
 #define MAX_FRAMES_PER_SECOND 2000

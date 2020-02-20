@@ -20,6 +20,10 @@ void Network::host(char* ssid, char* password) {
     Serial.println(IP);
 }
 
+void Network::setHostname(char *hostname) {
+    WiFi.setHostname(hostname);
+}
+
 bool Network::connect(char *ssid, char *password, bool savePreset, int retries) {
     Printf::ln("Connecting to Station: %s...", ssid);
     WiFi.begin(ssid, password);

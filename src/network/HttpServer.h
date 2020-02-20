@@ -10,6 +10,8 @@
 #include <sensor/RotationSensor.h>
 #include <util/ClockSynchronizer.h>
 
+#include "Setup.h"
+
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
 #include <util/XTaskTimer.h>
 #endif
