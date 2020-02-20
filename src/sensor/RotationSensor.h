@@ -8,7 +8,7 @@
 
 #include <util/IntRoller.h>
 #include "SensorSwitch.h"
-#include <list>
+#include <vector>
 
 class RotationSensor {
 public:

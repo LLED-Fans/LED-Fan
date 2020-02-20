@@ -6,9 +6,6 @@
 #define LED_FAN_INTROLLER_H
 
 
-#include <algorithm>
-#include <cstring>
-#include <climits>
 #include "RollerIterator.h"
 
 class IntRoller {
@@ -16,67 +13,29 @@ public:
     const unsigned int count;
     int *data;
 
-    IntRoller(int c): count(c), head(c - 1) {
-        data = new int[c];
-        fill(0);
-    }
+    IntRoller(int c);
 
-    int operator[](int index) {
-        return data[index];
-    }
+    int operator[](int index);
 
-    void append(int value) {
-        head = (head + 1) % count;
-        data[head] = value;
-    }
+    void append(int value);
 
-    void fill(int value) {
-        for (int i = 0; i < count; i++)
-            data[i] = value;
-    }
+    void fill(int value);
 
-    float scalesolidMean(float threshold, int *sCount) {
-        int mean = sum() / count;
-
-        int solidSum = 0;
-        int solidCount = 0;
-
-        if (mean != 0) {
-            for (int i = 0; i < count; ++i) {
-                if (abs((data[i] - mean) / mean) < threshold) {
-                    solidSum += data[i];
-                    solidCount ++;
-                }
-            }
-        }
-
-        if (sCount) *sCount = solidCount;
-
-        return solidCount > 0 ? (float) solidSum / (float) solidCount : INT_MAX;
-    }
+    float scalesolidMean(float threshold, int *sCount);
 
     int last() {
         return data[head];
     }
 
-    int min() {
-        return *std::min_element(data, data + count);
-    }
+    int min();
+    int max();
 
-    int max() {
-        return *std::max_element(data, data + count);
-    }
+    int sum();
+    float mean();
 
-    int sum() {
-        return std::accumulate(data, data + count, 0);
-    }
+    RollerIterator<int> begin() { return {data, head, count}; }
 
-    float mean() {
-        return (float) sum() / (float) count;
-    }
-
-    RollerIterator<int> begin() {return {data, head, count};}
-    RollerIterator<int> end() {return {};}
+    RollerIterator<int> end() { return {}; }
 
 private:
     unsigned int head = 0;
