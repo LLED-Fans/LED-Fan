@@ -92,8 +92,15 @@ String HttpServer::processTemplates(const String &var) {
     if (var == "FPS") {
         float meanMicrosPerFrame = clockSynchronizer->frameTimeHistory->mean();
 
-        return String(1000 * 1000 / _max(meanMicrosPerFrame, clockSynchronizer->microsecondsPerFrame))
+        auto fpsString = String(1000 * 1000 / _max(meanMicrosPerFrame, clockSynchronizer->microsecondsPerFrame))
             + " (slack: " + String(_max(0, clockSynchronizer->microsecondsPerFrame - meanMicrosPerFrame)) + "µs)";
+
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+        float meanHallMicrosPerFrame = hallTimer->frameTimes.mean();
+        fpsString += " / Sensor: " + String(1000 * 1000 / meanHallMicrosPerFrame);
+#endif
+
+        return fpsString;
     }
 
     return String("ERROR");

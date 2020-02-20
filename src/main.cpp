@@ -1,29 +1,11 @@
 // ==================================================================
-// ======================  Setup  ===================================
+// ======================  Constants  ===================================
 // ==================================================================
 
-#define MAGNET_PINS 33
+#define ROTATION_SENSOR_TYPE_HALL_SYNC 1
+#define ROTATION_SENSOR_TYPE_HALL_XTASK 2
 
-#define HOST_NETWORK_SSID "LLED Fan"
-#define HOST_NETWORK_PASSWORD "We love LED"
-
-#define MAX_FRAMES_PER_SECOND 2000
-
-#define LED_TYPE WS2813
-#define COLOR_ORDER GRB
-#define LED_PIN 25
-#define LED_COUNT 18
-
-#define VIRTUAL_SCREEN_SIZE 64
-#define CONCENTRIC_RESOLUTION_MIN 4
-#define CONCENTRIC_RESOLUTION_ADD 4
-
-// hall_synchronized or hall_xtask
-#define ROTATION_SENSOR_TYPE hall_xtask
-#define ROTATION_SENSOR_TICKS 10000
-
-// ==================================================================
-// ==================================================================
+#include "Setup.h"
 
 #include <SPIFFS.h>
 #include <network/ArtnetServer.h>
@@ -32,6 +14,8 @@
 #include <network/Network.h>
 #include <screen/ConcentricCoordinates.h>
 #include <util/ClockSynchronizer.h>
+
+using namespace std::placeholders;
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
@@ -46,23 +30,9 @@ Updater *updater;
 
 ClockSynchronizer *clockSynchronizer;
 
-#if ROTATION_SENSOR_TYPE == hall_xtask
-TaskHandle_t hallXTaskHandle = NULL;
-
-void runHallXTask(void * pvParameters)
-{
-    TickType_t xLastWakeTime;
-
-    xLastWakeTime = xTaskGetTickCount ();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-    for( ;; )
-    {
-        vTaskDelayUntil( &xLastWakeTime, ROTATION_SENSOR_TICKS );
-        rotationSensor->update(micros());
-    }
-#pragma clang diagnostic pop
-}
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+#include <util/XTaskTimer.h>
+XTaskTimer *hallTimer;
 #endif
 
 void setup() {
@@ -110,9 +80,14 @@ void setup() {
     // Updater
     updater = new Updater();
 
-#if ROTATION_SENSOR_TYPE == hall_xtask
-    xTaskCreate( runHallXTask, "RSENSOR", 1024, nullptr, 10, &hallXTaskHandle );
-    configASSERT( hallXTaskHandle );
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+    hallTimer = new XTaskTimer(
+        ROTATION_SENSOR_MS,
+        "RSENSOR",
+        10,
+        std::bind(&RotationSensor::update, rotationSensor, _1)
+    );
+    server->hallTimer = hallTimer;
 #endif
 }
 
@@ -120,7 +95,7 @@ void loop() {
     unsigned long microseconds = clockSynchronizer->sync();
     auto milliseconds = microseconds / 1000;
 
-#if ROTATION_SENSOR_TYPE == hall_synchronized
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
     rotationSensor->update(microseconds);
 #endif
 

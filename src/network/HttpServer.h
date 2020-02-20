@@ -10,6 +10,10 @@
 #include <sensor/RotationSensor.h>
 #include <util/ClockSynchronizer.h>
 
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+#include <util/XTaskTimer.h>
+#endif
+
 class HttpServer {
 public:
     Screen *screen;
@@ -17,6 +21,10 @@ public:
 
     RotationSensor *rotationSensor;
     ClockSynchronizer *clockSynchronizer;
+
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+    XTaskTimer *hallTimer;
+#endif
 
     HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, ClockSynchronizer *clockSynchronizer);
 
