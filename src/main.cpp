@@ -20,7 +20,6 @@ using namespace std::placeholders;
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
 RotationSensor *rotationSensor;
-CLEDController *ledChipset;
 Screen *screen;
 
 HttpServer *server;
