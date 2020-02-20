@@ -51,7 +51,7 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
         rotation = fixedRotation;
     }
 
-    if (rotation == NAN) {
+    if (std::isnan(rotation)) {
         drawRGB(0);
         return;
     }
