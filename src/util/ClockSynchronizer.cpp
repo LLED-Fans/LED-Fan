@@ -23,9 +23,11 @@ unsigned long ClockSynchronizer::sync() {
 
     if (microsecondsPerFrame > frameTime) {
         delayMicroseconds(microsecondsPerFrame - frameTime);
+        lastSyncTimestamp = micros();
     }
-    // Else we can't keep up! Lower framerate.
+    else
+        // Can't keep up! Accept lower framerate and just continue running.
+        lastSyncTimestamp = microseconds;
 
-    lastSyncTimestamp = microseconds + frameTime;
     return lastSyncTimestamp;
 }
