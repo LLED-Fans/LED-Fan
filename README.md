@@ -1,3 +1,11 @@
+# About
+
+This software is intended to be run on an ESP32 attached to a spinning blade of an LED Fan. Detailed build instructions are not provided at this point.
+
+It controls I/O for the fan, has a web interface and is controllable via ArtNet. 
+
+A python script is attached which is capable of capturing screen or images and sending them to the fan.
+
 # Setup
 
 Clion Recommended:
