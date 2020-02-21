@@ -16,10 +16,11 @@ RotationSensor::RotationSensor(std::vector<SensorSwitch*>  switches, int history
 void RotationSensor::update(unsigned long time) {
     unsigned int checkpointCount = switches.size();
 
-    if (checkpointIndices->last() != -1 && time - checkpointTimestamps->last() > 2000 * 1000) {
+    if (isReliable && time - checkpointTimestamps->last() > 2000 * 1000) {
         // We are paused, clear history
         checkpointTimestamps->fill(0);
         checkpointIndices->fill(-1);
+        isReliable = false;
     }
 
     for (int i = 0; i < checkpointCount; ++i) {
