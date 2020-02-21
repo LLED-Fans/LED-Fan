@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <climits>
 
-IntRoller::IntRoller(int c) : count(c), head(c - 1) {
+IntRoller::IntRoller(int c) : count(c), head(0) {
     data = new int[c];
     fill(0);
 }
@@ -17,8 +17,8 @@ int& IntRoller::operator[](unsigned int index) {
 }
 
 void IntRoller::append(int value) {
-    head = (head + 1) % count;
     data[head] = value;
+    head = (head + 1) % count;
 }
 
 void IntRoller::fill(int value) {

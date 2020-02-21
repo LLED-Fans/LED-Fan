@@ -5,16 +5,12 @@
 #include "StepExtrapolator.h"
 
 #include <algorithm>
+#include <util/Logger.h>
 
 void StepExtrapolator::adjust(std::vector<double> x, std::vector<double> y) {
-    double slopeSum = 0.0;
-
-    for (int i = 1; i < x.size(); ++i) {
-        slopeSum += (x[i] - x[i - 1]) / (y[i] - y[i - 1]);
-    }
-
-    _slope = 1.0 / (slopeSum / (x.size() - 1));
-    baselineX = x[x.size() - 1];
+    int n = x.size();
+    _slope = (y[n - 1] - y[0]) / (x[n - 1] - x[0]);
+    baselineX = x[n - 1];
 }
 
 double StepExtrapolator::extrapolate(double x) {

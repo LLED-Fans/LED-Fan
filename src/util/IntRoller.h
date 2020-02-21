@@ -23,7 +23,7 @@ public:
     void fill(int value);
 
     int last() {
-        return data[head];
+        return (*this)[-1];
     }
 
     int min();

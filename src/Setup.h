@@ -5,7 +5,9 @@
 #define ROTATION_SENSOR_TYPE_HALL_SYNC 1
 #define ROTATION_SENSOR_TYPE_HALL_XTASK 2
 
+// Good if measurements are accurate, but speed may vary
 #define ROTATION_EXTRAPOLATION_STEP 1
+// Good if speed is relatively constant, but measurements vary
 #define ROTATION_EXTRAPOLATION_REGRESSION 2
 
 // ==================================================================

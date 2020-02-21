@@ -18,6 +18,7 @@ public:
     static void println(char *value);
     static void println(String value);
 
+    static void println(unsigned int v);
     static void println(int v);
     static void println(long v);
     static void println(unsigned long v);
