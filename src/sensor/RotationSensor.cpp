@@ -73,11 +73,9 @@ void RotationSensor::update(unsigned long time) {
                     y[j] = y[j + 1] - round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps;
                 }
 
-                Logger::clear();
                 extrapolator->adjust(x, y);
                 double rotationsPerSecond = this->rotationsPerSecond();
 
-                Logger::println(rotationsPerSecond);
                 // Speed is sensible?
                 isReliable = rotationsPerSecond < 100 && rotationsPerSecond > 1;
             }
