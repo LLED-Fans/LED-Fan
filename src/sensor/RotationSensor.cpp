@@ -64,6 +64,13 @@ void RotationSensor::update(unsigned long time) {
                 std::vector<double> y(n);
                 double xDiffMean = (x[n - 1] - x[0]) / (n - 1);
 
+                if (xDiffMean <= 0) {
+                    // Not sure what happened... but don't take the chance.
+                    Logger::println("xDiffMean = 0; unable to sync rotation...");
+                    isReliable = false;
+                    continue;
+                }
+
                 // Go back in reverse, setting reached checkpoint as baseline Y
                 y[n - 1] = estimatedY[n - 1];
                 for (int j = n - 2; j >= 0; --j) {
