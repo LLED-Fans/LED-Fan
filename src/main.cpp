@@ -59,7 +59,8 @@ void setup() {
     }
     rotationSensor = new RotationSensor(
         switches,
-        10,
+        5,
+        2,
 #if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
         new StepExtrapolator()
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION

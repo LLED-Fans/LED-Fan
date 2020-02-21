@@ -7,10 +7,11 @@
 #include <util/Logger.h>
 #include "RotationSensor.h"
 
-RotationSensor::RotationSensor(std::vector<SensorSwitch*>  switches, int historySize, Extrapolator *extrapolator) :
+RotationSensor::RotationSensor(std::vector<SensorSwitch*>  switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator) :
     switches(std::move(switches)),
     checkpointTimestamps(new IntRoller(historySize)),
     checkpointIndices(new IntRoller(historySize)),
+    minCheckpointPasses(minCheckpointPasses),
     extrapolator(extrapolator)  { }
 
 void RotationSensor::update(unsigned long time) {
@@ -38,7 +39,7 @@ void RotationSensor::update(unsigned long time) {
 
                 int n = (int) historySize - checkpointIndices->countOccurrences(-1);
 
-                if (n < 3) {
+                if (n < minCheckpointPasses) {
                     // Too little data to make meaningful extrapolation
                     isReliable = false;
                     continue;
@@ -60,11 +61,17 @@ void RotationSensor::update(unsigned long time) {
                     estimatedY.push_back(checkpointIndex);
                 }
 
+                double estimatedCheckpointDiff = INT_MAX;
+                for (int j = 1; j < n; ++j) {
+                    int xDiff = (*checkpointTimestamps)[j] - (*checkpointTimestamps)[j - 1];
+                    if (xDiff < estimatedCheckpointDiff)
+                        estimatedCheckpointDiff = xDiff;
+                }
+
                 // Try to estimate if we missed any checkpoints
                 std::vector<double> y(n);
-                double xDiffMean = (x[n - 1] - x[0]) / (n - 1);
 
-                if (xDiffMean <= 0) {
+                if (estimatedCheckpointDiff <= 0) {
                     // Not sure what happened... but don't take the chance.
                     Logger::println("xDiffMean = 0; unable to sync rotation...");
                     isReliable = false;
@@ -75,7 +82,7 @@ void RotationSensor::update(unsigned long time) {
                 y[n - 1] = estimatedY[n - 1];
                 for (int j = n - 2; j >= 0; --j) {
                     unsigned int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
-                    double estimatedSteps = (x[j + 1] - x[j]) / xDiffMean;
+                    double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
 
                     // Accept +- multiples of checkpointCount
                     y[j] = y[j + 1] - round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps;

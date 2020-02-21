@@ -17,12 +17,13 @@ public:
 
     IntRoller *checkpointTimestamps;
     IntRoller *checkpointIndices;
+    int minCheckpointPasses;
 
     // x = micros, y = rotation 0 to switches.count
     Extrapolator *extrapolator;
     bool isReliable;
 
-    RotationSensor(std::vector<SensorSwitch*> switches, int historySize, Extrapolator *extrapolator);
+    RotationSensor(std::vector<SensorSwitch*> switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator);
 
     void update(unsigned long time);
 
