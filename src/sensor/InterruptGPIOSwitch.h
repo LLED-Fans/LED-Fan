@@ -6,15 +6,11 @@
 #define LED_FAN_INTERRUPTGPIOSWITCH_H
 
 #include <vector>
-#include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/c++/5.2.0/vector"
 #include "GPIOVisitor.h"
 
 class InterruptGPIOSwitch : public GPIOVisitor {
 public:
     std::vector<int> pins;
-
-    int lastCheckpoint;
-    unsigned long lastVisitTime;
 
     InterruptGPIOSwitch(const std::vector<int> &pins);
 
@@ -25,6 +21,8 @@ public:
     String stateDescription() override {
         return "<Interrupt>";
     }
+
+    void registerCheckpoint(int checkpoint);
 };
 
 
