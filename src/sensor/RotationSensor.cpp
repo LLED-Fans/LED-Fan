@@ -26,7 +26,7 @@ void RotationSensor::attachSwitchInterrupts() {
     for (int i = 0; i < switches.size(); i++) {
         attachInterruptFunction(switches[i]->pin, [this, i]() {
             registerCheckpoint(micros(), i);
-        }, FALLING);
+        }, FALLING, INPUT_PULLUP);
     }
 }
 

@@ -17,10 +17,10 @@ void IRAM_ATTR _shared_interrupt(void *arg) {
     (*static_cast<std::function<void(void)> *>(arg))();
 }
 
-void attachInterruptFunction(uint8_t gpio, std::function<void()> function, int mode) {
+void attachInterruptFunction(uint8_t gpio, std::function<void()> function, int edge, int inputMode) {
     _interrupt_functions[gpio] = function;
-    pinMode(gpio, INPUT_PULLUP);
-    attachInterruptArg(digitalPinToInterrupt(gpio), _shared_interrupt, &_interrupt_functions[gpio], mode);
+    pinMode(gpio, inputMode);
+    attachInterruptArg(digitalPinToInterrupt(gpio), _shared_interrupt, &_interrupt_functions[gpio], edge);
 }
 
 #endif //LED_FAN_INTERRUPTS_H
