@@ -19,7 +19,7 @@ void IRAM_ATTR _shared_interrupt(void *arg) {
 
 void attachInterruptFunction(uint8_t gpio, std::function<void()> function, int mode) {
     _interrupt_functions[gpio] = function;
-    pinMode(gpio, INPUT);
+    pinMode(gpio, INPUT_PULLUP);
     attachInterruptArg(digitalPinToInterrupt(gpio), _shared_interrupt, &_interrupt_functions[gpio], mode);
 }
 

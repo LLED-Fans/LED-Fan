@@ -24,7 +24,6 @@ RotationSensor::RotationSensor(std::vector<SensorSwitch*> switches, int historyS
 
 void RotationSensor::attachSwitchInterrupts() {
     for (int i = 0; i < switches.size(); i++) {
-        pinMode(switches[i]->pin, INPUT);
         attachInterruptFunction(switches[i]->pin, [this, i]() {
             registerCheckpoint(micros(), i);
         }, FALLING);
