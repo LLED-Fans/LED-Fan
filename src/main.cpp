@@ -76,7 +76,7 @@ void setup() {
     );
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
-    server->hallTimer = rotationSensor->visitor->timer;
+    server->hallTimer = ((XTaskGPIOSwitch *) rotationSensor->visitor)->timer;
 #endif
 
     // Initialize Server
