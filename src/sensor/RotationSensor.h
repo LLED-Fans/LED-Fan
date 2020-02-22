@@ -8,22 +8,23 @@
 
 #include <util/IntRoller.h>
 #include "SensorSwitch.h"
+#include "GPIOVisitor.h"
 #include <vector>
 #include <util/extrapolation/Extrapolator.h>
 
 class RotationSensor {
 public:
-    std::vector<SensorSwitch*> switches;
-
     IntRoller *checkpointTimestamps;
     IntRoller *checkpointIndices;
     int minCheckpointPasses;
+
+    GPIOVisitor *visitor;
 
     // x = micros, y = rotation 0 to switches.count
     Extrapolator *extrapolator;
     bool isReliable;
 
-    RotationSensor(std::vector<SensorSwitch*> switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator);
+    RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, Extrapolator *extrapolator);
 
     void update(unsigned long time);
     void registerCheckpoint(unsigned long time, int checkpoint);
@@ -32,9 +33,7 @@ public:
     float estimatedRotation(unsigned long time);
 
     int rotationsPerSecond();
-    String magnetValue();
-
-    void attachSwitchInterrupts();
+    String stateDescription();
 };
 
 

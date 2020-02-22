@@ -3,31 +3,17 @@
 //
 
 #include <cmath>
-#include <utility>
 #include <util/Logger.h>
-#include <util/Interrupts.h>
 #include "RotationSensor.h"
 
 #include "Setup.h"
 
-RotationSensor::RotationSensor(std::vector<SensorSwitch*> switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator) :
-    switches(std::move(switches)),
+RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, Extrapolator *extrapolator) :
     checkpointTimestamps(new IntRoller(historySize)),
     checkpointIndices(new IntRoller(historySize)),
     minCheckpointPasses(minCheckpointPasses),
+    visitor(visitor),
     extrapolator(extrapolator)  {
-
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_INTERRUPT
-    attachSwitchInterrupts();
-#endif
-}
-
-void RotationSensor::attachSwitchInterrupts() {
-    for (int i = 0; i < switches.size(); i++) {
-        attachInterruptFunction(switches[i]->pin, [this, i]() {
-            registerCheckpoint(micros(), i);
-        }, FALLING, INPUT_PULLUP);
-    }
 }
 
 void RotationSensor::update(unsigned long time) {
@@ -38,25 +24,15 @@ void RotationSensor::update(unsigned long time) {
         isReliable = false;
     }
 
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
-    for (int i = 0; i < switches.size(); ++i) {
-        SensorSwitch *sensorSwitch = switches[i];
-
-        // Test the switch
-        if (sensorSwitch->test() && sensorSwitch->isReliable) {
-            if (!sensorSwitch->isOn()) {
-                registerCheckpoint(time, i);
-            }
-        }
-
-        isReliable &= sensorSwitch->isReliable;
-    }
-#endif
+    int checkpoint = -1;
+    visitor->update(time, &checkpoint, &time);
+    if (checkpoint >= 0)
+        registerCheckpoint(time, checkpoint);
 }
 
 void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     unsigned int historySize = checkpointIndices->count;
-    unsigned int checkpointCount = switches.size();
+    unsigned int checkpointCount = visitor->checkpointCount;
 
     checkpointIndices->append(checkpoint);
     checkpointTimestamps->append(time);
@@ -130,19 +106,13 @@ float RotationSensor::estimatedRotation(unsigned long time) {
         return NAN;
     }
 
-    return std::fmod(rawRotation / switches.size(), 1.0f);
+    return std::fmod(rawRotation / (float) visitor->checkpointCount, 1.0f);
 }
 
 int RotationSensor::rotationsPerSecond() {
     return (int) (extrapolator->slope() * 1000 * 1000);
 }
 
-String RotationSensor::magnetValue() {
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC || ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
-    return String(switches[0]->peaks->lower)
-           + " < " +  String(switches[0]->rawValue())
-           + " < " +  String(switches[0]->peaks->upper);
-#else
-    return "ANALOG";
-#endif
+String RotationSensor::stateDescription() {
+    return visitor->stateDescription();
 }

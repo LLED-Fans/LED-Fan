@@ -7,11 +7,20 @@
 #include <network/Network.h>
 #include <screen/ConcentricCoordinates.h>
 #include <util/ClockSynchronizer.h>
-#include <util/extrapolation/LinearRegressionExtrapolator.h>
-#include <util/extrapolation/StepExtrapolator.h>
-#include <util/Logger.h>
 
-using namespace std::placeholders;
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
+#include <sensor/SyncGPIOSwitch.h>
+#elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+#include <sensor/XTaskGPIOSwitch.h>
+#elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_INTERRUPT
+#include <sensor/InterruptGPIOSwitch.h>
+#endif
+
+#if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
+#include <util/extrapolation/StepExtrapolator.h>
+#elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
+#include <util/extrapolation/LinearRegressionExtrapolator.h>
+#endif
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
@@ -24,11 +33,6 @@ ArtnetServer *artnetServer;
 Updater *updater;
 
 ClockSynchronizer *clockSynchronizer;
-
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
-#include <util/XTaskTimer.h>
-XTaskTimer *hallTimer;
-#endif
 
 void setup() {
     // Enable Monitoring
@@ -54,12 +58,14 @@ void setup() {
         ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );
 
-    std::vector<SensorSwitch *> switches = {};
-    for (int magnetPin : {MAGNET_PINS}) {
-        switches.push_back(new SensorSwitch(magnetPin, new PeakDetector(MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0)));
-    }
     rotationSensor = new RotationSensor(
-        switches,
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
+    new SyncGPIOSwitch({MAGNET_PINS}, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0),
+#elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+    new XTaskGPIOSwitch({MAGNET_PINS}, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0, ROTATION_SENSOR_MS),
+#elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_INTERRUPT
+    new InterruptGPIOSwitch({MAGNET_PINS}),
+#endif
         5,
         2,
 #if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
@@ -68,6 +74,10 @@ void setup() {
         new LinearRegressionExtrapolator()
 #endif
     );
+
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+    server->hallTimer = rotationSensor->visitor->timer;
+#endif
 
     // Initialize Server
     Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
@@ -84,16 +94,6 @@ void setup() {
 
     // Updater
     updater = new Updater();
-
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
-    hallTimer = new XTaskTimer(
-        ROTATION_SENSOR_MS,
-        "RSENSOR",
-        10,
-        std::bind(&RotationSensor::update, rotationSensor, _1)
-    );
-    server->hallTimer = hallTimer;
-#endif
 }
 
 void loop() {

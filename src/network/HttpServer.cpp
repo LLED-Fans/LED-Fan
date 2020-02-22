@@ -48,8 +48,8 @@ String HttpServer::processTemplates(const String &var) {
         return String(screen->pin);
     if (var == "MAGNET_PIN") {
         String r = "";
-        for (SensorSwitch *sensorSwitch : rotationSensor->switches) {
-            r += String(sensorSwitch->pin) + ", ";
+        for (auto pin : {MAGNET_PINS}) {
+            r += String(pin) + ", ";
         }
         return r;
     }
@@ -67,7 +67,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(screen->cartesianResolution);
     }
     if (var == "MAGNET_VALUE") {
-        return rotationSensor->magnetValue();
+        return rotationSensor->stateDescription();
     }
     if (var == "ROTATION_SPEED") {
         if (screen->fixedRotation >= 0)
