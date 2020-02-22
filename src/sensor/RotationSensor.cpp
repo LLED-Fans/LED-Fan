@@ -136,3 +136,13 @@ float RotationSensor::estimatedRotation(unsigned long time) {
 int RotationSensor::rotationsPerSecond() {
     return (int) (extrapolator->slope() * 1000 * 1000);
 }
+
+String RotationSensor::magnetValue() {
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC || ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
+    return String(switches[0]->peaks->lower)
+           + " < " +  String(switches[0]->rawValue())
+           + " < " +  String(switches[0]->peaks->upper);
+#else
+    return "ANALOG";
+#endif
+}

@@ -67,9 +67,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(screen->cartesianResolution);
     }
     if (var == "MAGNET_VALUE") {
-        return String(rotationSensor->switches[0]->peaks->lower)
-            + " < " +  String(rotationSensor->switches[0]->rawValue())
-            + " < " +  String(rotationSensor->switches[0]->peaks->upper);
+        return rotationSensor->magnetValue();
     }
     if (var == "ROTATION_SPEED") {
         if (screen->fixedRotation >= 0)

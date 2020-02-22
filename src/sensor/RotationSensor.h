@@ -32,6 +32,7 @@ public:
     float estimatedRotation(unsigned long time);
 
     int rotationsPerSecond();
+    String magnetValue();
 
     void attachSwitchInterrupts();
 };
