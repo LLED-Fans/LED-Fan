@@ -80,7 +80,7 @@ String HttpServer::processTemplates(const String &var) {
         }
 
         if (!rotationSensor->isReliable)
-            return "Unreliable + (" + history + ")";
+            return "Unreliable (" + history + ")";
 
         return String(rotationSensor->rotationsPerSecond()) + "r/s (" + history + ")";
     }
