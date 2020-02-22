@@ -73,17 +73,16 @@ String HttpServer::processTemplates(const String &var) {
         if (screen->fixedRotation >= 0)
             return "Fixed: " + String(screen->fixedRotation);
 
-        if (!rotationSensor->isReliable)
-            return "Unreliable";
-
-        String result = String(rotationSensor->rotationsPerSecond()) + "r/s (";
         IntRoller *timestamps = rotationSensor->checkpointTimestamps;
-
+        String history = "";
         for (int i = 1; i < timestamps->count; ++i) {
-            result += String(((*timestamps)[i] - (*timestamps)[i - 1]) / 1000) + "ms, ";
+            history += String(((*timestamps)[i] - (*timestamps)[i - 1]) / 1000) + "ms, ";
         }
 
-        return result + ")";
+        if (!rotationSensor->isReliable)
+            return "Unreliable + (" + history + ")";
+
+        return String(rotationSensor->rotationsPerSecond()) + "r/s (" + history + ")";
     }
     if (var == "UPTIME") {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
