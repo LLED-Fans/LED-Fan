@@ -5,18 +5,33 @@
 #include <cmath>
 #include <utility>
 #include <util/Logger.h>
+#include <util/Interrupts.h>
 #include "RotationSensor.h"
 
-RotationSensor::RotationSensor(std::vector<SensorSwitch*>  switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator) :
+#include "Setup.h"
+
+RotationSensor::RotationSensor(std::vector<SensorSwitch*> switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator) :
     switches(std::move(switches)),
     checkpointTimestamps(new IntRoller(historySize)),
     checkpointIndices(new IntRoller(historySize)),
     minCheckpointPasses(minCheckpointPasses),
-    extrapolator(extrapolator)  { }
+    extrapolator(extrapolator)  {
+
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_INTERRUPT
+    attachSwitchInterrupts();
+#endif
+}
+
+void RotationSensor::attachSwitchInterrupts() {
+    for (int i = 0; i < switches.size(); i++) {
+        pinMode(switches[i]->pin, INPUT);
+        attachInterruptFunction(switches[i]->pin, [this, i]() {
+            registerCheckpoint(micros(), i);
+        }, FALLING);
+    }
+}
 
 void RotationSensor::update(unsigned long time) {
-    unsigned int checkpointCount = switches.size();
-
     if (isReliable && time - checkpointTimestamps->last() > 2000 * 1000) {
         // We are paused, clear history
         checkpointTimestamps->fill(0);
@@ -24,80 +39,85 @@ void RotationSensor::update(unsigned long time) {
         isReliable = false;
     }
 
-    for (int i = 0; i < checkpointCount; ++i) {
+#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
+    for (int i = 0; i < switches.size(); ++i) {
         SensorSwitch *sensorSwitch = switches[i];
 
         // Test the switch
         if (sensorSwitch->test() && sensorSwitch->isReliable) {
             if (!sensorSwitch->isOn()) {
-                // Full Rotation
-
-                unsigned int historySize = checkpointIndices->count;
-
-                checkpointIndices->append(i);
-                checkpointTimestamps->append(time);
-
-                int n = (int) historySize - checkpointIndices->countOccurrences(-1);
-
-                if (n < minCheckpointPasses) {
-                    // Too little data to make meaningful extrapolation
-                    isReliable = false;
-                    continue;
-                }
-
-                // Raw Data Collection
-                std::vector<double> x{};
-                x.reserve(n);
-                std::vector<int> estimatedY{};
-                estimatedY.reserve(n);
-
-                for (int j = 0; j < historySize; ++j) {
-                    int checkpointIndex = (*checkpointIndices)[j];
-
-                    if (checkpointIndex < 0)
-                        continue; // Not set yet
-
-                    x.push_back((*checkpointTimestamps)[j]);
-                    estimatedY.push_back(checkpointIndex);
-                }
-
-                double estimatedCheckpointDiff = INT_MAX;
-                for (int j = 1; j < n; ++j) {
-                    int xDiff = (*checkpointTimestamps)[j] - (*checkpointTimestamps)[j - 1];
-                    if (xDiff < estimatedCheckpointDiff)
-                        estimatedCheckpointDiff = xDiff;
-                }
-
-                // Try to estimate if we missed any checkpoints
-                std::vector<double> y(n);
-
-                if (estimatedCheckpointDiff <= 0) {
-                    // Not sure what happened... but don't take the chance.
-                    Logger::println("xDiffMean = 0; unable to sync rotation...");
-                    isReliable = false;
-                    continue;
-                }
-
-                // Go back in reverse, setting reached checkpoint as baseline Y
-                y[n - 1] = estimatedY[n - 1];
-                for (int j = n - 2; j >= 0; --j) {
-                    unsigned int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
-                    double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
-
-                    // Accept +- multiples of checkpointCount
-                    y[j] = y[j + 1] - round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps;
-                }
-
-                extrapolator->adjust(x, y);
-                double rotationsPerSecond = this->rotationsPerSecond();
-
-                // Speed is sensible?
-                isReliable = rotationsPerSecond < 100 && rotationsPerSecond > 1;
+                registerCheckpoint(time, i);
             }
         }
 
         isReliable &= sensorSwitch->isReliable;
     }
+#endif
+}
+
+void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
+    unsigned int historySize = checkpointIndices->count;
+    unsigned int checkpointCount = switches.size();
+
+    checkpointIndices->append(checkpoint);
+    checkpointTimestamps->append(time);
+
+    int n = (int) historySize - checkpointIndices->countOccurrences(-1);
+
+    if (n < minCheckpointPasses) {
+        // Too little data to make meaningful extrapolation
+        isReliable = false;
+        return;
+    }
+
+    // Raw Data Collection
+    std::vector<double> x{};
+    x.reserve(n);
+    std::vector<int> estimatedY{};
+    estimatedY.reserve(n);
+
+    for (int j = 0; j < historySize; ++j) {
+        int checkpointIndex = (*checkpointIndices)[j];
+
+        if (checkpointIndex < 0)
+            continue; // Not set yet
+
+        x.push_back((*checkpointTimestamps)[j]);
+        estimatedY.push_back(checkpointIndex);
+    }
+
+    double estimatedCheckpointDiff = INT_MAX;
+    for (int j = 1; j < n; ++j) {
+        int xDiff = (*checkpointTimestamps)[j] - (*checkpointTimestamps)[j - 1];
+        if (xDiff < estimatedCheckpointDiff)
+            estimatedCheckpointDiff = xDiff;
+    }
+
+    // Try to estimate if we missed any checkpoints
+    std::vector<double> y(n);
+
+    if (estimatedCheckpointDiff <= 0) {
+        // Not sure what happened... but don't take the chance.
+        Logger::println("xDiffMean = 0; unable to sync rotation...");
+        isReliable = false;
+        return;
+    }
+
+    // Go back in reverse, setting reached checkpoint as baseline Y
+    y[n - 1] = estimatedY[n - 1];
+    for (int j = n - 2; j >= 0; --j) {
+        unsigned int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
+        double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
+
+        // Accept +- multiples of checkpointCount
+        y[j] = y[j + 1] - round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps;
+    }
+
+    extrapolator->adjust(x, y);
+    double rotationsPerSecond = this->rotationsPerSecond();
+
+    // Speed is sensible?
+    isReliable = rotationsPerSecond < 100 && rotationsPerSecond > 1;
 }
 
 float RotationSensor::estimatedRotation(unsigned long time) {

@@ -26,11 +26,14 @@ public:
     RotationSensor(std::vector<SensorSwitch*> switches, int historySize, int minCheckpointPasses, Extrapolator *extrapolator);
 
     void update(unsigned long time);
+    void registerCheckpoint(unsigned long time, int checkpoint);
 
     // Returns a value from 0 to 1, or NAN if unreliable
     float estimatedRotation(unsigned long time);
 
     int rotationsPerSecond();
+
+    void attachSwitchInterrupts();
 };
 
 

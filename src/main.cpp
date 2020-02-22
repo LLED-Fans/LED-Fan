@@ -9,6 +9,7 @@
 #include <util/ClockSynchronizer.h>
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
 #include <util/extrapolation/StepExtrapolator.h>
+#include <util/Logger.h>
 
 using namespace std::placeholders;
 
@@ -99,9 +100,7 @@ void loop() {
     unsigned long microseconds = clockSynchronizer->sync();
     auto milliseconds = microseconds / 1000;
 
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
     rotationSensor->update(microseconds);
-#endif
 
     screen->draw(
         milliseconds,
