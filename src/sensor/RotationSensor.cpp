@@ -8,10 +8,11 @@
 
 #include "Setup.h"
 
-RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, Extrapolator *extrapolator) :
+RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, Extrapolator *extrapolator) :
     checkpointTimestamps(new IntRoller(historySize)),
     checkpointIndices(new IntRoller(historySize)),
     minCheckpointPasses(minCheckpointPasses),
+    minCheckpointTime(minCheckpointTime),
     visitor(visitor),
     extrapolator(extrapolator)  {
 }
@@ -26,7 +27,7 @@ void RotationSensor::update(unsigned long time) {
 
     int checkpoint = -1;
     visitor->update(time, &checkpoint, &time);
-    if (checkpoint >= 0)
+    if (checkpoint >= 0 && time >= minCheckpointTime)
         registerCheckpoint(time, checkpoint);
 }
 

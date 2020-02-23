@@ -64,14 +64,15 @@ void setup() {
 #elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
     new XTaskGPIOSwitch({MAGNET_PINS}, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0, ROTATION_SENSOR_MS),
 #elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_INTERRUPT
-    new InterruptGPIOSwitch({MAGNET_PINS}),
+            new InterruptGPIOSwitch({MAGNET_PINS}),
 #endif
-        5,
-        2,
+            5,
+            2,
+            ROTATION_MIN_MS_PER_CHECKPOINT * 1000,
 #if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
         new StepExtrapolator()
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
-        new LinearRegressionExtrapolator()
+            new LinearRegressionExtrapolator()
 #endif
     );
 

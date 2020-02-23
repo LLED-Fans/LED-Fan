@@ -48,4 +48,8 @@
 // If applicable, max framerate of rotation sensor task
 #define ROTATION_SENSOR_MS 1
 
+// Minimum time after a checkpoint before registering a new one
+// Helps with double activations
+#define ROTATION_MIN_MS_PER_CHECKPOINT 10
+
 #endif //LED_FAN_SETUP_H
