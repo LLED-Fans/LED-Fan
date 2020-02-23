@@ -27,7 +27,7 @@ void RotationSensor::update(unsigned long time) {
 
     int checkpoint = -1;
     visitor->update(time, &checkpoint, &time);
-    if (checkpoint >= 0 && time >= minCheckpointTime)
+    if (checkpoint >= 0 && (time - checkpointTimestamps->last()) >= minCheckpointTime)
         registerCheckpoint(time, checkpoint);
 }
 
