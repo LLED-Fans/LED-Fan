@@ -34,9 +34,6 @@ void InterruptGPIOSwitch::attach() {
 
 void InterruptGPIOSwitch::update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) {
     if (__interruptSwitchLastCheckpoint >= 0) {
-        Logger::println("Update");
-        Logger::println(__interruptSwitchLastVisitTime);
-
         *visitCheckpoint = __interruptSwitchLastCheckpoint;
         *visitTime = __interruptSwitchLastVisitTime;
 
