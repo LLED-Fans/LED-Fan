@@ -41,8 +41,8 @@ void RotationSensor::update(unsigned long time) {
 }
 
 void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
-    unsigned int historySize = checkpointIndices->count;
-    unsigned int checkpointCount = visitor->checkpointCount;
+    int historySize = checkpointIndices->count;
+    int checkpointCount = visitor->checkpointCount;
 
     checkpointIndices->push(checkpoint);
     checkpointTimestamps->push((int) time);
@@ -91,7 +91,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     // Go back in reverse, setting reached checkpoint as baseline Y
     y[n - 1] = estimatedY[n - 1];
     for (int j = n - 2; j >= 0; --j) {
-        unsigned int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
+        int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
         double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
 
         // Accept +- multiples of checkpointCount
@@ -110,6 +110,7 @@ float RotationSensor::estimatedRotation(unsigned long time) {
         return NAN;
 
     float rawRotation = extrapolator->extrapolate(time);
+    Logger::println(rawRotation);
 
     if (std::isnan(rawRotation) || rawRotation > 3.5) {
         // Missed 3 checkpoints, this is not secure at all
