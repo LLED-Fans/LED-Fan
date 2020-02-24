@@ -110,7 +110,6 @@ float RotationSensor::estimatedRotation(unsigned long time) {
         return NAN;
 
     float rawRotation = extrapolator->extrapolate(time);
-    Logger::println(rawRotation);
 
     if (std::isnan(rawRotation) || rawRotation > 3.5) {
         // Missed 3 checkpoints, this is not secure at all

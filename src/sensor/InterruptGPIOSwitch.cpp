@@ -26,9 +26,10 @@ void IRAM_ATTR __interrupt_switch(void *args) {
 }
 
 void InterruptGPIOSwitch::attach() {
-    for (auto pin : pins) {
+    for (int i = 0; i < pins.size(); i++) {
+        auto pin = pins[i];
         pinMode(pin, INPUT_PULLUP);
-        attachInterruptArg(digitalPinToInterrupt(pin), __interrupt_switch, (void *) pin, FALLING);
+        attachInterruptArg(digitalPinToInterrupt(pin), __interrupt_switch, (void *) i, FALLING);
     }
 }
 
