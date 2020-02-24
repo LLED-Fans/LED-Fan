@@ -16,7 +16,7 @@ public:
 
     IntRoller(int c);
 
-    int& operator[](unsigned int index);
+    int& operator[](int index);
 
     void push(int value);
 

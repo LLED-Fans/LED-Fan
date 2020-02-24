@@ -12,7 +12,7 @@ IntRoller::IntRoller(int c) : count(c), head(0) {
     fill(0);
 }
 
-int& IntRoller::operator[](unsigned int index) {
+int& IntRoller::operator[](int index) {
     return data[(((head + index) % count + count) % count)];
 }
 
