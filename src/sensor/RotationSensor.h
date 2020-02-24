@@ -18,14 +18,15 @@ public:
     IntRoller *checkpointIndices;
     int minCheckpointPasses;
     unsigned long minCheckpointTime;
+    unsigned long maxCheckpointTime;
 
     GPIOVisitor *visitor;
 
     // x = micros, y = rotation 0 to switches.count
     Extrapolator *extrapolator;
-    bool isReliable;
+    bool isReliable = false;
 
-    RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, Extrapolator *extrapolator);
+    RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, unsigned long  maxCheckpointTime, Extrapolator *extrapolator);
 
     void update(unsigned long time);
     void registerCheckpoint(unsigned long time, int checkpoint);

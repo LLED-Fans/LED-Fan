@@ -51,5 +51,7 @@
 // Minimum time after a checkpoint before registering a new one
 // Helps with double activations
 #define ROTATION_MIN_MS_PER_CHECKPOINT 10
+// After this time, we're considered to be paused
+#define ROTATION_MAX_MS_PER_CHECKPOINT 2000
 
 #endif //LED_FAN_SETUP_H

@@ -8,27 +8,36 @@
 
 #include "Setup.h"
 
-RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, Extrapolator *extrapolator) :
+RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, unsigned long  maxCheckpointTime, Extrapolator *extrapolator) :
     checkpointTimestamps(new IntRoller(historySize)),
     checkpointIndices(new IntRoller(historySize)),
     minCheckpointPasses(minCheckpointPasses),
     minCheckpointTime(minCheckpointTime),
+    maxCheckpointTime(maxCheckpointTime),
     visitor(visitor),
     extrapolator(extrapolator)  {
 }
 
 void RotationSensor::update(unsigned long time) {
-    if (isReliable && time - checkpointTimestamps->last() > 2000 * 1000) {
-        // We are paused, clear history
-        checkpointTimestamps->fill(0);
-        checkpointIndices->fill(-1);
-        isReliable = false;
-    }
-
     int checkpoint = -1;
     visitor->update(time, &checkpoint, &time);
-    if (checkpoint >= 0 && (time - checkpointTimestamps->last()) >= minCheckpointTime)
+
+    unsigned long checkpointTime = time - checkpointTimestamps->last();
+
+    if (checkpoint >= 0 && checkpointTime >= minCheckpointTime) {
+        if (checkpointTime > maxCheckpointTime) {
+            // We were paused, clear history first
+            // TODO Will also happen when time rolls over, but eh
+
+            checkpointTimestamps->fill(0);
+            checkpointIndices->fill(-1);
+            isReliable = false;
+
+            // But do register the new checkpoint
+        }
+
         registerCheckpoint(time, checkpoint);
+    }
 }
 
 void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
