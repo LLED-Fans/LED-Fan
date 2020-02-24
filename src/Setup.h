@@ -30,7 +30,7 @@
 #define LED_TYPE WS2813
 #define COLOR_ORDER GRB
 #define LED_PIN 25
-#define LED_COUNT 18
+#define LED_COUNT 16
 
 // Size of the square artnet-accessible screen
 #define VIRTUAL_SCREEN_SIZE 64
