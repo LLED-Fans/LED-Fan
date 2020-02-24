@@ -13,7 +13,7 @@ IntRoller::IntRoller(int c) : count(c), head(0) {
 }
 
 int& IntRoller::operator[](int index) {
-    return data[(((head + index) % count + count) % count)];
+    return data[((((int) head + index) % count + count) % count)];
 }
 
 void IntRoller::push(int value) {
