@@ -19,7 +19,7 @@ public:
     void update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) override;
 
     String stateDescription() override {
-        return "<Interrupt>";
+        return "[Interrupt]";
     }
 
     void registerCheckpoint(int checkpoint);
