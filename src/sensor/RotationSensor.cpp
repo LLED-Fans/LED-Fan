@@ -45,7 +45,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     unsigned int checkpointCount = visitor->checkpointCount;
 
     checkpointIndices->push(checkpoint);
-    checkpointTimestamps->push(time);
+    checkpointTimestamps->push((int) time);
 
     int n = (int) historySize - checkpointIndices->countOccurrences(-1);
 
