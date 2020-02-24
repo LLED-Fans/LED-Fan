@@ -23,7 +23,7 @@ void runLLTimerTask(void *pvParameters)
         unsigned long microseconds = micros();
         timer->fun(microseconds);
 
-        timer->frameTimes.append((int) (microseconds - lastTimeMicros));
+        timer->frameTimes.push((int) (microseconds - lastTimeMicros));
         lastTimeMicros = microseconds;
     }
 #pragma clang diagnostic pop

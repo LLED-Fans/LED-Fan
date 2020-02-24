@@ -17,11 +17,11 @@ public:
 
     void clear();
 
-    void append(char c);
+    void push(char c);
 
-    void append(char *data);
-    void append(String data);
-    void append(char *d, unsigned int length);
+    void push(char *data);
+    void push(String data);
+    void push(char *d, unsigned int length);
 
     String toString();
 

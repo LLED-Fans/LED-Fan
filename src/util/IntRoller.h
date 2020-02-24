@@ -18,7 +18,7 @@ public:
 
     int& operator[](unsigned int index);
 
-    void append(int value);
+    void push(int value);
 
     void fill(int value);
 

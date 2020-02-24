@@ -16,7 +16,7 @@ int& IntRoller::operator[](unsigned int index) {
     return data[(((head + index) % count + count) % count)];
 }
 
-void IntRoller::append(int value) {
+void IntRoller::push(int value) {
     data[head] = value;
     head = (head + 1) % count;
 }

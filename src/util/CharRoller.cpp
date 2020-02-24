@@ -11,20 +11,20 @@ CharRoller::CharRoller(const int c) : count(c), head(0) {
     clear();
 }
 
-void CharRoller::append(char c) {
+void CharRoller::push(char c) {
     data[head] = c;
     head = (head + 1) % count;
 }
 
-void CharRoller::append(char *d) {
-    append(d, String(d).length());
+void CharRoller::push(char *d) {
+    push(data, String(data).length());
 }
 
-void CharRoller::append(String data) {
-    append(data.begin(), data.length());
+void CharRoller::push(String data) {
+    push(data.begin(), data.length());
 }
 
-void CharRoller::append(char *d, unsigned int length) {
+void CharRoller::push(char *d, unsigned int length) {
     if (length > count) {
         memcpy(data, d + (length - count), count);
         head = 0;

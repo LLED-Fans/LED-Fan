@@ -45,7 +45,7 @@ IntRoller * ConcentricCoordinates::resolution(int ringCount, int a = 4, int b = 
     auto *resolution = new IntRoller(ringCount);
 
     for (int ring = 0; ring < ringCount; ring++) {
-        resolution->append(a * ring + b);
+        resolution->push(a * ring + b);
     }
 
     return resolution;

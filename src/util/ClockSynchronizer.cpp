@@ -19,7 +19,7 @@ unsigned long ClockSynchronizer::sync() {
     }
 
     unsigned long frameTime = (microseconds - lastSyncTimestamp);
-    frameTimeHistory->append(frameTime);
+    frameTimeHistory->push(frameTime);
 
     if (microsecondsPerFrame > frameTime) {
         delayMicroseconds(microsecondsPerFrame - frameTime);

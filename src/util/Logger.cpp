@@ -9,13 +9,13 @@
 CharRoller *Logger::data = new CharRoller(1024);
 
 void Logger::println(char *value) {
-    data->append(value);
-    data->append('\n');
+    data->push(value);
+    data->push('\n');
 }
 
 void Logger::println(String value) {
-    data->append(std::move(value));
-    data->append('\n');
+    data->push(std::move(value));
+    data->push('\n');
 }
 
 void Logger::clear() {
