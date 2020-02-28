@@ -14,6 +14,8 @@ public:
 
     static String string();
 
+    static void init();
+
     static void clear();
     static void println(char *value);
     static void println(String value);

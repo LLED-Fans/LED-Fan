@@ -20,6 +20,8 @@
 #include <util/extrapolation/StepExtrapolator.h>
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
+#include <util/Logger.h>
+
 #endif
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
@@ -96,6 +98,9 @@ void setup() {
 
     // Updater
     updater = new Updater();
+
+    Logger::init();
+    Logger::println("Starting up...");
 }
 
 void loop() {

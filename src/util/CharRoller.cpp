@@ -7,7 +7,8 @@
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/string.h"
 
 CharRoller::CharRoller(const int c) : count(c), head(0) {
-    data = new char[count];
+    data = new char[count + 1];
+    data[count] = '\0';
     clear();
 }
 
@@ -17,7 +18,7 @@ void CharRoller::push(char c) {
 }
 
 void CharRoller::push(char *d) {
-    push(data, String(data).length());
+    push(String(d));
 }
 
 void CharRoller::push(String data) {
@@ -35,7 +36,7 @@ void CharRoller::push(char *d, unsigned int length) {
     memcpy(data + head, d, fromHead);
     head += fromHead;
 
-    if (length - fromHead > 0) {
+    if ((int) length - fromHead > 0) {
         // Roll Over
         memcpy(data, d + fromHead, length - fromHead);
         head = length - fromHead;
@@ -43,15 +44,14 @@ void CharRoller::push(char *d, unsigned int length) {
 }
 
 String CharRoller::toString() {
-    char *left = new char[count - head + 1];
-    memcpy(left, data + head, count - head);
-    left[count - head] = '\0';
+    char tmp = data[head];
 
-    char *right = new char[head + 1];
-    memcpy(right, data, head);
-    right[head - 1] = '\0';
+    data[head] = '\0';
+    String right(data); // 0 to head
+    data[head] = tmp;
 
-    return String(left) + String(right);
+    // head to end, data[count] is always \0
+    return String(data + head) + String(right);
 }
 
 void CharRoller::clear() {
