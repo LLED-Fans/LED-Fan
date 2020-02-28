@@ -29,7 +29,7 @@ def run_main(args):
 
         index = 0
         for i in reversed(range(1, min(len(full_log), len(log)) + 1)):
-            if log.startswith(full_log[-i]):
+            if log.startswith(full_log[-i:]):
                 index = i
                 break
 
