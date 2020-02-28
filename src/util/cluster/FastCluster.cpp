@@ -32,10 +32,10 @@ double FastCluster::center(std::vector<double> x, double lenience) {
 
 std::vector<double> FastCluster::stepDiffs(std::vector<double> x) {
     unsigned int n = x.size() - 1;
-    auto r = std::vector<double>{n};
+    auto r = std::vector<double>(n);
 
     for (int i = 0; i < n; ++i) {
-        r[n] = x[n + 1] - x[n];
+        r[i] = x[i + 1] - x[i];
     }
 
     return r;
