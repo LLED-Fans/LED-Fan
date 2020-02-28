@@ -32,14 +32,17 @@ void CharRoller::push(char *d, unsigned int length) {
         return;
     }
 
-    int fromHead = _min(length, count - head);
-    memcpy(data + head, d, fromHead);
-    head += fromHead;
+    int firstCopyCount = _min(length, count - head);
+    int leftoverCount = (int) length - firstCopyCount;
 
-    if ((int) length - fromHead > 0) {
+    // Copy what we can from head
+    memcpy(data + head, d, firstCopyCount);
+    head += firstCopyCount;
+
+    if (leftoverCount > 0) {
         // Roll Over
-        memcpy(data, d + fromHead, length - fromHead);
-        head = length - fromHead;
+        memcpy(data, d + firstCopyCount, leftoverCount);
+        head = leftoverCount;
     }
 }
 

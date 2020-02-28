@@ -28,7 +28,7 @@ def run_main(args):
         log = requests.get(f"http://{ip}/log").text
 
         index = 0
-        for i in reversed(range(min(len(full_log), len(log)))):
+        for i in reversed(range(1, min(len(full_log), len(log)) + 1)):
             if log.startswith(full_log[-i]):
                 index = i
                 break
