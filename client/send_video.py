@@ -147,9 +147,7 @@ command_parser.add_argument(
 )
 
 
-if __name__ == "__main__":
-    args = command_parser.parse_args()
-
+def run_main(args):
     if args.capture_screen:
         top, left, width, height = list(map(int, args.capture_screen.split(",")))
 
@@ -172,3 +170,8 @@ if __name__ == "__main__":
         simulated_rotation_seconds=args.simulated_rotation_seconds,
         frames_per_second=args.frames_per_second
     )
+
+
+if __name__ == "__main__":
+    run_main(command_parser.parse_args())
+
