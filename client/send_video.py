@@ -36,6 +36,7 @@ def run(
     endpoint: str,
     image_provider: Callable[[], Image.Image],
     simulated_rotation_seconds: int = 0,
+    rotate_input_seconds: int = 0,
     frames_per_second: int = 30
 ):
     print("Getting Server Info")
@@ -63,15 +64,18 @@ def run(
     seconds_per_frame = 1.0 / frames_per_second
 
     print(f"Sending Art-Net Data to: {ip}:{port}!")
-    sequence_start = datetime.now()
-
-    simulated_rotation = 0
+    start = datetime.now()
+    sequence_start = start
 
     try:
         while True:
             frame_start = datetime.now()
+            uptime = (frame_start - start).total_seconds()
 
             img = image_provider()
+
+            if rotate_input_seconds > 0:
+                img = img.rotate(uptime * 360 / rotate_input_seconds)
 
             if endpoint == "concentric":
                 data = bytes(flatmap(
@@ -94,8 +98,8 @@ def run(
                 sequence_start = frame_start
 
             if simulated_rotation_seconds > 0:
-                requests.post(f"http://{ip}/rotation/set", data={"rotation": simulated_rotation})
-                simulated_rotation = (simulated_rotation + seconds_per_frame / simulated_rotation_seconds) % 1.0
+                simulated_rotation = (uptime / simulated_rotation_seconds) % simulated_rotation_seconds
+                requests.post(f"http://{ip}/rotation/set", data={"rotation": (simulated_rotation)})
 
             # For plotting coords
             # log = requests.get(f"http://{ip}/log")
@@ -142,6 +146,11 @@ command_parser.add_argument(
     type=int, default=0
 )
 command_parser.add_argument(
+    "--rotate_input_seconds",
+    help="To simulate some movement, rotate the source image.",
+    type=int, default=0
+)
+command_parser.add_argument(
     "--frames_per_second",
     type=int, default=30
 )
@@ -178,6 +187,7 @@ def run_main(args):
         endpoint=args.endpoint,
         image_provider=image_provider,
         simulated_rotation_seconds=args.simulated_rotation_seconds,
+        rotate_input_seconds=args.rotate_input_seconds,
         frames_per_second=args.frames_per_second
     )
 
