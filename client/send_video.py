@@ -71,7 +71,6 @@ def run(
         while True:
             frame_start = datetime.now()
 
-            #img = get_white_noise_image(64, 64)
             img = image_provider()
 
             if endpoint == "concentric":
@@ -83,10 +82,6 @@ def run(
                 img = img.resize((64, 64))
                 data = img.tobytes("raw")
 
-            # data = io.BytesIO()
-            # img.save(data, format='JPEG', progression=False)
-            # print(data.tell())
-            # data.seek(0, 0)
             packets = artnet_provider(data)
             for packet in packets:
                 sock.sendto(
@@ -133,8 +128,13 @@ command_parser.add_argument(
     default="test_image.png"
 )
 command_parser.add_argument(
-    "--capture-screen", "-c",
+    "--capture-window", "-w",
     help="Capture Screen Recording. Input: top,left,width,height"
+)
+command_parser.add_argument(
+    "--monitor", "-m",
+    help="Capture Screen Recording on a specific monitor (number).",
+    type=int
 )
 command_parser.add_argument(
     "--simulated_rotation_seconds",
@@ -148,15 +148,25 @@ command_parser.add_argument(
 
 
 def run_main(args):
-    if args.capture_screen:
-        top, left, width, height = list(map(int, args.capture_screen.split(",")))
-
+    if args.capture_window or args.monitor is not None:
         capturer = mss()
-        monitor = {'top': top, 'left': left, 'width': width, 'height': height}
+
+        monitor_index = args.monitor or 0
+        monitor = capturer.monitors[monitor_index]
+
+        if args.capture_window:
+            left, top, width, height = list(map(int, args.capture_window.split(",")))
+            monitor = {
+                'top': monitor["top"] + top,
+                'left': monitor["left"] + left,
+                'width': width,
+                'height': height,
+                "mon": monitor_index
+            }
 
         def capture_image():
             image = capturer.grab(monitor)
-            return Image.frombytes('RGB', (monitor["width"], monitor["height"]), bytes(image.rgb))
+            return Image.frombytes('RGB', image.size, bytes(image.rgb))
 
         image_provider = capture_image
     else:
