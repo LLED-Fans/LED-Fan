@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <util/Logger.h>
+#include <util/cluster/FastCluster.h>
 #include "RotationSensor.h"
 
 #include "Setup.h"
@@ -71,12 +72,10 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         estimatedY.push_back(checkpointIndex);
     }
 
-    double estimatedCheckpointDiff = INT_MAX;
-    for (int j = 1; j < n; ++j) {
-        int xDiff = (*checkpointTimestamps)[j] - (*checkpointTimestamps)[j - 1];
-        if (xDiff < estimatedCheckpointDiff)
-            estimatedCheckpointDiff = xDiff;
-    }
+    double estimatedCheckpointDiff = FastCluster::center(
+        FastCluster::stepDiffs(x),
+        5 * 1000
+    );
 
     // Try to estimate if we missed any checkpoints
     std::vector<double> y(n);
