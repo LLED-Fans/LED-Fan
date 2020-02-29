@@ -16,9 +16,10 @@ class RotationSensor {
 public:
     IntRoller *checkpointTimestamps;
     IntRoller *checkpointIndices;
-    int minCheckpointPasses;
-    unsigned long minCheckpointTime;
-    unsigned long maxCheckpointTime;
+    int minCheckpointPasses = 2;
+    unsigned long minCheckpointTime = 10 * 1000;
+    unsigned long maxCheckpointTime = 2000 * 1000;
+    bool separateCheckpoints = false;
 
     GPIOVisitor *visitor;
 
@@ -26,7 +27,7 @@ public:
     Extrapolator *extrapolator;
     bool isReliable = false;
 
-    RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, unsigned long  maxCheckpointTime, Extrapolator *extrapolator);
+    RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolator *extrapolator);
 
     void update(unsigned long time);
     void registerCheckpoint(unsigned long time, int checkpoint);

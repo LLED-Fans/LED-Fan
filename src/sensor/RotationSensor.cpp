@@ -9,12 +9,9 @@
 
 #include "Setup.h"
 
-RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, int minCheckpointPasses, unsigned long  minCheckpointTime, unsigned long  maxCheckpointTime, Extrapolator *extrapolator) :
+RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolator *extrapolator) :
     checkpointTimestamps(new IntRoller(historySize)),
     checkpointIndices(new IntRoller(historySize)),
-    minCheckpointPasses(minCheckpointPasses),
-    minCheckpointTime(minCheckpointTime),
-    maxCheckpointTime(maxCheckpointTime),
     visitor(visitor),
     extrapolator(extrapolator)  {
 }
@@ -74,7 +71,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 
     double estimatedCheckpointDiff = FastCluster::center(
         FastCluster::stepDiffs(x),
-        5 * 1000
+        10 * 1000
     );
 
     // Try to estimate if we missed any checkpoints
@@ -94,7 +91,16 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
 
         // Accept +- multiples of checkpointCount
-        y[j] = y[j + 1] - round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps;
+        y[j] = y[j + 1] - (round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps);
+    }
+
+    if (separateCheckpoints) {
+        for (int i = n - 1; i >= 0; --i) {
+            if (std::lround(estimatedY[i]) != checkpoint) {
+                x.erase(x.begin() + i);
+                y.erase(y.begin() + i);
+            }
+        }
     }
 
     extrapolator->adjust(x, y);

@@ -4,6 +4,8 @@
 
 #include <util/Logger.h>
 #include <util/Image.h>
+
+#include <cmath>
 #include "Screen.h"
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
@@ -126,8 +128,8 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
         }
         else {
             // 0 to cartesianSize - 1
-            int x = int(relativeX * (cartesianResolution - 1) + 0.5f);
-            int y = int(relativeY * (cartesianResolution - 1) + 0.5f);
+            int x = std::lround(relativeX * (cartesianResolution - 1));
+            int y = std::lround(relativeY * (cartesianResolution - 1));
 
             // For plotting coords
 //        Logger::println(ringIndex);

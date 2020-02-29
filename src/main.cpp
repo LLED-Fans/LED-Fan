@@ -60,24 +60,26 @@ void setup() {
         ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );
 
+    std::vector<int> rotationSensorPins = {ROTATION_SENSOR_PINS};
     rotationSensor = new RotationSensor(
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
-    new SyncGPIOSwitch({MAGNET_PINS}, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0),
+    new SyncGPIOSwitch(rotationSensorPins, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0),
 #elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
-    new XTaskGPIOSwitch({MAGNET_PINS}, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0, ROTATION_SENSOR_MS),
+    new XTaskGPIOSwitch(rotationSensorPins, MICROSECONDS_PER_FRAME / 1000.0 / 1000.0 / 10.0, ROTATION_SENSOR_MS),
 #elif  ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_INTERRUPT
-            new InterruptGPIOSwitch({MAGNET_PINS}),
+            new InterruptGPIOSwitch(rotationSensorPins),
 #endif
-            5,
-            2,
-            ROTATION_MIN_MS_PER_CHECKPOINT * 1000,
-            ROTATION_MAX_MS_PER_CHECKPOINT * 1000,
+        // if separate checkpoints, each n
+        5 * (ROTATION_SENSOR_SEPARATE_CHECKPOINTS ? rotationSensorPins.size() : 1),
 #if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
         new StepExtrapolator()
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
             new LinearRegressionExtrapolator()
 #endif
     );
+    rotationSensor->minCheckpointTime = ROTATION_MIN_MS_PER_CHECKPOINT * 1000;
+    rotationSensor->maxCheckpointTime = ROTATION_MAX_MS_PER_CHECKPOINT * 1000;
+    rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
     server->hallTimer = ((XTaskGPIOSwitch *) rotationSensor->visitor)->timer;

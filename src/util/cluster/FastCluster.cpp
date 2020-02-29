@@ -8,7 +8,7 @@
 double FastCluster::center(std::vector<double> x, double lenience) {
     int n = x.size();
 
-    int counts[n];
+    int counts[n] = {};
 
     // n log n
     int maxIndex = 0;

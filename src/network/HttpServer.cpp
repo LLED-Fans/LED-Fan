@@ -48,7 +48,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(screen->pin);
     if (var == "MAGNET_PIN") {
         String r = "";
-        for (auto pin : {MAGNET_PINS}) {
+        for (auto pin : {ROTATION_SENSOR_PINS}) {
             r += String(pin) + ", ";
         }
         return r;
@@ -74,9 +74,11 @@ String HttpServer::processTemplates(const String &var) {
             return "Fixed: " + String(screen->fixedRotation);
 
         IntRoller *timestamps = rotationSensor->checkpointTimestamps;
+        IntRoller *indices = rotationSensor->checkpointIndices;
         String history = "";
         for (int i = 1; i < timestamps->count; ++i) {
-            history += String(((*timestamps)[i] - (*timestamps)[i - 1]) / 1000) + "ms, ";
+            int diffMS = ((*timestamps)[i] - (*timestamps)[i - 1]) / 1000;
+            history += String(diffMS) + "ms (" + (*indices)[i] + "), ";
         }
 
         if (!rotationSensor->isReliable)
