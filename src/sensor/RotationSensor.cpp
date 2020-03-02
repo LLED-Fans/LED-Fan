@@ -20,22 +20,30 @@ void RotationSensor::update(unsigned long time) {
     int checkpoint = -1;
     visitor->update(time, &checkpoint, &time);
 
+    if (checkpoint < 0)
+        return;
+
     unsigned long checkpointTime = time - checkpointTimestamps->last();
 
-    if (checkpoint >= 0 && checkpointTime >= minCheckpointTime) {
-        if (checkpointTime > maxCheckpointTime) {
-            // We were paused, clear history first
-            // TODO Will also happen when time rolls over, but eh
+    int checkpointCount = visitor->checkpointCount;
+    // 0->1 = 1; 0->0 = count
+    int elapsedCheckpoints = ((checkpoint - checkpointIndices->last()) + checkpointCount - 1) % checkpointCount + 1;
 
-            checkpointTimestamps->fill(0);
-            checkpointIndices->fill(-1);
-            isReliable = false;
-
-            // But do register the new checkpoint
-        }
-
-        registerCheckpoint(time, checkpoint);
+    if (checkpointTime < minCheckpointTime * elapsedCheckpoints) {
+        return;
     }
+    else if (checkpointTime > pauseInterval) {
+        // We were paused, clear history first
+        // TODO Will also happen when time rolls over, but eh
+
+        checkpointTimestamps->fill(0);
+        checkpointIndices->fill(-1);
+        isReliable = false;
+
+        // But do register the new checkpoint
+    }
+
+    registerCheckpoint(time, checkpoint);
 }
 
 void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
@@ -95,8 +103,9 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     }
 
     if (separateCheckpoints) {
+        int interestingCheckpoint = (checkpoint + 1) % checkpointCount;
         for (int i = n - 1; i >= 0; --i) {
-            if (std::lround(estimatedY[i]) != checkpoint) {
+            if (std::lround(estimatedY[i]) != interestingCheckpoint) {
                 x.erase(x.begin() + i);
                 y.erase(y.begin() + i);
             }

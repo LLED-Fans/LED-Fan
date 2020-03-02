@@ -50,10 +50,10 @@
 // If applicable, max framerate of rotation sensor task
 #define ROTATION_SENSOR_MS 1
 
-// Minimum time after a checkpoint before registering a new one
-// Helps with double activations
-#define ROTATION_MIN_MS_PER_CHECKPOINT 10
-// After this time, we're considered to be paused
-#define ROTATION_MAX_MS_PER_CHECKPOINT 2000
+// Minimum milliseconds accepted for rotations.
+// Helps with double activations.
+#define MIN_ROTATION_MS 50
+// After this idle time, we're considered to be paused.
+#define ROTATION_PAUSED_MS 2000
 
 #endif //LED_FAN_SETUP_H

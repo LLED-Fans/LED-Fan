@@ -18,7 +18,7 @@ public:
     IntRoller *checkpointIndices;
     int minCheckpointPasses = 2;
     unsigned long minCheckpointTime = 10 * 1000;
-    unsigned long maxCheckpointTime = 2000 * 1000;
+    unsigned long pauseInterval = 2000 * 1000;
     bool separateCheckpoints = false;
 
     GPIOVisitor *visitor;
