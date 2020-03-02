@@ -77,7 +77,7 @@ void setup() {
             new LinearRegressionExtrapolator()
 #endif
     );
-    rotationSensor->minCheckpointTime = MIN_ROTATION_MS * 1000 / rotationSensorPins.size();
+    rotationSensor->minCheckpointTime = 1000 / (MAX_ROTATIONS_PER_SECOND * rotationSensorPins.size());
     rotationSensor->pauseInterval = ROTATION_PAUSED_MS * 1000;
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
 

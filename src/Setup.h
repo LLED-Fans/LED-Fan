@@ -50,9 +50,9 @@
 // If applicable, max framerate of rotation sensor task
 #define ROTATION_SENSOR_MS 1
 
-// Minimum milliseconds accepted for rotations.
-// Helps with double activations.
-#define MIN_ROTATION_MS 50
+// Maximum rotation speed accepted.
+// Setting this low helps with interpreting sensor activations correctly.
+#define MAX_ROTATIONS_PER_SECOND 20
 // After this idle time, we're considered to be paused.
 #define ROTATION_PAUSED_MS 2000
 
