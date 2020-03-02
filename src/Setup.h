@@ -2,8 +2,11 @@
 // ===================== Constants  =================================
 // ==================================================================
 
+// Do the sensor check on the main thread.
 #define ROTATION_SENSOR_TYPE_HALL_SYNC 1
+// Do the sensor check as an async xtask.
 #define ROTATION_SENSOR_TYPE_HALL_XTASK 2
+// Let the sensors interrupt the CPU on activation.
 #define ROTATION_SENSOR_TYPE_INTERRUPT 3
 
 // Good if measurements are accurate, but speed may vary
