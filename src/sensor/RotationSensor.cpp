@@ -32,7 +32,8 @@ void RotationSensor::update(unsigned long time) {
     if (checkpointTime < minCheckpointTime * elapsedCheckpoints) {
         return;
     }
-    else if (checkpointTime > pauseInterval) {
+
+    if (checkpointTime > pauseInterval) {
         // We were paused, clear history first
         // TODO Will also happen when time rolls over, but eh
 
