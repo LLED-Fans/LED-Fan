@@ -104,12 +104,31 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     }
 
     if (separateCheckpoints) {
-        int interestingCheckpoint = (checkpoint + 1) % checkpointCount;
-        for (int i = n - 1; i >= 0; --i) {
-            if (std::lround(estimatedY[i]) != interestingCheckpoint) {
+        // Expand any available checkpoint -> (checkpoint + 1) to full rotation
+        // -- Practically 'deleting' any other segments from time history
+        // -- Regress, and then 'unexpand' the segment into its intended size
+        int segmentStart = checkpoint;
+
+        // Always keep last x and y, since it's our current reference
+        for (int i = n - 2; i >= 0; --i) {
+            if (i == 0 || std::lround(estimatedY[i - 1]) != segmentStart || (std::lround(y[i] - y[i - 1]) != 1)) {
+                // Uninteresting; remove!
                 x.erase(x.begin() + i);
                 y.erase(y.begin() + i);
+                continue;
             }
+
+            // Found a separatable segment, determine its length
+            // i + 1 is our last reference, sync the current segment up to it, deleting any time in between
+            x[i] = x[i + 1] - (x[i] - x[i - 1]);
+            // Since we're only considering in-segment differences, set y to reflect 1 segment slopes
+            y[i] = y[i + 1] - 1;
+        }
+
+        // Best case we now have n / checkpointCount references
+        if (x.size() < minCheckpointPasses) {
+            isReliable = false;
+            return;
         }
     }
 
