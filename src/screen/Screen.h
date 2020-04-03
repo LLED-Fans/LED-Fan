@@ -54,6 +54,10 @@ public:
     int ping();
 
     void determineMode(unsigned long milliseconds);
+
+    void setCorrection(float ratio);
+private:
+    fract8 *correction;
 };
 
 

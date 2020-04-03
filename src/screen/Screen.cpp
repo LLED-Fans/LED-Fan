@@ -32,6 +32,8 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianR
 
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
+
+    correction = new fract8[ledCount]{1};
 }
 
 
@@ -103,9 +105,9 @@ void Screen::drawRGB(float red, float green, float blue) {
 }
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
-    for (int i = 0; i < ledCount; i++) {
-        int ringIndex =  (int) abs((float) (i - (ledCount / 2)) * 2 + 0.5f);
-        int ledPolarity = i < (ledCount / 2) ? -1 : 1;
+    for (int ledIndex = 0; ledIndex < ledCount; ledIndex++) {
+        int ringIndex =  (int) abs((float) (ledIndex - (ledCount / 2)) * 2 + 0.5f);
+        int ledPolarity = ledIndex < (ledCount / 2) ? -1 : 1;
 
         // 0 to 1
         float relativeX, relativeY;
@@ -118,10 +120,10 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
 
         if (cartesianSampling == bilinear) {
             Image::bilinearSample(
-                [this](int x, int y){
+                    [this](int x, int y){
                     return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianResolution]);
                 },
-                reinterpret_cast<uint8_t*>(&leds[i]), 3,
+                    reinterpret_cast<uint8_t*>(&leds[ledIndex]), 3,
                 relativeX * cartesianResolution,
                 relativeY * cartesianResolution
             );
@@ -136,8 +138,10 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
 //        Logger::println(x);
 //        Logger::println(y);
 
-            leds[i] = cartesianScreen[x + y * cartesianResolution];
+            leds[ledIndex] = cartesianScreen[x + y * cartesianResolution];
         }
+
+        leds[ledIndex].nscale8_video(this->correction[ledIndex]);
     }
     FastLED.show();
 }
@@ -145,14 +149,15 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
     int centerLED = ledCount / 2;
 
-    for (int i = 0; i < ledCount; ++i) {
-        int distanceFromCenter = abs(i - centerLED);
-        auto ledRotation = std::fmod(rotation + (i > centerLED ? 0.5f : 0.0f), 1.0f);
+    for (int ledIndex = 0; ledIndex < ledCount; ++ledIndex) {
+        int distanceFromCenter = abs(ledIndex - centerLED);
+        auto ledRotation = std::fmod(rotation + (ledIndex > centerLED ? 0.5f : 0.0f), 1.0f);
 
-        fill_rainbow(&leds[i], 1,
+        fill_rainbow(&leds[ledIndex], 1,
         distanceFromCenter * 10 + milliseconds * 255 / 1000 / 10 + (int)(ledRotation * 255),
-        0
+                     0
         );
+        leds[ledIndex].nscale8_video(this->correction[ledIndex]);
     }
     FastLED.show();
 }
@@ -161,8 +166,10 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
     int centerLEDIndex = ledCount / 2;
     int ringArrayIndex = 0;
     for (int ring = 0; ring < concentricResolution->count; ++ring) {
-        int ringResolution = (*concentricResolution)[ring];
         int polarity = (ring % 2) == 0 ? 1 : -1;
+        int ledIndex = centerLEDIndex + ((ring + 1) / 2) * polarity;
+
+        int ringResolution = (*concentricResolution)[ring];
 
         float ledRotation = rotation;
         if (polarity < 0)
@@ -178,11 +185,8 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
         auto leftPixel = concentricScreen[leftIndex + ringArrayIndex];
         auto rightPixel = concentricScreen[rightIndex + ringArrayIndex];
 
-        leds[centerLEDIndex + ((ring + 1) / 2) * polarity] = CRGB(
-                leftPixel.r * leftPart + rightPixel.r * rightPart,
-                leftPixel.g * leftPart + rightPixel.g * rightPart,
-                leftPixel.b * leftPart + rightPixel.b * rightPart
-        );
+        leds[ledIndex] = leftPixel * fract8(leftPart) + rightPixel * fract8(rightPart);
+        leds[ledIndex].nscale8_video(this->correction[ledIndex]);
 
         ringArrayIndex += ringResolution;
     }
@@ -197,4 +201,17 @@ int Screen::noteInput(Mode mode) {
 int Screen::ping() {
     millisecondsPingLeft = 2000;
     return 2000;
+}
+
+void Screen::setCorrection(float correction) {
+    float baselineIBrightness = float(this->ledCount - 1 + 0.25) * correction;
+
+    int centerLEDIndex = ledCount / 2;
+    for (int ring = 0; ring < concentricResolution->count; ++ring) {
+        int polarity = (ring % 2) == 0 ? 1 : -1;
+        int ledIndex = centerLEDIndex + ((ring + 1) / 2) * polarity;
+
+        float iBrightness = float(ring) + 0.25f;
+        this->correction[ledIndex] = fract8(_min(iBrightness / baselineIBrightness, 1) * 255);
+    }
 }

@@ -59,6 +59,7 @@ void setup() {
         VIRTUAL_SCREEN_SIZE,
         ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );
+    screen->setCorrection(LED_BRIGHTNESS_CORRECTION);
 
     std::vector<int> rotationSensorPins = {ROTATION_SENSOR_PINS};
     rotationSensor = new RotationSensor(
