@@ -41,8 +41,6 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
     auto delay = milliseconds - lastUpdateTimestamp;
     lastUpdateTimestamp = milliseconds;
 
-    determineMode(milliseconds);
-
     if (millisecondsPingLeft > 0) {
         drawRGB((((millisecondsPingLeft - 1) / 500) % 2) == 0 ? 0 : 1);
         millisecondsPingLeft = millisecondsPingLeft > delay
@@ -195,7 +193,9 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
 }
 
 int Screen::noteInput(Mode mode) {
-    return inputTimestamps[mode] = lastUpdateTimestamp;
+    inputTimestamps[mode] = lastUpdateTimestamp;
+    determineMode(lastUpdateTimestamp);
+    return lastUpdateTimestamp;
 }
 
 int Screen::ping() {
