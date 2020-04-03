@@ -150,8 +150,10 @@ float RotationSensor::estimatedRotation(unsigned long time) {
 
     float rotation = position / (float) visitor->checkpointCount;
 
-    if (rotation > 3.5)
-        return NAN; // Missed checkpoints for > 3 rotations...
+    if (rotation > 3.5 || rotation < -3.5)
+        // Missed checkpoints for > 3 rotations...
+        // Or went back too far
+        return NAN;
 
     return std::fmod(rotation, 1.0f);
 }
