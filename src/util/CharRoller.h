@@ -23,6 +23,9 @@ public:
     void push(String data);
     void push(char *d, unsigned int length);
 
+    size_t write(const uint8_t *data, size_t len);
+    size_t write(uint8_t data);
+
     String toString();
 
     RollerIterator<char> begin() {return {data, head, count};}

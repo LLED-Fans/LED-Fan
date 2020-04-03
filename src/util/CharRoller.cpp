@@ -46,6 +46,16 @@ void CharRoller::push(char *d, unsigned int length) {
     }
 }
 
+size_t CharRoller::write(const uint8_t *d, size_t len) {
+    this->push((char *) d, static_cast<unsigned int>(len));
+    return this->count;
+}
+
+size_t CharRoller::write(uint8_t d) {
+    this->push(d);
+    return this->count;
+}
+
 String CharRoller::toString() {
     char tmp = data[head];
 
