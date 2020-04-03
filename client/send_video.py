@@ -41,8 +41,8 @@ def run(
 ):
     print("Getting Server Info")
 
-    server_info = requests.get(f"http://{ip}/i/cc").json()
-    #print(server_info)
+    server_info = requests.get(f"http://{ip}/i").json()
+    print(server_info)
 
     artnet_info = server_info[endpoint]
     port = int(artnet_info["port"])
@@ -121,7 +121,7 @@ def run(
 command_parser = argparse.ArgumentParser()
 
 command_parser.add_argument(
-    "ip", default="192.168.1.4",
+    "ip", default="192.168.4.1",
 )
 command_parser.add_argument(
     "--endpoint", "-e",
