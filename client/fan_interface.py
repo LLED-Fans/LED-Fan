@@ -33,11 +33,13 @@ def run(
     server_info = requests.get(f"http://{ip}/i").json()
     # print(server_info)
 
-    artnet_info = server_info[endpoint]
-    port = int(artnet_info["port"])
+    endpoint_info = server_info[endpoint]
+    port = int(endpoint_info["port"])
 
     if endpoint == "concentric":
-        pixels = list(grouper(2, artnet_info["pixels"]))
+        pixels = list(grouper(2, endpoint_info["pixels"]))
+    elif endpoint == "cartesian":
+        resolution = (endpoint_info["width"], endpoint_info["height"])
 
     sock = socket.socket(
         socket.AF_INET,  # Internet
@@ -72,7 +74,7 @@ def run(
                     pixels
                 ))
             else:
-                img = img.resize((64, 64))
+                img = img.resize(resolution)
                 data = img.tobytes("raw")
 
             packets = artnet_provider(data)
