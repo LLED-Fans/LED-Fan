@@ -50,7 +50,7 @@ if __name__ == "__main__":
     print(f"Total LEDs: {total_leds}")
     print(f"Total Power Needed: {total_ampere * led_voltage : .5}W = {total_ampere : .5}A x {led_voltage}v")
     print(f"Pixel Lightness: {pixel_density}")
-    print(f"Concentric Pixels: {int(4 * total_leds + (total_leds / 2 * 4 * (total_leds - 1)))}")
+    print(f"Concentric Pixels: {int(2 * total_leds + (total_leds / 2 * 1 * (total_leds - 1)))}")
     print(f"Cartesian Pixels: {total_leds * total_leds}")
 
     print()
