@@ -1,18 +1,15 @@
-import io
 import random
-import time
-from typing import Callable
+from dataclasses import dataclass, field
+from typing import List
 
-import requests
-import socket
 from PIL import Image
 from mss import mss
 
-from artnet import ArtnetProvider
-from util import grouper, flatmap, bilinear
-from datetime import datetime
-
 import argparse
+
+import fan_interface
+
+from threading import Thread, Lock, Condition
 
 
 def get_white_noise_image(width, height):
@@ -24,98 +21,6 @@ def get_white_noise_image(width, height):
     ), [0] * width * height)
     pil_map.putdata(random_grid)
     return pil_map
-
-
-def pixel_at(image: Image, x: float, y: float):
-    r = bilinear(image, x * (image.width - 1), y * (image.height - 1))
-    return r
-
-
-def run(
-    ip: str,
-    endpoint: str,
-    image_provider: Callable[[], Image.Image],
-    simulated_rotation_seconds: int = 0,
-    rotate_input_seconds: int = 0,
-    frames_per_second: int = 30
-):
-    print("Getting Server Info")
-
-    server_info = requests.get(f"http://{ip}/i").json()
-    print(server_info)
-
-    artnet_info = server_info[endpoint]
-    port = int(artnet_info["port"])
-
-    if endpoint == "concentric":
-        pixels = list(grouper(2, artnet_info["pixels"]))
-
-    sock = socket.socket(
-        socket.AF_INET,    # Internet
-        socket.SOCK_DGRAM  # UDP
-    )
-
-    artnet_provider = ArtnetProvider(
-        universe=0,
-        subnet=0,
-        net=0
-    )
-
-    seconds_per_frame = 1.0 / frames_per_second
-
-    print(f"Sending Art-Net Data to: {ip}:{port}!")
-    start = datetime.now()
-    sequence_start = start
-
-    try:
-        while True:
-            frame_start = datetime.now()
-            uptime = (frame_start - start).total_seconds()
-
-            img = image_provider()
-
-            if rotate_input_seconds > 0:
-                img = img.rotate(uptime * 360 / rotate_input_seconds)
-
-            if endpoint == "concentric":
-                data = bytes(flatmap(
-                    lambda t: pixel_at(img, *t),
-                    pixels
-                ))
-            else:
-                img = img.resize((64, 64))
-                data = img.tobytes("raw")
-
-            packets = artnet_provider(data)
-            for packet in packets:
-                sock.sendto(
-                    bytes(packet),
-                    (ip, port)
-                )
-
-            if artnet_provider.sequence == 0:
-                print(f"Sequence Pushed! RGB Pixels: {len(data) / 3}, Packets p.f.: {len(packets)}, FPS: {255.0 / (frame_start - sequence_start).total_seconds()}")
-                sequence_start = frame_start
-
-            if simulated_rotation_seconds > 0:
-                simulated_rotation = (uptime / simulated_rotation_seconds) % simulated_rotation_seconds
-                requests.post(f"http://{ip}/rotation/set", data={"rotation": (simulated_rotation)})
-
-            # For plotting coords
-            # log = requests.get(f"http://{ip}/log")
-            # img2 = img.copy()
-            # for idx, x, y in grouper(3, log.text.split("\n")):
-            #     if x and y:
-            #         print(idx, x, y)
-            #         img2.putpixel((int(x), int(y)), (int(idx) * 14, 0, 255))
-            # img2.save("rs.png")
-
-            time_this_frame = datetime.now() - frame_start
-            if time_this_frame.total_seconds() < seconds_per_frame:
-                time.sleep(seconds_per_frame - time_this_frame.total_seconds())
-    finally:
-        if simulated_rotation_seconds > 0:
-            requests.post(f"http://{ip}/rotation/set", data={"rotation": "-1"})
 
 
 command_parser = argparse.ArgumentParser()
@@ -155,6 +60,38 @@ command_parser.add_argument(
     type=int, default=30
 )
 
+@dataclass
+class BufferedResource:
+    max_buffer_size: int
+    buffer: List = field(default_factory=list)
+
+    condition = Condition()
+
+    def push(self, resource):
+        with self.condition:
+            while len(self.buffer) >= self.max_buffer_size:
+                self.condition.wait()
+
+            self.buffer.append(resource)
+            self.condition.notify()
+
+    def pop(self):
+        with self.condition:
+            while len(self.buffer) == 0:
+                self.condition.wait()
+
+            resource = self.buffer.pop(0)
+            self.condition.notify()
+
+        return resource
+
+
+def run_capture_thread(image_provider, resource: BufferedResource):
+    print("Beginning capture...")
+
+    while True:
+        resource.push(image_provider())
+
 
 def run_main(args):
     if args.capture_window or args.monitor is not None:
@@ -172,6 +109,17 @@ def run_main(args):
                 'height': height,
                 "mon": monitor_index
             }
+        else:
+            # Capture square window since we have a square view
+            width, height = monitor['width'], monitor['height']
+            size = min(width, height)
+            monitor = {
+                'top': monitor['top'] + (height - size) / 2,
+                'left': monitor['left'] + (width - size) / 2,
+                'width': size,
+                'height': size,
+                "mon": monitor_index
+            }
 
         def capture_image():
             image = capturer.grab(monitor)
@@ -182,10 +130,14 @@ def run_main(args):
         image = Image.open(args.image).convert("RGB")
         image_provider = lambda: image
 
-    run(
+    resource = BufferedResource(max_buffer_size=2)
+    capture_thread = Thread(target=run_capture_thread, args=[image_provider, resource])
+    capture_thread.start()
+
+    fan_interface.run(
         ip=args.ip,
         endpoint=args.endpoint,
-        image_provider=image_provider,
+        image_provider=resource.pop,
         simulated_rotation_seconds=args.simulated_rotation_seconds,
         rotate_input_seconds=args.rotate_input_seconds,
         frames_per_second=args.frames_per_second
@@ -194,4 +146,3 @@ def run_main(args):
 
 if __name__ == "__main__":
     run_main(command_parser.parse_args())
-
