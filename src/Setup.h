@@ -38,9 +38,6 @@
 // 0 to 1, at 0.5 half of the pixels will be brightness-adjusted for the rest.
 #define LED_BRIGHTNESS_CORRECTION 0.15
 
-// Size of the square artnet-accessible screen
-#define VIRTUAL_SCREEN_SIZE 64
-
 // RingResolution = add * x + min
 #define CONCENTRIC_RESOLUTION_MIN 4
 #define CONCENTRIC_RESOLUTION_ADD 4
