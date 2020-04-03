@@ -143,14 +143,17 @@ float RotationSensor::estimatedRotation(unsigned long time) {
     if (!isReliable)
         return NAN;
 
-    float rawRotation = extrapolator->extrapolate(time);
+    float position = extrapolator->extrapolate(time);
 
-    if (std::isnan(rawRotation) || rawRotation > 3.5) {
-        // Missed 3 checkpoints, this is not secure at all
+    if (std::isnan(position))
         return NAN;
-    }
 
-    return std::fmod(rawRotation / (float) visitor->checkpointCount, 1.0f);
+    float rotation = position / (float) visitor->checkpointCount;
+
+    if (rotation > 3.5)
+        return NAN; // Missed checkpoints for > 3 rotations...
+
+    return std::fmod(rotation, 1.0f);
 }
 
 int RotationSensor::rotationsPerSecond() {
