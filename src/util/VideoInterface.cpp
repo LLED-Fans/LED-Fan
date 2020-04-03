@@ -43,7 +43,7 @@ bool VideoInterface::acceptJpeg(File file) {
                 auto pixelX = mcu_x + x;
                 auto pixelY = mcu_y + y;
 
-                screen->cartesianScreen[pixelX * screen->cartesianResolution + pixelY] =
+                screen->buffer[pixelX * screen->cartesianResolution + pixelY] =
                         CRGB(pixel, pixel + 1, pixel + 2);
             }
         }

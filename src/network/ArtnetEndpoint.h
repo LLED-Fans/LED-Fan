@@ -11,8 +11,6 @@
 
 struct ArtnetEndpoint {
     int port;
-    uint8_t *array;
-    int arraySize;
     Screen::Mode mode;
 };
 

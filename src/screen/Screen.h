@@ -28,12 +28,14 @@ public:
 
     Mode mode = demo;
 
+    // Multi-purpose buffer for any input mode
+    CRGB *buffer;
+    int bufferSize;
+
     int cartesianResolution;
-    CRGB *cartesianScreen;
     CartesianSampling cartesianSampling = bilinear;
 
     IntRoller *concentricResolution;
-    CRGB *concentricScreen;
 
     float fixedRotation = -1;
     unsigned long millisecondsPingLeft = 0;

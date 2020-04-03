@@ -12,13 +12,9 @@ ArtnetServer::ArtnetServer(Screen *screen)
     endpoints = new ArtnetEndpoint[2];
 
     endpoints[0].port = 1200;
-    endpoints[0].array = reinterpret_cast<uint8_t *>(screen->concentricScreen);
-    endpoints[0].arraySize = screen->concentricResolution->sum() * 3;
     endpoints[0].mode = Screen::Mode::concentric;
 
     endpoints[1].port = 1201;
-    endpoints[1].array = reinterpret_cast<uint8_t *>(screen->cartesianScreen);
-    endpoints[1].arraySize = screen->cartesianResolution * screen->cartesianResolution * 3;
     endpoints[1].mode = Screen::Mode::screen;
 
     artnets = new AsyncArtnet*[endpointCount];
@@ -39,11 +35,11 @@ void ArtnetServer::acceptDMX(int endpointIndex, uint16_t universe, uint16_t leng
     ArtnetEndpoint &endpoint = endpoints[endpointIndex];
 
     unsigned int offset = (unsigned int) universe << (uint8_t) 9;
-    int arrayCount = endpoint.arraySize - (int) offset;
+    int arrayCount = screen->bufferSize - (int) offset;
     if (arrayCount <= 0) {
         return; // Out of scope
     }
-    uint8_t *array = endpoint.array + offset;
+    uint8_t *array = reinterpret_cast<uint8_t *>(screen->buffer) + offset;
 
     memcpy(array, data, _min(arrayCount, length));
     screen->noteInput(endpoint.mode);

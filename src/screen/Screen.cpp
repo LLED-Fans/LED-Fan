@@ -24,11 +24,11 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianR
     this->ringRadii = new float[ledCount];
     ConcentricCoordinates::ringRadii(this->ringRadii, ledCount);
 
-    cartesianScreen = new CRGB[cartesianResolution * cartesianResolution];
-    memset(cartesianScreen, 0x00, cartesianResolution * cartesianResolution * 3);
-
-    concentricScreen = new CRGB[concentricResolution->sum()];
-    memset(concentricScreen, 0x00, concentricResolution->sum() * 3);
+    int cartesianBufferSize = cartesianResolution * cartesianResolution;
+    int concentricBufferSize = concentricResolution->sum();
+    bufferSize = _max(cartesianBufferSize, concentricBufferSize);
+    buffer = new CRGB[bufferSize];
+    memset(buffer, 0x00, bufferSize * 3);
 
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
@@ -121,7 +121,7 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
         if (cartesianSampling == bilinear) {
             Image::bilinearSample(
                     [this](int x, int y){
-                    return reinterpret_cast<uint8_t*>(&cartesianScreen[x + y * cartesianResolution]);
+                    return reinterpret_cast<uint8_t*>(&buffer[x + y * cartesianResolution]);
                 },
                     reinterpret_cast<uint8_t*>(&leds[ledIndex]), 3,
                 relativeX * cartesianResolution,
@@ -138,7 +138,7 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
 //        Logger::println(x);
 //        Logger::println(y);
 
-            leds[ledIndex] = cartesianScreen[x + y * cartesianResolution];
+            leds[ledIndex] = buffer[x + y * cartesianResolution];
         }
 
         leds[ledIndex].nscale8_video(this->correction[ledIndex]);
@@ -182,8 +182,8 @@ void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
         float rightPart = std::fmod(relativeIndex, 1.0f);
         float leftPart = 1.0f - rightPart;
 
-        auto leftPixel = concentricScreen[leftIndex + ringArrayIndex];
-        auto rightPixel = concentricScreen[rightIndex + ringArrayIndex];
+        auto leftPixel = buffer[leftIndex + ringArrayIndex];
+        auto rightPixel = buffer[rightIndex + ringArrayIndex];
 
         leds[ledIndex] = leftPixel * fract8(leftPart) + rightPixel * fract8(rightPart);
         leds[ledIndex].nscale8_video(this->correction[ledIndex]);
