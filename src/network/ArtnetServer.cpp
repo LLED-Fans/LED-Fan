@@ -38,12 +38,15 @@ void ArtnetServer::acceptDMX(int endpointIndex, uint16_t universe, uint16_t leng
     if (screen->mode != endpoint.mode)
         return; // We're in another mode; don't jumble the buffer
 
+    uint8_t *buffer = reinterpret_cast<uint8_t *>(screen->buffer);
+    int bufferSize = screen->bufferSize * 3;
+
     unsigned int offset = (unsigned int) universe << (uint8_t) 9;
-    int arrayCount = screen->bufferSize - (int) offset;
+    int arrayCount = bufferSize - (int) offset;
     if (arrayCount <= 0) {
         return; // Out of scope
     }
-    uint8_t *array = reinterpret_cast<uint8_t *>(screen->buffer) + offset;
+    uint8_t *array = buffer + offset;
 
     memcpy(array, data, _min(arrayCount, length));
 }
