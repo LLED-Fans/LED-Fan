@@ -52,12 +52,6 @@ bool AsyncArtnet::accept(AsyncUDPPacket packet) {
         return ART_DMX;
     }
     if (opcode == ART_POLL) {
-        //fill the reply struct, and then send it to the network's broadcast address
-        Serial.print("POLL from ");
-        Serial.print(remoteIP);
-        Serial.print(" broadcast addr: ");
-        Serial.println(broadcast);
-
 #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
         IPAddress local_ip = Ethernet.localIP();
 #else
