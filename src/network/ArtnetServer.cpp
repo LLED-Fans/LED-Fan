@@ -11,11 +11,11 @@ ArtnetServer::ArtnetServer(Screen *screen)
     endpointCount = 2;
     endpoints = new ArtnetEndpoint[2];
 
-    endpoints[0].net = 0;
-    endpoints[0].mode = Screen::Mode::concentric;
-
-    endpoints[1].net = 1;
+    endpoints[1].net = 0;
     endpoints[1].mode = Screen::Mode::screen;
+
+    endpoints[0].net = 1;
+    endpoints[0].mode = Screen::Mode::concentric;
 
     artnet = new AsyncArtnet();
     artnet->artDmxCallback = std::bind(
