@@ -77,6 +77,7 @@ def run(
                 ))
             else:
                 img = img.resize(resolution)
+                # img.save("backup.png")
                 data = img.tobytes("raw")
 
             packets = artnet_provider(data)
