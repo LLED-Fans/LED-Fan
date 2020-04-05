@@ -24,6 +24,8 @@ public:
     CRGB *leds;
     float *ringRadii; // -1 to 1
 
+    int overflowWall;
+
     unsigned long lastUpdateTimestamp;
 
     Mode mode = demo;
@@ -41,7 +43,7 @@ public:
     unsigned long millisecondsPingLeft = 0;
     unsigned long inputTimestamps[Mode::count];
 
-    Screen(CLEDController *controller, int pin, int ledCount, int cartesianResolution, IntRoller *concentricResolution);
+    Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
     void draw(unsigned long milliseconds, float rotation);
 

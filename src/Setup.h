@@ -34,6 +34,8 @@
 #define COLOR_ORDER GRB
 #define LED_PIN 26
 #define LED_COUNT 42
+// How many additional LEDs we should set to black, just to be safe
+#define LED_OVERFLOW_WALL 5
 
 // 0 to 1, at 0.5 half of the pixels will be brightness-adjusted for the rest.
 #define LED_BRIGHTNESS_CORRECTION 0.15

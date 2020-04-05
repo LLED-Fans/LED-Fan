@@ -56,6 +56,7 @@ void setup() {
         new LED_TYPE<LED_PIN, COLOR_ORDER>(),
         LED_PIN,
         LED_COUNT,
+        LED_OVERFLOW_WALL,
         LED_COUNT,
         ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );

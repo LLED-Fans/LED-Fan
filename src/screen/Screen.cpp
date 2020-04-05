@@ -12,10 +12,11 @@
 
 // FIXME This should definitely be per-instance
 
-Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianResolution, IntRoller *concentricResolution)
-: controller(controller), pin(pin), ledCount(ledCount), cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
-    this->leds = new CRGB[ledCount];
-    FastLED.addLeds(controller, leds, ledCount)
+Screen::Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution)
+: controller(controller), pin(pin), ledCount(ledCount), overflowWall(overflowWall),
+cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
+    this->leds = new CRGB[ledCount + overflowWall]{CRGB::Black};
+    FastLED.addLeds(controller, leds, ledCount + overflowWall)
             .setCorrection(TypicalLEDStrip);
 
     // Disable max refresh rates; we set this in Setup.h.
@@ -27,8 +28,7 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianR
     int cartesianBufferSize = cartesianResolution * cartesianResolution;
     int concentricBufferSize = concentricResolution->sum();
     bufferSize = _max(cartesianBufferSize, concentricBufferSize);
-    buffer = new CRGB[bufferSize];
-    memset(buffer, 0x00, bufferSize * 3);
+    buffer = new CRGB[bufferSize]{CRGB::Black};
 
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
@@ -40,6 +40,10 @@ Screen::Screen(CLEDController *controller, int pin, int ledCount, int cartesianR
 void Screen::draw(unsigned long milliseconds, float rotation) {
     auto delay = milliseconds - lastUpdateTimestamp;
     lastUpdateTimestamp = milliseconds;
+
+    for (int i = 0; i < overflowWall; ++i) {
+        this->leds[ledCount + i] = CRGB::Black;
+    }
 
     if (millisecondsPingLeft > 0) {
         drawRGB((((millisecondsPingLeft - 1) / 500) % 2) == 0 ? 0 : 1);
