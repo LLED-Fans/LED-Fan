@@ -58,7 +58,7 @@ String HttpServer::processTemplates(const String &var) {
         return screen->mode == Screen::demo ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_SCREEN") {
-        return screen->mode == Screen::screen ? "mdl-button--accent" : "";
+        return screen->mode == Screen::cartesian ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_CONCENTRIC") {
         return screen->mode == Screen::concentric ? "mdl-button--accent" : "";
@@ -151,7 +151,7 @@ void HttpServer::setupRoutes() {
         if (mode == "demo") {
             screen->mode = Screen::demo;
         } else if (mode == "screen") {
-            screen->mode = Screen::screen;
+            screen->mode = Screen::cartesian;
         } else if (mode == "concentric") {
             screen->mode = Screen::concentric;
         }

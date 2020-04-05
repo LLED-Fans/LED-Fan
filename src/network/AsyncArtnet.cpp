@@ -82,8 +82,8 @@ bool AsyncArtnet::accept(AsyncUDPPacket packet) {
 
         uint8_t shortname[18];
         uint8_t longname[64];
-        sprintf((char *) shortname, "concentricArtnet arduino");
-        sprintf((char *) longname, "Art-Net -> Arduino Bridge");
+        sprintf((char *) shortname, "Small LLED Fan");
+        sprintf((char *) longname, "Small LLED Fan - Cartesian");
         memcpy(ArtPollReply.shortname, shortname, sizeof(shortname));
         memcpy(ArtPollReply.longname, longname, sizeof(longname));
 
@@ -111,8 +111,8 @@ bool AsyncArtnet::accept(AsyncUDPPacket packet) {
         ArtPollReply.bindip[2] = node_ip_address[2];
         ArtPollReply.bindip[3] = node_ip_address[3];
 
-        uint8_t swin[4] = {0x01, 0x02, 0x03, 0x04};
-        uint8_t swout[4] = {0x01, 0x02, 0x03, 0x04};
+        uint8_t swin[4] = {0x00, 0x01, 0x02, 0x03};
+        uint8_t swout[4] = {0x00, 0x01, 0x02, 0x03};
         for (uint8_t i = 0; i < 4; i++) {
             ArtPollReply.swout[i] = swout[i];
             ArtPollReply.swin[i] = swin[i];

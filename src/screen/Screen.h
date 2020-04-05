@@ -11,7 +11,7 @@
 class Screen {
 public:
     enum Mode {
-        demo, screen, concentric, count
+        demo, cartesian, concentric, count
     };
 
     enum CartesianSampling {
