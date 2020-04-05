@@ -16,12 +16,12 @@ public:
 
     int endpointCount;
     ArtnetEndpoint *endpoints;
-    AsyncArtnet **artnets;
+    AsyncArtnet *artnet;
 
     ArtnetServer(Screen *screen);
 
-    void acceptDMX(int endpointIndex, uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
-    void acceptSync(int endpoint, IPAddress remoteIP);
+    void acceptDMX(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+    void acceptSync(IPAddress remoteIP);
 };
 
 

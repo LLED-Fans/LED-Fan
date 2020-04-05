@@ -37,7 +37,7 @@ class ArtnetProvider:
         packet.append(0x00)
         # 14 - universe, (2 x 8 low byte first)
 
-        # as specified in Artnet 4 (remember to set the value manually after):
+        # as specified in Artnet 4
         # Bit 3  - 0 = Universe (1-16)
         # Bit 7  - 4 = Subnet (1-16)
         # Bit 14 - 8 = Net (1-128)

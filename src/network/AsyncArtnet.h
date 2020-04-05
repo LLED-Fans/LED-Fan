@@ -71,7 +71,7 @@ public:
     std::function<void(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)> artDmxCallback;
     std::function<void(IPAddress remoteIP)> artSyncCallback;
 
-    bool listen(uint16_t port);
+    bool listen(uint16_t port=ART_NET_PORT);
     bool accept(AsyncUDPPacket packet);
 
     bool print(AsyncUDPPacket packet);

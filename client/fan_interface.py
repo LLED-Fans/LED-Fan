@@ -34,7 +34,9 @@ def run(
     # print(server_info)
 
     endpoint_info = server_info[endpoint]
-    port = int(endpoint_info["port"])
+    net = int(endpoint_info["net"])
+
+    port = 6454  # default artnet port
 
     if endpoint == "concentric":
         pixels = list(grouper(2, endpoint_info["pixels"]))
@@ -49,12 +51,12 @@ def run(
     artnet_provider = ArtnetProvider(
         universe=0,
         subnet=0,
-        net=0
+        net=net
     )
 
     seconds_per_frame = 1.0 / frames_per_second
 
-    print(f"Sending Art-Net Data to: {ip}:{port}!")
+    print(f"Sending Art-Net Data to: {ip}:{port} — {artnet_provider.net}|{artnet_provider.subnet}|{artnet_provider.universe}!")
     start = datetime.now()
     sequence_start = start
 

@@ -10,7 +10,7 @@
 #include <screen/Screen.h>
 
 struct ArtnetEndpoint {
-    int port;
+    int net;
     Screen::Mode mode;
 };
 

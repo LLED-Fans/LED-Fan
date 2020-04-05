@@ -65,8 +65,8 @@ DynamicJsonDocument VideoInterface::info() {
             + JSON_OBJECT_SIZE(3)
             // Concentric Screen
             + JSON_OBJECT_SIZE(3)
-            + JSON_ARRAY_SIZE(concentricResolution->count)
-            + JSON_ARRAY_SIZE(pixelCount * 2)
+//            + JSON_ARRAY_SIZE(concentricResolution->count)
+//            + JSON_ARRAY_SIZE(pixelCount * 2)
     );
 
     // ==============================================
@@ -76,7 +76,7 @@ DynamicJsonDocument VideoInterface::info() {
     {
         auto object = doc.createNestedObject("cartesian");
 
-        object["port"] = artnetServer->endpoints[1].port;
+        object["net"] = artnetServer->endpoints[1].net;
         object["width"] = screen->cartesianResolution;
         object["height"] = screen->cartesianResolution;
     }
@@ -85,22 +85,23 @@ DynamicJsonDocument VideoInterface::info() {
     // ================Concentric=====================
     // ==============================================
 
-    {
-        auto object = doc.createNestedObject("concentric");
-
-        object["port"] = artnetServer->endpoints[0].port;
-
-        JsonArray pixels = object.createNestedArray("pixels");
-        for (int i = 0; i < pixelCount * 2; ++i) {
-            pixels.add(rawPixels[i]);
-        }
-        delete[] rawPixels;
-
-        JsonArray resolution = object.createNestedArray("resolution");
-        for (int j = 0; j < concentricResolution->count; ++j) {
-            resolution.add((*concentricResolution)[j]);
-        }
-    }
+    // Fails if too large??
+//    {
+//        auto object = doc.createNestedObject("concentric");
+//
+//        object["net"] = artnetServer->endpoints[0].net;
+//
+//        JsonArray pixels = object.createNestedArray("pixels");
+//        for (int i = 0; i < pixelCount * 2; ++i) {
+//            pixels.add(rawPixels[i]);
+//        }
+//        delete[] rawPixels;
+//
+//        JsonArray resolution = object.createNestedArray("resolution");
+//        for (int j = 0; j < concentricResolution->count; ++j) {
+//            resolution.add((*concentricResolution)[j]);
+//        }
+//    }
 
     return doc;
 }
