@@ -34,7 +34,7 @@ command_parser.add_argument(
 )
 command_parser.add_argument(
     "--image", "-i",
-    default="test_image.png"
+    default="img/test.png"
 )
 command_parser.add_argument(
     "--capture-window", "-w",
