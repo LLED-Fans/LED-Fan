@@ -79,8 +79,8 @@ def run_main(args):
             width, height = monitor['width'], monitor['height']
             size = min(width, height)
             monitor = {
-                'top': monitor['top'] + (height - size) / 2,
-                'left': monitor['left'] + (width - size) / 2,
+                'top': monitor['top'] + (height - size) // 2,
+                'left': monitor['left'] + (width - size) // 2,
                 'width': size,
                 'height': size,
                 "mon": monitor_index
