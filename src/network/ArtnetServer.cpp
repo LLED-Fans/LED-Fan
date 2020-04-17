@@ -12,14 +12,14 @@ ArtnetServer::ArtnetServer(Screen *screen)
 
     artnet->channels->push_back(new ArtnetEndpoint(
         0,
-        screen->cartesianResolution * screen->cartesianResolution,
+        screen->cartesianResolution * screen->cartesianResolution * 3,
         "Cartesian",
         Screen::Mode::cartesian
     ));
 
     artnet->channels->push_back(new ArtnetEndpoint(
         1,
-        screen->concentricResolution->sum(),
+        screen->concentricResolution->sum() * 3,
         "Concentric",
         Screen::Mode::concentric
     ));
