@@ -1,4 +1,6 @@
 import math
+from datetime import datetime, timedelta
+from time import sleep
 from typing import Iterable, TypeVar, List, Callable
 from itertools import zip_longest
 
@@ -72,3 +74,49 @@ class BufferedResource:
             self.condition.notify()
 
         return resource
+
+
+class RegularClock:
+    """
+    Helper class for regularizing delays.
+    Call elapse to make sure exactly the timedelta
+    elapsed since the last mark.
+    """
+
+    def __init__(self, context: str):
+        self.last_mark = None
+        self.context = context
+
+    def mark(self) -> datetime:
+        """
+        Marks the current time as start for the next
+        elapse call.
+
+        Returns: The current datetime.
+        """
+        self.last_mark = datetime.now()
+        return self.last_mark
+
+    def elapse(self, time: timedelta) -> datetime:
+        """
+        Elapses remaining time since the last mark.
+        If there is no mark, elapse the complete time.
+        Automatically calls mark after completion.
+
+        Args:
+            time: The time to elapse.
+
+        Returns: The current datetime.
+        """
+        seconds_elapsed = 0
+
+        if self.last_mark:
+            last_write_delta = (datetime.now() - self.last_mark)
+
+            if last_write_delta > time and self.context:
+                print("Can't keep up! ({0})".format(self.context))
+
+            seconds_elapsed = last_write_delta / timedelta(seconds=1)
+
+        sleep(max(0.0, time / timedelta(seconds=1) - seconds_elapsed))
+        return self.mark()

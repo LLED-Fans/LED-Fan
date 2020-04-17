@@ -43,16 +43,6 @@ command_parser.add_argument(
     type=int
 )
 command_parser.add_argument(
-    "--simulated_rotation_seconds",
-    help="Simulate a rotation that takes x seconds.",
-    type=int, default=0
-)
-command_parser.add_argument(
-    "--rotate_input_seconds",
-    help="To simulate some movement, rotate the source image.",
-    type=int, default=0
-)
-command_parser.add_argument(
     "--frames_per_second",
     type=int, default=30
 )
@@ -113,8 +103,6 @@ def run_main(args):
         ip=args.ip,
         endpoint=args.endpoint,
         image_provider=resource.pop,
-        simulated_rotation_seconds=args.simulated_rotation_seconds,
-        rotate_input_seconds=args.rotate_input_seconds,
         frames_per_second=args.frames_per_second
     )
 
