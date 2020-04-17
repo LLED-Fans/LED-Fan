@@ -18,6 +18,7 @@
 #define ART_NET_ID "Art-Net\0"
 #define ART_DMX_START 18
 
+#include <vector>
 #include "Stream.h" // Will fail without this explicit import
 #include "AsyncUDP.h"
 
@@ -60,16 +61,40 @@ struct artnet_reply_s {
     uint8_t  filler[26];
 } __attribute__((packed));
 
+class ArtnetChannel {
+public:
+    long start, length;
+    String name;
 
+    ArtnetChannel(long start, long length, const String &name);
+};
+
+template <typename T>
+class ArtnetChannelPacket {
+public:
+    T *channel;
+    int channelUniverse;
+
+    uint8_t* data;
+    uint16_t length;
+
+    uint8_t sequence;
+
+    IPAddress remoteIP;
+};
+
+template <typename T>
 class AsyncArtnet {
 public:
     AsyncUDP udp;
-    uint8_t artnetPacket[MAX_BUFFER_ARTNET];
+    uint8_t artnetPacket[MAX_BUFFER_ARTNET] = {};
     IPAddress broadcast;
-    uint8_t  id[8];
+    uint8_t  id[8] = {};
 
-    std::function<void(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)> artDmxCallback;
-    std::function<void(IPAddress remoteIP)> artSyncCallback;
+    std::function<void(ArtnetChannelPacket<T> *packet)> artDmxCallback;
+    std::function<void(IPAddress *remoteIP)> artSyncCallback;
+
+    std::vector<T*> *channels = new std::vector<T*>();
 
     bool listen(uint16_t port=ART_NET_PORT);
     bool accept(AsyncUDPPacket packet);
@@ -78,9 +103,10 @@ public:
 
     int activePort();
 private:
-    int port;
+    int port = 0;
+    ArtnetChannelPacket<T> *channelPacket = new ArtnetChannelPacket<T>();
 
-    struct artnet_reply_s ArtPollReply;
+    struct artnet_reply_s artPollReply = {};
 };
 
 #endif //LED_FAN_ASYNCARTNET_H

@@ -13,15 +13,14 @@
 class ArtnetServer {
 public:
     Screen *screen;
-
-    int endpointCount;
-    ArtnetEndpoint *endpoints;
-    AsyncArtnet *artnet;
+    AsyncArtnet<ArtnetEndpoint> *artnet;
 
     ArtnetServer(Screen *screen);
 
-    void acceptDMX(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
-    void acceptSync(IPAddress remoteIP);
+    void acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *);
+    void acceptSync(IPAddress *remoteIP);
+
+    std::vector<ArtnetEndpoint *> *endpoints();
 };
 
 

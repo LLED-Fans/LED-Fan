@@ -6,12 +6,16 @@
 #define LED_FAN_ARTNETENDPOINT_H
 
 
-#include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/stdint.h"
 #include <screen/Screen.h>
+#include <network/AsyncArtnet.h>
 
-struct ArtnetEndpoint {
-    int net;
+class ArtnetEndpoint: public ArtnetChannel {
+public:
+    unsigned int net;
     Screen::Mode mode;
+
+    ArtnetEndpoint(unsigned int net, long byteLength, const String &name, Screen::Mode mode)
+    : ArtnetChannel(net << 8, (byteLength + 255) / 256, name), net(net), mode(mode) {}
 };
 
 #endif //LED_FAN_ARTNETENDPOINT_H

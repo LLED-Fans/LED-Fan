@@ -58,6 +58,7 @@ DynamicJsonDocument VideoInterface::info() {
     IntRoller *concentricResolution = screen->concentricResolution;
     int pixelCount;
     float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, screen->ringRadii, &pixelCount);
+    const std::vector<ArtnetEndpoint *> *endpoints = artnetServer->endpoints();
 
     DynamicJsonDocument doc(
             JSON_OBJECT_SIZE(2)
@@ -76,7 +77,7 @@ DynamicJsonDocument VideoInterface::info() {
     {
         auto object = doc.createNestedObject("cartesian");
 
-        object["net"] = artnetServer->endpoints[0].net;
+        object["net"] = (*endpoints)[0]->net;
         object["width"] = screen->cartesianResolution;
         object["height"] = screen->cartesianResolution;
     }
