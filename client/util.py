@@ -58,7 +58,7 @@ class BufferedResource:
     def push(self, resource):
         with self.condition:
             while len(self.buffer) >= self.max_buffer_size:
-                self.condition.wait()
+                self.condition.wait(2)
 
             self.buffer.append(resource)
             self.condition.notify()
@@ -66,7 +66,7 @@ class BufferedResource:
     def pop(self):
         with self.condition:
             while len(self.buffer) == 0:
-                self.condition.wait()
+                self.condition.wait(2)
 
             resource = self.buffer.pop(0)
             self.condition.notify()
