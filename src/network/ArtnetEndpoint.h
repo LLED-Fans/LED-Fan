@@ -12,20 +12,35 @@
 class ArtnetEndpoint: public ArtnetChannel {
 public:
     unsigned int net;
-    virtual ~ArtnetEndpoint() = default;
 
-    ArtnetEndpoint(unsigned int net, long byteLength, const String &name)
-    : ArtnetChannel(net << 8, (byteLength + 255) / 256, name), net(net) {}
+#ifdef RTTI_SUPPORTED
+    virtual ~ArtnetEndpoint() = default;
+#else
+    Screen::Mode mode;
+#endif
+
+    ArtnetEndpoint(unsigned int net, long byteLength, const String &name
+#ifndef RTTI_SUPPORTED
+    , Screen::Mode mode
+#endif
+    )
+    : ArtnetChannel(net << 8, (byteLength + 255) / 256, name), net(net)
+#ifndef RTTI_SUPPORTED
+    , mode(mode)
+#endif
+    {}
 };
 
+#ifdef RTTI_SUPPORTED
 class VisualEndpoint: public ArtnetEndpoint {
 public:
     Screen::Mode mode;
 
-    VisualEndpoint(unsigned int net, long byteLength, const String &name, Screen::Mode mode)
-            : ArtnetEndpoint(net, byteLength, name), mode(mode) {}
+    VisualEndpoint(unsigned int net, long byteLength, const String &name)
+            : ArtnetEndpoint(net, byteLength, name) {}
 };
 
 class SpeedEndpoint: public ArtnetEndpoint {};
+#endif
 
 #endif //LED_FAN_ARTNETENDPOINT_H

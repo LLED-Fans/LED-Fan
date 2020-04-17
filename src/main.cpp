@@ -26,6 +26,8 @@
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
+#undef RTTI_SUPPORTED
+
 RotationSensor *rotationSensor;
 SpeedControl *speedControl;
 Screen *screen;
