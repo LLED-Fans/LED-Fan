@@ -2,26 +2,34 @@
 // Created by Lukas Tenbrink on 02.02.20.
 //
 
+#include <util/Logger.h>
 #include "ArtnetServer.h"
 
 using namespace std::placeholders;
 
-ArtnetServer::ArtnetServer(Screen *screen)
-        : screen(screen) {
+ArtnetServer::ArtnetServer(Screen *screen, SpeedControl *speedControl)
+: screen(screen), speedControl(speedControl) {
     artnet = new AsyncArtnet<ArtnetEndpoint>();
 
-    artnet->channels->push_back(new ArtnetEndpoint(
+    artnet->channels->push_back(new VisualEndpoint(
         0,
         screen->cartesianResolution * screen->cartesianResolution * 3,
         "Cartesian",
         Screen::Mode::cartesian
     ));
 
-    artnet->channels->push_back(new ArtnetEndpoint(
+    artnet->channels->push_back(new VisualEndpoint(
         1,
         screen->concentricResolution->sum() * 3,
         "Concentric",
         Screen::Mode::concentric
+    ));
+
+    artnet->channels->push_back(new VisualEndpoint(
+            2,
+            1,
+            "Rotation Speed",
+            Screen::Mode::concentric
     ));
 
     artnet->artDmxCallback = std::bind(&ArtnetServer::acceptDMX, this, _1);
@@ -30,7 +38,19 @@ ArtnetServer::ArtnetServer(Screen *screen)
 }
 
 void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
-    ArtnetEndpoint *endpoint = packet->channel;
+    ArtnetEndpoint *rawEndpoint = packet->channel;
+
+    if (SpeedEndpoint *endpoint = dynamic_cast<SpeedEndpoint*>(rawEndpoint)) {
+        speedControl->setDesiredSpeed((float(packet->data[0]) - 128) / 128);
+        return;
+    }
+
+    VisualEndpoint *endpoint = dynamic_cast<VisualEndpoint*>(rawEndpoint);
+    if (!endpoint) {
+        Logger::println("Error: Unknown Endpoint");
+        return;
+    }
+
     screen->noteInput(endpoint->mode);
 
     if (screen->mode != endpoint->mode)

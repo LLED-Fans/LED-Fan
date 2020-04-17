@@ -27,6 +27,7 @@
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
 RotationSensor *rotationSensor;
+SpeedControl *speedControl;
 Screen *screen;
 
 HttpServer *server;
@@ -83,6 +84,8 @@ void setup() {
     rotationSensor->pauseInterval = ROTATION_PAUSED_MS * 1000;
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
 
+    speedControl = new SpeedControl();
+
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
     server->hallTimer = ((XTaskGPIOSwitch *) rotationSensor->visitor)->timer;
 #endif
@@ -92,7 +95,7 @@ void setup() {
     Network::connectToPreset();
     Network::setHostname(WIFI_HOSTNAME);
 
-    artnetServer = new ArtnetServer(screen);
+    artnetServer = new ArtnetServer(screen, speedControl);
 
     server = new HttpServer(
         new VideoInterface(screen, artnetServer),
