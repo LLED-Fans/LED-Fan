@@ -41,8 +41,10 @@ def run(
 
     if endpoint == "concentric":
         pixels = list(grouper(2, endpoint_info["pixels"]))
+        print(f"Sampled Pixels: {pixels}")
     elif endpoint == "cartesian":
         resolution = (endpoint_info["width"], endpoint_info["height"])
+        print(f"Screen Size: {resolution[0]}x{resolution[1]}")
 
     # ------------------------------------------------------
     # --- Frame Conversion
