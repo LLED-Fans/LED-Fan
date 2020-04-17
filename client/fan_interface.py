@@ -98,7 +98,7 @@ def run(
     start = datetime.now()
     sequence_start = start
 
-    clock = RegularClock("FPS")
+    clock = RegularClock()
     frame_start = clock.mark()
 
     while True:
