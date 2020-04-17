@@ -1,0 +1,3 @@
+PILLOW
+mss
+requests
