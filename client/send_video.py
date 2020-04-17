@@ -1,6 +1,4 @@
 import random
-from dataclasses import dataclass, field
-from typing import List
 
 from PIL import Image
 from mss import mss
@@ -8,8 +6,7 @@ from mss import mss
 import argparse
 
 import fan_interface
-
-from threading import Thread, Lock, Condition
+from util import BufferedResource, RepeatTimer
 
 
 def get_white_noise_image(width, height):
@@ -60,38 +57,6 @@ command_parser.add_argument(
     type=int, default=30
 )
 
-@dataclass
-class BufferedResource:
-    max_buffer_size: int
-    buffer: List = field(default_factory=list)
-
-    condition = Condition()
-
-    def push(self, resource):
-        with self.condition:
-            while len(self.buffer) >= self.max_buffer_size:
-                self.condition.wait()
-
-            self.buffer.append(resource)
-            self.condition.notify()
-
-    def pop(self):
-        with self.condition:
-            while len(self.buffer) == 0:
-                self.condition.wait()
-
-            resource = self.buffer.pop(0)
-            self.condition.notify()
-
-        return resource
-
-
-def run_capture_thread(image_provider, resource: BufferedResource):
-    print("Beginning capture...")
-
-    while True:
-        resource.push(image_provider())
-
 
 def run_main(args):
     if args.capture_window or args.monitor is not None:
@@ -131,7 +96,10 @@ def run_main(args):
         image_provider = lambda: image
 
     resource = BufferedResource(max_buffer_size=2)
-    capture_thread = Thread(target=run_capture_thread, args=[image_provider, resource])
+    capture_thread = RepeatTimer(
+        interval=0,
+        function=lambda: resource.push(image_provider())
+    )
     capture_thread.start()
 
     fan_interface.run(

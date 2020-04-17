@@ -4,6 +4,9 @@ from itertools import zip_longest
 
 from PIL import Image
 
+from dataclasses import dataclass, field
+from threading import Thread, Lock, Condition, Timer
+
 # Declare type variables
 T = TypeVar('T')
 U = TypeVar('U')
@@ -37,3 +40,35 @@ def bilinear(im: Image, x, y):
     left = lerp(im.getpixel((x1, y1)), im.getpixel((x1, y2)), y)
     right = lerp(im.getpixel((x2, y1)), im.getpixel((x2, y2)), y)
     return lerp(left, right, x)
+
+
+class RepeatTimer(Timer):
+    def run(self):
+        while not self.finished.wait(self.interval):
+            self.function(*self.args, **self.kwargs)
+
+
+@dataclass
+class BufferedResource:
+    max_buffer_size: int
+    buffer: List = field(default_factory=list)
+
+    condition = Condition()
+
+    def push(self, resource):
+        with self.condition:
+            while len(self.buffer) >= self.max_buffer_size:
+                self.condition.wait()
+
+            self.buffer.append(resource)
+            self.condition.notify()
+
+    def pop(self):
+        with self.condition:
+            while len(self.buffer) == 0:
+                self.condition.wait()
+
+            resource = self.buffer.pop(0)
+            self.condition.notify()
+
+        return resource
