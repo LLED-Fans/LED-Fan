@@ -83,7 +83,7 @@ class RegularClock:
     elapsed since the last mark.
     """
 
-    def __init__(self, context: str):
+    def __init__(self, context: str = None):
         self.last_mark = None
         self.context = context
 

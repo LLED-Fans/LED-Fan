@@ -27,10 +27,13 @@ def run_main(args):
     ip = args.ip
     time_per_frame = timedelta(seconds=1.0 / args.frames_per_second)
 
-    clock = RegularClock(None)
+    clock = RegularClock()
     start = clock.mark()
 
-    print(f"Simulating Rotation: {seconds_per_rotation} seconds per rotation, ({time_per_frame.total_seconds()} FPS)")
+    print(
+        f"Simulating Rotation: {seconds_per_rotation} seconds per rotation"
+        f", ({1.0 / time_per_frame.total_seconds()} FPS)"
+    )
 
     try:
         while True:
