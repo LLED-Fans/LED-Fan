@@ -86,8 +86,15 @@ def run_main(args):
                 "mon": monitor_index
             }
 
+            raw_image_resource = BufferedResource(max_buffer_size=2)
+            raw_capture_thread = RepeatTimer(
+                interval=0,
+                function=lambda: raw_image_resource.push(capturer.grab(monitor))
+            )
+            raw_capture_thread.start()
+
         def capture_image():
-            image = capturer.grab(monitor)
+            image = raw_image_resource.pop()
             return Image.frombytes('RGB', image.size, bytes(image.rgb))
 
         image_provider = capture_image
