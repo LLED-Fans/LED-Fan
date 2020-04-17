@@ -21,7 +21,7 @@ using namespace std::placeholders;
 // FIXME This should be per-instance. Or something.
 AsyncWebServer _server(80);
 
-HttpServer::HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, ClockSynchronizer *clockSynchronizer)
+HttpServer::HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, RegularClock *clockSynchronizer)
         : screen(videoInterface->screen),
           videoInterface(videoInterface),
           rotationSensor(rotationSensor),

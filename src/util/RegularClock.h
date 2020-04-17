@@ -2,21 +2,21 @@
 // Created by Lukas Tenbrink on 19.02.20.
 //
 
-#ifndef LED_FAN_CLOCKSYNCHRONIZER_H
-#define LED_FAN_CLOCKSYNCHRONIZER_H
+#ifndef LED_FAN_REGULARCLOCK_H
+#define LED_FAN_REGULARCLOCK_H
 
 #include "IntRoller.h"
 
-class ClockSynchronizer {
+class RegularClock {
 public:
     unsigned long lastSyncTimestamp;
     unsigned long microsecondsPerFrame;
     IntRoller *frameTimeHistory;
 
-    ClockSynchronizer(unsigned long microsecondsPerFrame, int historyLength);
+    RegularClock(unsigned long microsecondsPerFrame, int historyLength);
 
     unsigned long sync();
 };
 
 
-#endif //LED_FAN_CLOCKSYNCHRONIZER_H
+#endif //LED_FAN_REGULARCLOCK_H

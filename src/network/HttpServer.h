@@ -8,7 +8,7 @@
 
 #include <util/VideoInterface.h>
 #include <sensor/RotationSensor.h>
-#include <util/ClockSynchronizer.h>
+#include <util/RegularClock.h>
 
 #include "Setup.h"
 
@@ -22,13 +22,13 @@ public:
     VideoInterface *videoInterface;
 
     RotationSensor *rotationSensor;
-    ClockSynchronizer *clockSynchronizer;
+    RegularClock *clockSynchronizer;
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
     XTaskTimer *hallTimer;
 #endif
 
-    HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, ClockSynchronizer *clockSynchronizer);
+    HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, RegularClock *clockSynchronizer);
 
     void setupRoutes();
     String processTemplates(const String &var);

@@ -6,7 +6,7 @@
 #include <network/HttpServer.h>
 #include <network/Network.h>
 #include <screen/ConcentricCoordinates.h>
-#include <util/ClockSynchronizer.h>
+#include <util/RegularClock.h>
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
 #include <sensor/SyncGPIOSwitch.h>
@@ -34,7 +34,7 @@ ArtnetServer *artnetServer;
 
 Updater *updater;
 
-ClockSynchronizer *clockSynchronizer;
+RegularClock *regularClock;
 
 void setup() {
     // Enable Monitoring
@@ -46,7 +46,7 @@ void setup() {
     SPIFFS.begin(false);
 
     // Clock Synchronizer
-    clockSynchronizer = new ClockSynchronizer(
+    regularClock = new RegularClock(
         MICROSECONDS_PER_FRAME, 50
     );
 
@@ -97,7 +97,7 @@ void setup() {
     server = new HttpServer(
         new VideoInterface(screen, artnetServer),
         rotationSensor,
-        clockSynchronizer
+        regularClock
     );
 
     // Updater
@@ -108,7 +108,7 @@ void setup() {
 }
 
 void loop() {
-    unsigned long microseconds = clockSynchronizer->sync();
+    unsigned long microseconds = regularClock->sync();
     auto milliseconds = microseconds / 1000;
 
     rotationSensor->update(microseconds);

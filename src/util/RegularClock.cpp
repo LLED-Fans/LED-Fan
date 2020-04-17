@@ -2,14 +2,14 @@
 // Created by Lukas Tenbrink on 19.02.20.
 //
 
-#include "ClockSynchronizer.h"
+#include "RegularClock.h"
 #include <HardwareSerial.h>
 #include <climits>
 
-ClockSynchronizer::ClockSynchronizer(unsigned long microsecondsPerFrame, int historyLength)
+RegularClock::RegularClock(unsigned long microsecondsPerFrame, int historyLength)
 : lastSyncTimestamp(INT_MAX), microsecondsPerFrame(microsecondsPerFrame), frameTimeHistory(new IntRoller(historyLength)) {}
 
-unsigned long ClockSynchronizer::sync() {
+unsigned long RegularClock::sync() {
     unsigned long microseconds = micros();
 
     if (lastSyncTimestamp == INT_MAX) {
