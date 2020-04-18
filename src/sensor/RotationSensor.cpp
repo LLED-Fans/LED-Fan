@@ -20,8 +20,19 @@ void RotationSensor::update(unsigned long time) {
     int checkpoint = -1;
     visitor->update(time, &checkpoint, &time);
 
-    if (checkpoint < 0)
+    if (checkpoint < 0) {
+        // TODO Handle when time rolls over
+        if (isPaused || (time - checkpointTimestamps->last()) < pauseInterval) {
+            return;
+        }
+
+        checkpointTimestamps->fill(0);
+        checkpointIndices->fill(-1);
+        isReliable = true;
+        isPaused = true;
+
         return;
+    }
 
     unsigned long checkpointTime = time - checkpointTimestamps->last();
 
@@ -31,17 +42,6 @@ void RotationSensor::update(unsigned long time) {
 
     if (checkpointTime < minCheckpointTime * elapsedCheckpoints) {
         return;
-    }
-
-    if (checkpointTime > pauseInterval) {
-        // We were paused, clear history first
-        // TODO Will also happen when time rolls over, but eh
-
-        checkpointTimestamps->fill(0);
-        checkpointIndices->fill(-1);
-        isReliable = false;
-
-        // But do register the new checkpoint
     }
 
     registerCheckpoint(time, checkpoint);
@@ -140,7 +140,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 }
 
 float RotationSensor::estimatedRotation(unsigned long time) {
-    if (!isReliable)
+    if (!isReliable || isPaused)
         return NAN;
 
     float position = extrapolator->extrapolate(time);
@@ -159,6 +159,9 @@ float RotationSensor::estimatedRotation(unsigned long time) {
 }
 
 int RotationSensor::rotationsPerSecond() {
+    if (isPaused)
+        return 0;
+
     return (int) (extrapolator->slope() * 1000 * 1000);
 }
 

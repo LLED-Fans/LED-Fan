@@ -26,6 +26,7 @@ public:
     // x = micros, y = rotation 0 to switches.count
     Extrapolator *extrapolator;
     bool isReliable = false;
+    bool isPaused = false;
 
     RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolator *extrapolator);
 
