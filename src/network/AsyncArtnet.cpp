@@ -89,10 +89,10 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
         memset(artPollReply.goodoutput, 0x80, 4);
         memset(artPollReply.porttypes, 0xc0, 4);
 
-        artPollReply.etsaman[0] = 0;
-        artPollReply.etsaman[1] = 0;
-        artPollReply.verH = 1;
-        artPollReply.ver = 0;
+        artPollReply.estaman[0] = 0;
+        artPollReply.estaman[1] = 0;
+        artPollReply.versionH = 1;
+        artPollReply.versionL = 0;
         artPollReply.oemH = 0;
         artPollReply.oem = 0xFF;
         artPollReply.ubea = 0;
@@ -124,8 +124,8 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
             for (int i = 0; i < (channel->length + 3) / 4; i++) {
                 int packetStart = channel->start + i * 4;
 
-                artPollReply.subH = (packetStart >> 8) & 0x7f;
-                artPollReply.sub = (packetStart >> 4) & 0xf;
+                artPollReply.net = (packetStart >> 8) & 0x7f;
+                artPollReply.subNet = (packetStart >> 4) & 0xf;
 
                 uint8_t swin[4] = {};
                 for (uint8_t j = 0; j < 4; j++) {
