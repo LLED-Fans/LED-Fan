@@ -38,6 +38,9 @@ public:
 
     int rotationsPerSecond();
     String stateDescription();
+
+private:
+    int estimatedDirection();
 };
 
 

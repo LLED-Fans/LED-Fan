@@ -5,6 +5,7 @@
 #include <cmath>
 #include <util/Logger.h>
 #include <util/cluster/FastCluster.h>
+#include <util/Math.h>
 #include "RotationSensor.h"
 
 #include "Setup.h"
@@ -62,6 +63,16 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         return;
     }
 
+    // If we have <= 2 checkpoints, can't estimate direction. Just assume 1.
+    auto direction = historySize > 2 ? estimatedDirection() : 1;
+    if (direction == 0) {
+        // Unsure about direction - probably unreliable!
+        isReliable = false;
+        return;
+    }
+    // -1 if backwards
+    auto backwardsAdjust = (direction - 1) / 2;
+
     // Raw Data Collection
     std::vector<double> x{};
     x.reserve(n);
@@ -96,7 +107,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     // Go back in reverse, setting reached checkpoint as baseline Y
     y[n - 1] = estimatedY[n - 1];
     for (int j = n - 2; j >= 0; --j) {
-        int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount;
+        int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount + backwardsAdjust;
         double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
 
         // Accept +- multiples of checkpointCount
@@ -137,6 +148,24 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 
     // Speed is sensible?
     isReliable = rotationsPerSecond < 100 && rotationsPerSecond > 1;
+}
+
+int RotationSensor::estimatedDirection() {
+    int historySize = checkpointIndices->count;
+
+    int direction = 0;
+    for (unsigned int i = checkpointIndices->count; i > 1; i++) {
+        int diff = (((*checkpointIndices)[i] == (*checkpointIndices)[i - 1]) + historySize) % historySize;
+        if (diff == 0)
+            continue;
+
+        if (diff < historySize / 2)
+            direction++; // Moved < 180°; probably forwards
+        else if (diff > historySize / 2) {
+            direction--; // Moved > 180°; probably backwards
+        }
+    }
+    return signum(direction);
 }
 
 float RotationSensor::estimatedRotation(unsigned long time) {
