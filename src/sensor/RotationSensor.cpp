@@ -144,10 +144,11 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     }
 
     extrapolator->adjust(x, y);
-    double rotationsPerSecond = this->rotationsPerSecond();
+    auto rotationsPerSecond = this->rotationsPerSecond();
+    auto rotationsPerSecondP = std::abs(rotationsPerSecond);
 
     // Speed is sensible?
-    isReliable = rotationsPerSecond < 100 && rotationsPerSecond > 1;
+    isReliable = rotationsPerSecondP < 100 && rotationsPerSecondP > 0.5;
 }
 
 int RotationSensor::estimatedDirection() {
