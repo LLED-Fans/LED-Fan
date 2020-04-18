@@ -86,6 +86,9 @@ String HttpServer::processTemplates(const String &var) {
 
         return String(rotationSensor->rotationsPerSecond()) + "r/s (" + history + ")";
     }
+    if (var == "MOTOR_SPEED") {
+        return String(videoInterface->artnetServer->speedControl->getDesiredSpeed());
+    }
     if (var == "UPTIME") {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
     }
@@ -133,6 +136,7 @@ void HttpServer::setupRoutes() {
 
     _server.serveStatic("/images", SPIFFS, "/images");
     _server.serveStatic("/styles.css", SPIFFS, "/styles.css");
+    _server.serveStatic("/scripts.js", SPIFFS, "/scripts.js");
 
     SERVE_HTML("/", "/index.html")
 
@@ -198,6 +202,16 @@ void HttpServer::setupRoutes() {
         }
         auto rotation = request->getParam("rotation", true)->value().toFloat();
         screen->fixedRotation = rotation;
+
+        request_result(true);
+    });
+
+    _server.on("/speed/set", HTTP_POST, [videoInterface](AsyncWebServerRequest *request) {
+        if (!request->hasParam("speed-control", true)) {
+            request_result(false);
+        }
+        auto speed = request->getParam("speed-control", true)->value().toFloat();
+        videoInterface->artnetServer->speedControl->setDesiredSpeed(speed);
 
         request_result(true);
     });

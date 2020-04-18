@@ -22,30 +22,7 @@
     <link rel="stylesheet" href="material.min.css">
     <link rel="stylesheet" href="styles.css">
 
-    <script>
-        function postRequest(url, data) {
-            var form_data = new FormData();
-            for (const key in data) {
-                form_data.append(key, data[key]);
-            }
-
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState !== 4) {
-                    return;
-                }
-
-                if (this.status !== 200) {
-                    alert("Failure!");
-                    return;
-                }
-
-                location.reload();
-            };
-            xhttp.open("POST", url, true);
-            xhttp.send(form_data);
-        }
-    </script>
+    <script src="scripts.js"></script>
 </head>
 <body>
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -103,7 +80,46 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col" style="margin-top: 20px;">
+                    <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                        <h2 class="mdl-card__title-text">Motor Control</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        <h4>Speed</h4>
+
+                        <p><b>Current Speed:</b> %MOTOR_SPEED%</p>
+
+                        <div class="mdl-grid controls">
+                            <div class="mdl-cell mdl-cell--3-col">
+                                <p>
+                                    <span style="font-weight: bold">Speed: </span>
+                                    <span id="speed-control-out"></span>
+                                </p>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--9-col">
+                                <input type="range" min="-1" max="1" value="%MOTOR_SPEED%" step="0.01" class="slider" id="speed-control" name="speed-control">
+                            </div>
+
+                            <script>
+                                sliderTrackValue(
+                                    document.getElementById("speed-control"),
+                                    document.getElementById("speed-control-out")
+                                );
+                            </script>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                        onclick="postRequest('/speed/set', {'speed-control': document.getElementById('speed-control').value})">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div class="demo-cards mdl-cell mdl-cell--6-col mdl-grid mdl-grid--no-spacing">
                 <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
                     <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">

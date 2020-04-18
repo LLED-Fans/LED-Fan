@@ -12,8 +12,13 @@ SpeedControl::SpeedControl(RotationSensor *rotationSensor, float maxSpeedRotatio
 }
 
 void SpeedControl::setDesiredSpeed(float speed) {
+    speed = fminf(1.0f, fmaxf(-1.0f, speed));
     desiredSpeed = speed;
     update();
+}
+
+float SpeedControl::getDesiredSpeed() {
+    return desiredSpeed;
 }
 
 void SpeedControl::update() {
