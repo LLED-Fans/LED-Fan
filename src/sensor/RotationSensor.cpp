@@ -155,7 +155,8 @@ float RotationSensor::estimatedRotation(unsigned long time) {
         // Or went back too far
         return NAN;
 
-    return std::fmod(rotation, 1.0f);
+    // Add 10 beforehand so we're always positive
+    return std::fmod(rotation + 10, 1.0f);
 }
 
 int RotationSensor::rotationsPerSecond() {
