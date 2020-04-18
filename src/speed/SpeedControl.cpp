@@ -66,10 +66,11 @@ void SpeedControl::setSpeed(float speed) {
 
     this->speed = speed;
     int direction = signum(speed);
+    float speedRatio = std::abs(speed);
 
-    if (speed == 0 || std::abs(speed) == 1) {
-        forwardPin->setConstant(0);
-        backwardPin->setConstant(0);
+    if (speedRatio < SPEED_CONSTANT_THRESHOLD || speedRatio > (1.0f - SPEED_CONSTANT_THRESHOLD)) {
+        forwardPin->setConstant(speed > SPEED_CONSTANT_THRESHOLD ? HIGH : LOW);
+        backwardPin->setConstant(speed < SPEED_CONSTANT_THRESHOLD ? HIGH : LOW);
 
         // Constant speed, don't need PWM
         return;
@@ -79,5 +80,5 @@ void SpeedControl::setSpeed(float speed) {
     auto highChannel = direction == 1 ? backwardPin : forwardPin;
 
     lowChannel->setConstant(LOW);
-    highChannel->setRatio(std::abs(speed));
+    highChannel->setRatio(speedRatio);
 }

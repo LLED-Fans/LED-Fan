@@ -6,6 +6,8 @@
 #define LED_FAN_SPEEDCONTROL_H
 
 
+static const float SPEED_CONSTANT_THRESHOLD = 0.0001f;
+
 #include <sensor/RotationSensor.h>
 #include <util/PWMPin.h>
 
