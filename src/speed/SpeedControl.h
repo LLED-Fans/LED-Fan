@@ -7,14 +7,18 @@
 
 
 #include <sensor/RotationSensor.h>
+#include <util/PWMPin.h>
 
 class SpeedControl {
 public:
+    PWMPin *forwardPin;
+    PWMPin *backwardPin;
+
     RotationSensor *rotationSensor;
 
     float maxSpeedRotationsPerSecond = 0;
 
-    SpeedControl(RotationSensor *rotationSensor, float maxSpeedRotationsPerSecond);
+    SpeedControl(PWMPin *forwardPin, PWMPin *backwardPin, RotationSensor *rotationSensor, float maxSpeedRotationsPerSecond);
 
     void setDesiredSpeed(float speed);
     float getDesiredSpeed();
@@ -23,7 +27,7 @@ public:
 
 private:
     float desiredSpeed = 0;
-    float speed = 0;
+    float speed = NAN;
 
     void setSpeed(float speed);
 };

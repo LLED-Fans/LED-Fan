@@ -4,11 +4,16 @@
 
 #include <util/Math.h>
 #include <cmath>
+#include <esp32-hal-gpio.h>
 #include "SpeedControl.h"
 
-SpeedControl::SpeedControl(RotationSensor *rotationSensor, float maxSpeedRotationsPerSecond)
-: rotationSensor(rotationSensor), maxSpeedRotationsPerSecond(maxSpeedRotationsPerSecond) {
-    setDesiredSpeed(desiredSpeed);
+SpeedControl::SpeedControl(
+        PWMPin *forwardPin, PWMPin *backwardPin,
+        RotationSensor *rotationSensor, float maxSpeedRotationsPerSecond
+):
+forwardPin(forwardPin), backwardPin(backwardPin),
+rotationSensor(rotationSensor), maxSpeedRotationsPerSecond(maxSpeedRotationsPerSecond) {
+    setSpeed(0.0f);
 }
 
 void SpeedControl::setDesiredSpeed(float speed) {
@@ -60,5 +65,19 @@ void SpeedControl::setSpeed(float speed) {
         return; // No Change
 
     this->speed = speed;
-    // TODO Update outputs
+    int direction = signum(speed);
+
+    if (speed == 0 || std::abs(speed) == 1) {
+        forwardPin->setConstant(0);
+        backwardPin->setConstant(0);
+
+        // Constant speed, don't need PWM
+        return;
+    }
+
+    auto lowChannel = direction == 1 ? forwardPin : backwardPin;
+    auto highChannel = direction == 1 ? backwardPin : forwardPin;
+
+    lowChannel->setConstant(LOW);
+    highChannel->setRatio(std::abs(speed));
 }

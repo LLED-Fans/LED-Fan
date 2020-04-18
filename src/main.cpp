@@ -86,7 +86,13 @@ void setup() {
     rotationSensor->pauseInterval = ROTATION_PAUSED_MS * 1000;
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
 
+    auto motorForwardPin = new PWMPin(MOTOR_FORWARD_PIN, 0);
+    auto motorBackwardPin = new PWMPin(MOTOR_BACKWARD_PIN, 1);
+    motorForwardPin->setup(MOTOR_PWM_FREQUENCY, MOTOR_PWM_RESOLUTION);
+    motorBackwardPin->setup(MOTOR_PWM_FREQUENCY, MOTOR_PWM_RESOLUTION);
     speedControl = new SpeedControl(
+        motorForwardPin,
+        motorBackwardPin,
         rotationSensor,
         MOTOR_ROTATIONS_PER_SECOND
     );
