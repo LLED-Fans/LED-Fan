@@ -58,6 +58,7 @@
 // Maximum rotation speed accepted.
 // Setting this low helps with interpreting sensor activations correctly.
 #define MAX_ROTATIONS_PER_SECOND 20
+#define MOTOR_ROTATIONS_PER_SECOND 14
 // After this idle time, we're considered to be paused.
 #define ROTATION_PAUSED_MS 2000
 

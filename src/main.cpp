@@ -86,7 +86,10 @@ void setup() {
     rotationSensor->pauseInterval = ROTATION_PAUSED_MS * 1000;
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
 
-    speedControl = new SpeedControl();
+    speedControl = new SpeedControl(
+        rotationSensor,
+        MOTOR_ROTATIONS_PER_SECOND
+    );
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
     server->hallTimer = ((XTaskGPIOSwitch *) rotationSensor->visitor)->timer;
@@ -122,6 +125,7 @@ void loop() {
         milliseconds,
         rotationSensor->estimatedRotation(microseconds)
     );
+    speedControl->update();
 
     EVERY_N_SECONDS(2) {
         Network::checkStatus();
