@@ -54,6 +54,8 @@ void SpeedControl::update() {
 }
 
 void SpeedControl::setSpeed(float speed) {
+    speed = fminf(1.0f, fmaxf(-1.0f, speed));
+
     if (this->speed == speed)
         return; // No Change
 
