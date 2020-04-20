@@ -8,6 +8,24 @@
 #include <FastLED.h>
 #include <util/IntRoller.h>
 
+class Blade {
+public:
+    struct Pixel {
+        float radius;
+        int ringIndex;
+        fract8 correction;
+
+        CRGB *color;
+        CRGB *concentricPointer;
+    };
+
+    float rotationOffset;
+    int pixelCount;
+    Pixel *pixels;
+
+    Blade(int pixelCoun, float rotationOffset);
+};
+
 class Screen {
 public:
     enum Mode {
@@ -22,7 +40,9 @@ public:
     const int pin; // Just for output
     int ledCount;
     CRGB *leds;
-    float *ringRadii; // -1 to 1
+
+    int bladeCount;
+    Blade **blades;
 
     int overflowWall;
 
@@ -60,8 +80,6 @@ public:
     void determineMode(unsigned long milliseconds);
 
     void setCorrection(float ratio);
-private:
-    fract8 *correction;
 };
 
 

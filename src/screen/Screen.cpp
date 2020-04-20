@@ -15,15 +15,38 @@
 Screen::Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution)
 : controller(controller), pin(pin), ledCount(ledCount), overflowWall(overflowWall),
 cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
-    this->leds = new CRGB[ledCount + overflowWall]{CRGB::Black};
+    leds = new CRGB[ledCount + overflowWall]{CRGB::Black};
     FastLED.addLeds(controller, leds, ledCount + overflowWall)
             .setCorrection(TypicalLEDStrip);
 
     // Disable max refresh rates; we set this in Setup.h.
     FastLED.setMaxRefreshRate(0);
 
-    this->ringRadii = new float[ledCount];
-    ConcentricCoordinates::ringRadii(this->ringRadii, ledCount);
+    auto ringRadii = new float[ledCount];
+    ConcentricCoordinates::ringRadii(ringRadii, ledCount);
+
+    bladeCount = 2;
+    blades = new Blade*[bladeCount];
+    for (int b = 0; b < bladeCount; ++b) {
+        Blade *blade = blades[b] = new Blade(
+            ledCount / bladeCount,
+            b / float(bladeCount)
+        );
+        int bladePolarity = b * 2 - 1;
+        int bladeStartLED = ledCount / 2 - (bladePolarity < 0 ? 1 : 0);
+
+        for (int p = 0; p < blade->pixelCount; ++p) {
+            int ringIdx = b + p * bladeCount;
+
+            blade->pixels[p] = Blade::Pixel{
+                ringRadii[ringIdx],
+                ringIdx,
+                1,
+                leds + bladeStartLED + p * bladePolarity,
+                buffer + std::accumulate((*concentricResolution).data, (*concentricResolution).data + ringIdx, 0)
+            };
+        }
+    }
 
     int cartesianBufferSize = cartesianResolution * cartesianResolution;
     int concentricBufferSize = concentricResolution->sum();
@@ -32,8 +55,6 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
-
-    correction = new fract8[ledCount]{1};
 }
 
 
@@ -107,96 +128,100 @@ void Screen::drawRGB(float red, float green, float blue) {
 }
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
-    float vectorX[2];
-    float vectorY[2];
-    for (int i = 0; i < 2; ++i) {
+    for (int b = 0; b < bladeCount; ++b) {
+        auto blade = blades[b];
+
+        float vectorX, vectorY;
         PolarCoordinates::asCartesian(
-            rotation * M_TWOPI,
-            (i * 2) - 1,
-            vectorX + i, vectorY + i
+                std::fmod((rotation + blade->rotationOffset), 1.0f) * float(M_TWOPI),
+                0.5f,
+                &vectorX, &vectorY
         );
-    }
 
-    for (int ledIndex = 0; ledIndex < ledCount; ledIndex++) {
-        int ringIndex =  (int) abs((float) (ledIndex - (ledCount / 2)) * 2 + 0.5f);
-        int ledPolarity = ledIndex < (ledCount / 2) ? -1 : 1;
-        int ledPolarityIdx = (ledPolarity + 1) / 2;
+        for (int p = 0; p < blade->pixelCount; ++p) {
+            Blade::Pixel &pixel = blade->pixels[p];
 
-        // 0 to 1
-        float relativeX = 0.5f + vectorX[ledPolarityIdx] * ringRadii[ringIndex] * 0.5f;
-        float relativeY = 0.5f + vectorY[ledPolarityIdx] * ringRadii[ringIndex] * 0.5f;
+            // 0 to 1
+            float relativeX = 0.5f + vectorX * pixel.radius;
+            float relativeY = 0.5f + vectorY * pixel.radius;
 
-        if (cartesianSampling == bilinear) {
-            Image::bilinearSample(
-                    [this](int x, int y){
-                    return reinterpret_cast<uint8_t*>(&buffer[x + y * cartesianResolution]);
-                },
-                    reinterpret_cast<uint8_t*>(&leds[ledIndex]), 3,
-                relativeX * cartesianResolution,
-                relativeY * cartesianResolution
-            );
-        }
-        else {
-            // 0 to cartesianSize - 1
-            int x = std::lround(relativeX * (cartesianResolution - 1));
-            int y = std::lround(relativeY * (cartesianResolution - 1));
+            if (cartesianSampling == bilinear) {
+                Image::bilinearSample(
+                        [this](int x, int y){
+                            return reinterpret_cast<uint8_t*>(&buffer[x + y * cartesianResolution]);
+                        },
+                        reinterpret_cast<uint8_t*>(pixel.color), 3,
+                        relativeX * cartesianResolution,
+                        relativeY * cartesianResolution
+                );
+            }
+            else {
+                // 0 to cartesianSize - 1
+                int x = std::lround(relativeX * (cartesianResolution - 1));
+                int y = std::lround(relativeY * (cartesianResolution - 1));
 
-            // For plotting coords
+                // For plotting coords
 //        Logger::println(ringIndex);
 //        Logger::println(x);
 //        Logger::println(y);
 
-            leds[ledIndex] = buffer[x + y * cartesianResolution];
-        }
+                *pixel.color = buffer[x + y * cartesianResolution];
+            }
 
-        leds[ledIndex].nscale8_video(this->correction[ledIndex]);
+            pixel.color->nscale8_video(pixel.correction);
+        }
     }
+
     FastLED.show();
 }
 
 void Screen::drawDemo(unsigned long milliseconds, float rotation) {
-    int centerLED = ledCount / 2;
+    for (int b = 0; b < bladeCount; ++b) {
+        auto blade = blades[b];
+        auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
-    for (int ledIndex = 0; ledIndex < ledCount; ++ledIndex) {
-        int distanceFromCenter = abs(ledIndex - centerLED);
-        auto ledRotation = std::fmod(rotation + (ledIndex > centerLED ? 0.5f : 0.0f), 1.0f);
+        for (int p = 0; p < blade->pixelCount; ++p) {
+            Blade::Pixel &pixel = blade->pixels[p];
 
-        fill_rainbow(&leds[ledIndex], 1,
-        distanceFromCenter * 10 + milliseconds * 255 / 1000 / 10 + (int)(ledRotation * 255),
-                     0
-        );
-        leds[ledIndex].nscale8_video(this->correction[ledIndex]);
+            if (bladeRotation > 0.75f) {
+                *pixel.color = CRGB::White;
+            }
+            else {
+                fill_rainbow(
+                    pixel.color, 1,
+                    pixel.radius * 10 + milliseconds * 255 / 1000 / 10 + (int)(bladeRotation * 255),
+                    0
+                );
+            }
+        }
     }
+
     FastLED.show();
 }
 
 void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
-    int centerLEDIndex = ledCount / 2;
-    int ringArrayIndex = 0;
-    for (int ring = 0; ring < concentricResolution->count; ++ring) {
-        int polarity = (ring % 2) == 0 ? 1 : -1;
-        int ledIndex = centerLEDIndex + ((ring + 1) / 2) * polarity;
+    for (int b = 0; b < bladeCount; ++b) {
+        auto blade = blades[b];
+        auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
-        int ringResolution = (*concentricResolution)[ring];
+        for (int p = 0; p < blade->pixelCount; ++p) {
+            Blade::Pixel &pixel = blade->pixels[p];
 
-        float ledRotation = rotation;
-        if (polarity < 0)
-            ledRotation = std::fmod(ledRotation + 0.5f, 1.0f);
+            int ringResolution = (*concentricResolution)[pixel.ringIndex];
 
-        float relativeIndex = ledRotation * (float) ringResolution;
+            float relativeIndex = bladeRotation * (float) ringResolution;
 
-        int leftIndex = (int) relativeIndex % ringResolution;
-        int rightIndex = (int)(leftIndex + 1) % ringResolution;
-        float rightPart = std::fmod(relativeIndex, 1.0f);
-        float leftPart = 1.0f - rightPart;
+            int leftIndex = (int) relativeIndex % ringResolution;
+            int rightIndex = (int)(leftIndex + 1) % ringResolution;
+            float rightPart = std::fmod(relativeIndex, 1.0f);
+            float leftPart = 1.0f - rightPart;
 
-        auto leftPixel = buffer[leftIndex + ringArrayIndex];
-        auto rightPixel = buffer[rightIndex + ringArrayIndex];
+            auto leftPixel = pixel.concentricPointer[leftIndex];
+            auto rightPixel = pixel.concentricPointer[rightIndex];
 
-        leds[ledIndex] = leftPixel * fract8(leftPart) + rightPixel * fract8(rightPart);
-        leds[ledIndex].nscale8_video(this->correction[ledIndex]);
-
-        ringArrayIndex += ringResolution;
+            *pixel.color = leftPixel * fract8(leftPart) + rightPixel * fract8(rightPart);
+            pixel.color->nscale8_video(pixel.correction);
+        }
     }
 
     FastLED.show();
@@ -214,14 +239,24 @@ int Screen::ping() {
 }
 
 void Screen::setCorrection(float correction) {
-    float baselineIBrightness = float(this->ledCount - 1 + 0.25) * correction;
+    for (int b = 0; b < bladeCount; ++b) {
+        Blade *blade = blades[b];
 
-    int centerLEDIndex = ledCount / 2;
-    for (int ring = 0; ring < concentricResolution->count; ++ring) {
-        int polarity = (ring % 2) == 0 ? 1 : -1;
-        int ledIndex = centerLEDIndex + ((ring + 1) / 2) * polarity;
+        for (int p = 0; p < blade->pixelCount; ++p) {
+            Blade::Pixel &pixel = blade->pixels[p];
 
-        float iBrightness = float(ring) + 0.25f;
-        this->correction[ledIndex] = fract8(_min(iBrightness / baselineIBrightness, 1) * 255);
+            if (correction > 0) {
+                pixel.correction = fract8(_min(pixel.radius / correction, 1) * 255);
+            }
+            else {
+                pixel.correction = 255;
+            }
+        }
     }
+}
+
+Blade::Blade(int pixelCount, float rotationOffset) {
+    this->pixelCount = pixelCount;
+    pixels = new Pixel[pixelCount];
+    this->rotationOffset = rotationOffset;
 }
