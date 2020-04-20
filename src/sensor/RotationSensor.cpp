@@ -35,6 +35,7 @@ void RotationSensor::update(unsigned long time) {
         return;
     }
 
+    isPaused = false;
     unsigned long checkpointTime = time - checkpointTimestamps->last();
 
     int checkpointCount = visitor->checkpointCount;
@@ -99,7 +100,6 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 
     if (estimatedCheckpointDiff <= 0) {
         // Not sure what happened... but don't take the chance.
-        Logger::println("xDiffMean = 0; unable to sync rotation...");
         isReliable = false;
         return;
     }
@@ -155,8 +155,8 @@ int RotationSensor::estimatedDirection() {
     int historySize = checkpointIndices->count;
 
     int direction = 0;
-    for (unsigned int i = checkpointIndices->count; i > 1; i++) {
-        int diff = (((*checkpointIndices)[i] == (*checkpointIndices)[i - 1]) + historySize) % historySize;
+    for (unsigned int i = 1; i < checkpointIndices->count; i++) {
+        int diff = (((*checkpointIndices)[i] - (*checkpointIndices)[i - 1]) + historySize) % historySize;
         if (diff == 0)
             continue;
 
@@ -189,11 +189,11 @@ float RotationSensor::estimatedRotation(unsigned long time) {
     return std::fmod(rotation + 10, 1.0f);
 }
 
-int RotationSensor::rotationsPerSecond() {
+float RotationSensor::rotationsPerSecond() {
     if (isPaused)
         return 0;
 
-    return (int) (extrapolator->slope() * 1000 * 1000);
+    return extrapolator->slope() * 1000 * 1000;
 }
 
 String RotationSensor::stateDescription() {

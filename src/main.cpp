@@ -75,7 +75,7 @@ void setup() {
             new InterruptGPIOSwitch(rotationSensorPins),
 #endif
         // if separate checkpoints, each n
-        5 * (ROTATION_SENSOR_SEPARATE_CHECKPOINTS ? rotationSensorPins.size() : 1),
+        6 * (ROTATION_SENSOR_SEPARATE_CHECKPOINTS ? rotationSensorPins.size() : 1),
 #if ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_STEP
         new StepExtrapolator()
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION

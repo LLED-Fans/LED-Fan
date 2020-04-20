@@ -26,6 +26,8 @@ String Logger::string() {
     return data->toString();
 }
 
+void Logger::println(bool v) { println(String(v ? "true" : "false")); }
+
 void Logger::println(unsigned int v) { println(String(v)); }
 
 void Logger::println(int v) { println(String(v)); }

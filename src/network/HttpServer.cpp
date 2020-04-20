@@ -84,7 +84,7 @@ String HttpServer::processTemplates(const String &var) {
         if (!rotationSensor->isReliable)
             return "Unreliable (" + history + ")";
 
-        return String(rotationSensor->rotationsPerSecond()) + "r/s (" + history + ")";
+        return String(int(rotationSensor->rotationsPerSecond())) + "r/s (" + history + ")";
     }
     if (var == "MOTOR_SPEED") {
         return String(videoInterface->artnetServer->speedControl->getDesiredSpeed());

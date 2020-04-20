@@ -36,7 +36,7 @@ public:
     // Returns a value from 0 to 1, or NAN if unreliable
     float estimatedRotation(unsigned long time);
 
-    int rotationsPerSecond();
+    float rotationsPerSecond();
     String stateDescription();
 
 private:

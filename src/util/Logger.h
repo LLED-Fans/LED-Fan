@@ -20,6 +20,7 @@ public:
     static void println(char *value);
     static void println(String value);
 
+    static void println(bool v);
     static void println(unsigned int v);
     static void println(int v);
     static void println(long v);
