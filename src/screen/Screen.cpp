@@ -107,18 +107,24 @@ void Screen::drawRGB(float red, float green, float blue) {
 }
 
 void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
+    float vectorX[2];
+    float vectorY[2];
+    for (int i = 0; i < 2; ++i) {
+        PolarCoordinates::asCartesian(
+            rotation * M_TWOPI,
+            (i * 2) - 1,
+            vectorX + i, vectorY + i
+        );
+    }
+
     for (int ledIndex = 0; ledIndex < ledCount; ledIndex++) {
         int ringIndex =  (int) abs((float) (ledIndex - (ledCount / 2)) * 2 + 0.5f);
         int ledPolarity = ledIndex < (ledCount / 2) ? -1 : 1;
+        int ledPolarityIdx = (ledPolarity + 1) / 2;
 
         // 0 to 1
-        float relativeX, relativeY;
-        PolarCoordinates::asCartesian(
-            rotation * M_TWOPI,
-            ringRadii[ringIndex] * ledPolarity,
-            &relativeX, &relativeY,
-            true
-        );
+        float relativeX = 0.5f + vectorX[ledPolarityIdx] * ringRadii[ringIndex] * 0.5f;
+        float relativeY = 0.5f + vectorY[ledPolarityIdx] * ringRadii[ringIndex] * 0.5f;
 
         if (cartesianSampling == bilinear) {
             Image::bilinearSample(

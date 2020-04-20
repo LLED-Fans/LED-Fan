@@ -5,12 +5,13 @@
 #include "PolarCoordinates.h"
 
 #include <cmath>
+#include <util/LUT.h>
 #include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
 
 void PolarCoordinates::asCartesian(float theta, float r, float *x, float *y, bool positive) {
     // -r to r
-    *x = std::sin(theta) * r;
-    *y = std::cos(theta) * r;
+    *x = LUT::sin->lookup(theta) * r;
+    *y = LUT::cos->lookup(theta) * r;
 
     if (positive) {
         // 0 to 1, assuming -1 < r < 1

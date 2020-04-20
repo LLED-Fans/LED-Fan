@@ -21,6 +21,7 @@
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
 #include <util/Logger.h>
+#include <util/LUT.h>
 
 #endif
 
@@ -44,6 +45,8 @@ void setup() {
     Serial.begin(9600);
 
     Serial.println("Booting LLED Fan Firmware");
+
+    LUT::initSin(LUT_SIN_COUNT);
 
     // Mount file system
     SPIFFS.begin(false);
@@ -116,9 +119,6 @@ void setup() {
 
     // Updater
     updater = new Updater();
-
-    Logger::init();
-    Logger::println("Starting up...");
 }
 
 void loop() {

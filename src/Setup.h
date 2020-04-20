@@ -88,4 +88,10 @@
 #define MOTOR_PWM_FREQUENCY 30000
 #define MOTOR_PWM_RESOLUTION 8
 
+// ------------------------------------------
+// ---- Accuracy
+// ------------------------------------------
+
+#define LUT_SIN_COUNT 1000
+
 #endif //LED_FAN_SETUP_H
