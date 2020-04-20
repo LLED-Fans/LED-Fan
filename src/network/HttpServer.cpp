@@ -82,7 +82,7 @@ String HttpServer::processTemplates(const String &var) {
         }
 
         if (rotationSensor->isPaused) {
-            return "Paused"
+            return "Paused";
         }
 
         if (!rotationSensor->isReliable())
