@@ -11,7 +11,7 @@ class GPIOVisitor {
 public:
     int checkpointCount;
 
-    virtual void update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) = 0;
+    virtual void update(int *visitCheckpoint, unsigned long *visitTime) = 0;
 
     virtual String stateDescription() = 0;
 };

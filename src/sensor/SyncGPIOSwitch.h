@@ -18,7 +18,7 @@ public:
 
     SyncGPIOSwitch(const std::vector<int>& pins, double decay);
 
-    void update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) override;
+    void update(int *visitCheckpoint, unsigned long *visitTime) override;
 
     String stateDescription() override {
         return String(switches[0]->peaks->lower)

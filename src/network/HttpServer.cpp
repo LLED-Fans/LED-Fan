@@ -70,8 +70,8 @@ String HttpServer::processTemplates(const String &var) {
         return rotationSensor->stateDescription();
     }
     if (var == "ROTATION_SPEED") {
-        if (screen->fixedRotation >= 0)
-            return "Fixed: " + String(screen->fixedRotation);
+        if (rotationSensor->fixedRotation >= 0)
+            return "Fixed: " + String(rotationSensor->fixedRotation);
 
         IntRoller *timestamps = rotationSensor->checkpointTimestamps;
         IntRoller *indices = rotationSensor->checkpointIndices;
@@ -81,7 +81,11 @@ String HttpServer::processTemplates(const String &var) {
             history += String(diffMS) + "ms (" + (*indices)[i] + "), ";
         }
 
-        if (!rotationSensor->isReliable)
+        if (rotationSensor->isPaused) {
+            return "Paused"
+        }
+
+        if (!rotationSensor->isReliable())
             return "Unreliable (" + history + ")";
 
         return String(int(rotationSensor->rotationsPerSecond())) + "r/s (" + history + ")";
@@ -130,6 +134,7 @@ void HttpServer::setupRoutes() {
     auto template_processor = std::bind(&HttpServer::processTemplates, this, _1);
     auto videoInterface = this->videoInterface;
     auto screen = this->screen;
+    auto rotationSensor = this->rotationSensor;
 
     _server.serveStatic("/material.min.js", SPIFFS, "/material.min.js");
     _server.serveStatic("/material.min.css", SPIFFS, "/material.min.css");
@@ -196,12 +201,12 @@ void HttpServer::setupRoutes() {
         request->send(200, "text/plain", Logger::string());
     });
 
-    _server.on("/rotation/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+    _server.on("/rotation/set", HTTP_POST, [rotationSensor](AsyncWebServerRequest *request) {
         if (!request->hasParam("rotation", true)) {
             request_result(false);
         }
         auto rotation = request->getParam("rotation", true)->value().toFloat();
-        screen->fixedRotation = rotation;
+        rotationSensor->fixedRotation = rotation;
 
         request_result(true);
     });

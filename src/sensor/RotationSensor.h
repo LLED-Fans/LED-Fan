@@ -25,21 +25,25 @@ public:
 
     // x = micros, y = rotation 0 to switches.count
     Extrapolator *extrapolator;
-    bool isReliable = false;
     bool isPaused = false;
+
+    // Tool to fix rotation to a specific value
+    float fixedRotation = -1;
 
     RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolator *extrapolator);
 
-    void update(unsigned long time);
+    void update();
     void registerCheckpoint(unsigned long time, int checkpoint);
 
     // Returns a value from 0 to 1, or NAN if unreliable
     float estimatedRotation(unsigned long time);
+    bool isReliable();
 
     float rotationsPerSecond();
     String stateDescription();
 
 private:
+    bool _isReliable = false;
     int estimatedDirection();
 };
 

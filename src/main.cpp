@@ -58,16 +58,6 @@ void setup() {
 
     // Initialize Screen
 
-    screen = new Screen(
-        new LED_TYPE<LED_PIN, COLOR_ORDER>(),
-        LED_PIN,
-        LED_COUNT,
-        LED_OVERFLOW_WALL,
-        LED_COUNT,
-        ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
-    );
-    screen->setCorrection(LED_BRIGHTNESS_CORRECTION);
-
     std::vector<int> rotationSensorPins = {ROTATION_SENSOR_PINS};
     rotationSensor = new RotationSensor(
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
@@ -88,6 +78,17 @@ void setup() {
     rotationSensor->minCheckpointTime = 1000 * 1000 / (MAX_ROTATIONS_PER_SECOND * rotationSensorPins.size());
     rotationSensor->pauseInterval = ROTATION_PAUSED_MS * 1000;
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
+
+    screen = new Screen(
+            new LED_TYPE<LED_PIN, COLOR_ORDER>(),
+            LED_PIN,
+            LED_COUNT,
+            LED_OVERFLOW_WALL,
+            LED_COUNT,
+            ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
+    );
+    screen->setCorrection(LED_BRIGHTNESS_CORRECTION);
+    screen->rotationSensor = rotationSensor;
 
     auto motorForwardPin = new PWMPin(MOTOR_FORWARD_PIN, 0);
     auto motorBackwardPin = new PWMPin(MOTOR_BACKWARD_PIN, 1);
@@ -122,15 +123,10 @@ void setup() {
 }
 
 void loop() {
-    unsigned long microseconds = regularClock->sync();
-    auto milliseconds = microseconds / 1000;
+    regularClock->sync();
+    rotationSensor->update();
 
-    rotationSensor->update(microseconds);
-
-    screen->draw(
-        milliseconds,
-        rotationSensor->estimatedRotation(microseconds)
-    );
+    screen->draw();
     speedControl->update();
 
     EVERY_N_SECONDS(2) {

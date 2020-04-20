@@ -5,6 +5,7 @@
 #include "SyncGPIOSwitch.h"
 #include "../util/PeakDetector.h"
 #include <vector>
+#include <esp32-hal.h>
 
 SyncGPIOSwitch::SyncGPIOSwitch(const std::vector<int>& pins, double decay) {
     checkpointCount = pins.size();
@@ -15,7 +16,7 @@ SyncGPIOSwitch::SyncGPIOSwitch(const std::vector<int>& pins, double decay) {
     }
 }
 
-void SyncGPIOSwitch::update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) {
+void SyncGPIOSwitch::update(int *visitCheckpoint, unsigned long *visitTime) {
     for (int i = 0; i < switches.size(); ++i) {
         SensorSwitch *sensorSwitch = switches[i];
 
@@ -23,7 +24,7 @@ void SyncGPIOSwitch::update(unsigned long micros, int *visitCheckpoint, unsigned
         if (sensorSwitch->test() && sensorSwitch->isReliable) {
             if (!sensorSwitch->isOn()) {
                 *visitCheckpoint = i;
-                *visitTime = micros;
+                *visitTime = micros();
             }
         }
     }

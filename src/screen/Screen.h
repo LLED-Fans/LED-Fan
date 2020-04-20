@@ -7,6 +7,7 @@
 
 #include <FastLED.h>
 #include <util/IntRoller.h>
+#include <sensor/RotationSensor.h>
 
 class Blade {
 public:
@@ -36,6 +37,8 @@ public:
         nearest, bilinear
     };
 
+    RotationSensor *rotationSensor;
+
     CLEDController *controller;
     const int pin; // Just for output
     int ledCount;
@@ -59,17 +62,16 @@ public:
 
     IntRoller *concentricResolution;
 
-    float fixedRotation = -1;
     unsigned long millisecondsPingLeft = 0;
     unsigned long inputTimestamps[Mode::count];
 
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
-    void draw(unsigned long milliseconds, float rotation);
+    void draw();
 
-    void drawDemo(unsigned long milliseconds, float rotation);
-    void drawCartesian(unsigned long milliseconds, float rotation);
-    void drawConcentric(unsigned long milliseconds, float rotation);
+    void drawDemo();
+    void drawCartesian();
+    void drawConcentric();
     void drawError();
 
     void drawRGB(float red, float green = 0, float blue = 0);

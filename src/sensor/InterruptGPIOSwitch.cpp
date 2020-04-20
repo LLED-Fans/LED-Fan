@@ -33,7 +33,7 @@ void InterruptGPIOSwitch::attach() {
     }
 }
 
-void InterruptGPIOSwitch::update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) {
+void InterruptGPIOSwitch::update(int *visitCheckpoint, unsigned long *visitTime) {
     if (__interruptSwitchLastCheckpoint >= 0) {
         *visitCheckpoint = __interruptSwitchLastCheckpoint;
         *visitTime = __interruptSwitchLastVisitTime;

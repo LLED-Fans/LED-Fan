@@ -17,9 +17,10 @@ RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolat
     extrapolator(extrapolator)  {
 }
 
-void RotationSensor::update(unsigned long time) {
+void RotationSensor::update() {
     int checkpoint = -1;
-    visitor->update(time, &checkpoint, &time);
+    unsigned long time;
+    visitor->update(&checkpoint, &time);
 
     if (checkpoint < 0) {
         // TODO Handle when time rolls over
@@ -29,7 +30,7 @@ void RotationSensor::update(unsigned long time) {
 
         checkpointTimestamps->fill(0);
         checkpointIndices->fill(-1);
-        isReliable = true;
+        _isReliable = false;
         isPaused = true;
 
         return;
@@ -60,7 +61,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 
     if (n < minCheckpointPasses) {
         // Too little data to make meaningful extrapolation
-        isReliable = false;
+        _isReliable = false;
         return;
     }
 
@@ -68,7 +69,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     auto direction = historySize > 2 ? estimatedDirection() : 1;
     if (direction == 0) {
         // Unsure about direction - probably unreliable!
-        isReliable = false;
+        _isReliable = false;
         return;
     }
     // -1 if backwards
@@ -100,7 +101,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 
     if (estimatedCheckpointDiff <= 0) {
         // Not sure what happened... but don't take the chance.
-        isReliable = false;
+        _isReliable = false;
         return;
     }
 
@@ -138,7 +139,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
 
         // Best case we now have n / checkpointCount references
         if (x.size() < minCheckpointPasses) {
-            isReliable = false;
+            _isReliable = false;
             return;
         }
     }
@@ -148,7 +149,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     auto rotationsPerSecondP = std::abs(rotationsPerSecond);
 
     // Speed is sensible?
-    isReliable = rotationsPerSecondP < 100 && rotationsPerSecondP > 0.5;
+    _isReliable = rotationsPerSecondP < 100 && rotationsPerSecondP > 0.5;
 }
 
 int RotationSensor::estimatedDirection() {
@@ -170,7 +171,10 @@ int RotationSensor::estimatedDirection() {
 }
 
 float RotationSensor::estimatedRotation(unsigned long time) {
-    if (!isReliable || isPaused)
+    if (fixedRotation >= 0)
+        return fixedRotation;
+
+    if (!_isReliable || isPaused)
         return NAN;
 
     float position = extrapolator->extrapolate(time);
@@ -194,6 +198,10 @@ float RotationSensor::rotationsPerSecond() {
         return 0;
 
     return extrapolator->slope() * 1000 * 1000;
+}
+
+bool RotationSensor::isReliable() {
+    return _isReliable || fixedRotation >= 0;
 }
 
 String RotationSensor::stateDescription() {

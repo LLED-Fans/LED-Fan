@@ -7,7 +7,7 @@
 #include <util/XTaskTimer.h>
 #include <sensor/XTaskGPIOSwitch.h>
 
-void XTaskGPIOSwitch::update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) {
+void XTaskGPIOSwitch::update(int *visitCheckpoint, unsigned long *visitTime) {
     if (lastCheckpoint >= 0) {
         *visitCheckpoint = lastCheckpoint;
         *visitTime = lastVisitTime;
@@ -22,7 +22,7 @@ XTaskGPIOSwitch::XTaskGPIOSwitch(const std::vector<int> &pins, double decay, int
         "RSENSOR",
         10,
         [this](unsigned long time){
-            SyncGPIOSwitch::update(time, &lastCheckpoint, &lastVisitTime);
+            SyncGPIOSwitch::update(&lastCheckpoint, &lastVisitTime);
         }
     );
 }

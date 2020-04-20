@@ -18,7 +18,7 @@ public:
 
     XTaskGPIOSwitch(const std::vector<int> &pins, double decay, int delay);
 
-    void update(unsigned long micros, int *visitCheckpoint, unsigned long *visitTime) override;
+    void update(int *visitCheckpoint, unsigned long *visitTime) override;
 };
 
 

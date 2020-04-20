@@ -58,7 +58,8 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 }
 
 
-void Screen::draw(unsigned long milliseconds, float rotation) {
+void Screen::draw() {
+    float milliseconds = millis();
     auto delay = milliseconds - lastUpdateTimestamp;
     lastUpdateTimestamp = milliseconds;
 
@@ -74,24 +75,20 @@ void Screen::draw(unsigned long milliseconds, float rotation) {
         return;
     }
 
-    if (fixedRotation >= 0) {
-        rotation = fixedRotation;
-    }
-
-    if (std::isnan(rotation)) {
+    if (!rotationSensor->isReliable()) {
         drawRGB(0);
         return;
     }
 
     switch (mode) {
         default:
-            drawCartesian(milliseconds, rotation);
+            drawCartesian();
             break;
         case demo:
-            drawDemo(milliseconds, rotation);
+            drawDemo();
             break;
         case concentric:
-            drawConcentric(milliseconds, rotation);
+            drawConcentric();
             break;
     }
 }
@@ -127,9 +124,11 @@ void Screen::drawRGB(float red, float green, float blue) {
     FastLED.show();
 }
 
-void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
+void Screen::drawCartesian() {
     for (int b = 0; b < bladeCount; ++b) {
         auto blade = blades[b];
+
+        float rotation = rotationSensor->estimatedRotation(micros());
 
         float vectorX, vectorY;
         PolarCoordinates::asCartesian(
@@ -138,7 +137,7 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
                 &vectorX, &vectorY
         );
 
-        for (int p = 0; p < blade->pixelCount; ++p) {
+        for (int p = blade->pixelCount - 1; p >= 0; --p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
             // 0 to 1
@@ -175,12 +174,15 @@ void Screen::drawCartesian(unsigned long milliseconds, float rotation) {
     FastLED.show();
 }
 
-void Screen::drawDemo(unsigned long milliseconds, float rotation) {
+void Screen::drawDemo() {
     for (int b = 0; b < bladeCount; ++b) {
+        float rotation = rotationSensor->estimatedRotation(micros());
+        float milliseconds = millis();
+
         auto blade = blades[b];
         auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
-        for (int p = 0; p < blade->pixelCount; ++p) {
+        for (int p = blade->pixelCount - 1; p >= 0; --p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
             if (bladeRotation > 0.75f) {
@@ -199,12 +201,14 @@ void Screen::drawDemo(unsigned long milliseconds, float rotation) {
     FastLED.show();
 }
 
-void Screen::drawConcentric(unsigned long milliseconds, float rotation) {
+void Screen::drawConcentric() {
     for (int b = 0; b < bladeCount; ++b) {
+        float rotation = rotationSensor->estimatedRotation(micros());
+
         auto blade = blades[b];
         auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
-        for (int p = 0; p < blade->pixelCount; ++p) {
+        for (int p = blade->pixelCount - 1; p >= 0; --p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
             int ringResolution = (*concentricResolution)[pixel.ringIndex];
