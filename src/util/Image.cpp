@@ -5,27 +5,27 @@
 #include "Image.h"
 
 void Image::bilinearSample(std::function<uint8_t*(int, int)> image, uint8_t *dest, int count, float x, float y) {
-    int x_l = int(x), y_l = int(y);
+    int xIdxLow = int(x), yIdxLow = int(y);
 
-    const uint8_t *q11 = image(x_l, y_l);
-    const uint8_t *q12 = image(x_l, y_l + 1);
-    const uint8_t *q21 = image(x_l + 1, y_l);
-    const uint8_t *q22 = image(x_l + 1, y_l + 1);
+    const uint8_t *q00 = image(xIdxLow, yIdxLow);
+    const uint8_t *q01 = image(xIdxLow, yIdxLow + 1);
+    const uint8_t *q10 = image(xIdxLow + 1, yIdxLow);
+    const uint8_t *q11 = image(xIdxLow + 1, yIdxLow + 1);
 
-    float xr = x - x_l;
-    float yr = y - y_l;
+    float xR = x - xIdxLow;
+    float yR = y - yIdxLow;
 
-    float xi = 1.f - xr;
-    float yi = 1.f - yr;
+    float xL = 1.f - xR;
+    float yL = 1.f - yR;
 
     for (int i = 0; i < count; i++) {
-        dest[i] = bilinearLerp(q11[i], q12[i], q21[i], q22[i], xr, yr, xi, yi);
+        dest[i] = bilinearLerp(q00[i], q01[i], q10[i], q11[i], xL, yL, xR, yR);
     }
 }
 
-uint8_t Image::bilinearLerp(uint8_t q11, uint8_t q12, uint8_t q21, uint8_t q22, float xr, float yr, float xi, float yi) {
-    return q11 * xr * yr +
-           q21 * xi * yr +
-           q12 * xr * yi +
-           q22 * xi * yi;
+uint8_t Image::bilinearLerp(uint8_t q00, uint8_t q01, uint8_t q10, uint8_t q11, float xL, float yL, float xR, float yR) {
+    return q00 * xL * yL +
+           q10 * xR * yL +
+           q01 * xL * yR +
+           q11 * xR * yR;
 }

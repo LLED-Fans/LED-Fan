@@ -11,7 +11,7 @@ class Image {
 public:
     static void bilinearSample(std::function<uint8_t*(int, int)> image, uint8_t *dest, int count, float x, float y);
 
-    static inline uint8_t bilinearLerp(uint8_t q11, uint8_t q12, uint8_t q21, uint8_t q22, float xr, float yr, float xi, float yi);
+    static inline uint8_t bilinearLerp(uint8_t q00, uint8_t q01, uint8_t q10, uint8_t q11, float xL, float yL, float xR, float yR);
 };
 
 
