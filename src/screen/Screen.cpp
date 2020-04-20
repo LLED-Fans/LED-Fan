@@ -59,7 +59,7 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
 
 void Screen::draw() {
-    float milliseconds = millis();
+    auto milliseconds = millis();
     auto delay = milliseconds - lastUpdateTimestamp;
     lastUpdateTimestamp = milliseconds;
 
@@ -177,7 +177,7 @@ void Screen::drawCartesian() {
 void Screen::drawDemo() {
     for (int b = 0; b < bladeCount; ++b) {
         float rotation = rotationSensor->estimatedRotation(micros());
-        float milliseconds = millis();
+        auto milliseconds = millis();
 
         auto blade = blades[b];
         auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);

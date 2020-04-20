@@ -12,7 +12,7 @@ void runLLTimerTask(void *pvParameters)
     auto *timer = static_cast<XTaskTimer *>(pvParameters);
 
     auto xLastWakeTime = xTaskGetTickCount ();
-    unsigned long lastTimeMicros = micros();
+    auto lastTimeMicros = micros();
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

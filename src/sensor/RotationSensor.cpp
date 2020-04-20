@@ -6,6 +6,7 @@
 #include <util/Logger.h>
 #include <util/cluster/FastCluster.h>
 #include <util/Math.h>
+#include <esp32-hal.h>
 #include "RotationSensor.h"
 
 #include "Setup.h"
@@ -24,9 +25,8 @@ void RotationSensor::update() {
 
     if (checkpoint < 0) {
         // TODO Handle when time rolls over
-        if (isPaused || (time - checkpointTimestamps->last()) < pauseInterval) {
+        if (isPaused || (micros() - checkpointTimestamps->last()) < pauseInterval)
             return;
-        }
 
         checkpointTimestamps->fill(0);
         checkpointIndices->fill(-1);
