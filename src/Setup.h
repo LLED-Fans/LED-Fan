@@ -42,9 +42,13 @@
 // ------------------------------------------
 
 // See https://github.com/FastLED/FastLED/blob/master/chipsets.h
-#define LED_TYPE WS2813
-#define COLOR_ORDER GRB
-#define LED_PIN 26
+// APA102Controller recommended, WS2013 etc. work too
+#define LED_TYPE APA102Controller
+#define COLOR_ORDER BGR
+#define LED_DATA_PIN 26
+// Only in use for clock-based LED strips (e.g. APA102)
+#define LED_CLOCK_PIN 27
+
 #define LED_COUNT 42
 // How many additional LEDs we should set to black, just to be safe
 #define LED_OVERFLOW_WALL 5
@@ -65,7 +69,7 @@
 // See ROTATION_EXTRAPOLATION_XXX
 #define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_REGRESSION
 // Comma-Separated list of pins in use
-#define ROTATION_SENSOR_PINS 14,18,23,4
+#define ROTATION_SENSOR_PINS 14,18//,23,4
 // If true, calculate the time per checkpoint separately (for wobbly fans)
 #define ROTATION_SENSOR_SEPARATE_CHECKPOINTS false
 // If applicable, max framerate of rotation sensor task

@@ -80,8 +80,12 @@ void setup() {
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
 
     screen = new Screen(
-            new LED_TYPE<LED_PIN, COLOR_ORDER>(),
-            LED_PIN,
+#if LED_TYPE == APA102Controller
+            new LED_TYPE<LED_DATA_PIN, LED_CLOCK_PIN, COLOR_ORDER>(),
+#else
+            new LED_TYPE<LED_DATA_PIN, COLOR_ORDER>(),
+#endif
+            LED_DATA_PIN,
             LED_COUNT,
             LED_OVERFLOW_WALL,
             LED_COUNT,
