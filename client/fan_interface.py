@@ -96,10 +96,13 @@ def run(
 
     print(f"Sending Art-Net Data to: {ip}:{port} — {artnet_provider.net}|{artnet_provider.subnet}|{artnet_provider.universe}!")
     start = datetime.now()
-    sequence_start = start
 
     clock = RegularClock()
     frame_start = clock.mark()
+
+    last_status_update = start
+    frame_update_time = timedelta(seconds=10)
+    frames_since_status_update = 0
 
     while True:
         packets = packets_resource.pop()
@@ -109,13 +112,17 @@ def run(
                 (ip, port)
             )
 
-        if artnet_provider.sequence == 0:
+        frames_since_status_update += 1
+
+        if frame_start - last_status_update > frame_update_time:
             print(
-                f"Sequence Pushed! kB: {sum(map(len, packets)) / 3}"
+                f"===> "
+                f"kB: {sum(map(len, packets)) / 3}"
                 f", Packets p.f.: {len(packets)}"
-                f", FPS: {255.0 / (frame_start - sequence_start).total_seconds()}"
+                f", FPS: {frames_since_status_update / (frame_start - last_status_update).total_seconds()}"
             )
-            sequence_start = frame_start
+            frames_since_status_update = 0
+            last_status_update = frame_start
 
         # For plotting coords
         # log = requests.get(f"http://{ip}/log")
