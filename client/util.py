@@ -55,7 +55,7 @@ class BufferedResource:
     max_buffer_size: int
     buffer: List = field(default_factory=list)
 
-    condition = Condition()
+    condition: Condition = field(default_factory=Condition)
 
     def push(self, resource):
         with self.condition:
