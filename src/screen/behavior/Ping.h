@@ -12,7 +12,7 @@ class Ping : public NativeBehavior {
 public:
     unsigned long timeLeft;
 
-    Ping(int timeLeft);
+    Ping(unsigned long timeLeft);
 
     virtual bool update(CRGB *leds, int ledCount, unsigned long delay);
 };

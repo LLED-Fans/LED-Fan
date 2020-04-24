@@ -10,6 +10,7 @@
 #include <esp_wifi.h>
 #include <util/Logger.h>
 #include <screen/behavior/Ping.h>
+#include <screen/behavior/StrobeDemo.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -194,6 +195,11 @@ void HttpServer::setupRoutes() {
 
         screen->behavior = new Ping(time);
         request->send(200, "text/plain", String(time));
+    });
+
+    _server.on("/strobe-demo", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+        screen->behavior = new StrobeDemo();
+        request->send(200, "text/plain", String(2000));
     });
 
     _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {

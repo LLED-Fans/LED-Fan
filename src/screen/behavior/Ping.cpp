@@ -4,7 +4,7 @@
 
 #include "Ping.h"
 
-Ping::Ping(int timeLeft) : timeLeft(timeLeft) {}
+Ping::Ping(unsigned long timeLeft) : timeLeft(timeLeft) {}
 
 bool Ping::update(CRGB *leds, int ledCount, unsigned long delay) {
     if (timeLeft <= 0)
