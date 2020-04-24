@@ -67,16 +67,19 @@ void Screen::draw() {
         this->leds[ledCount + i] = CRGB::Black;
     }
 
-    if (millisecondsPingLeft > 0) {
-        drawRGB((((millisecondsPingLeft - 1) / 500) % 2) == 0 ? 0 : 1);
-        millisecondsPingLeft = millisecondsPingLeft > delay
-                ? millisecondsPingLeft - delay
-                : 0;
-        return;
+    if (behavior != nullptr) {
+        if (behavior->update(leds, ledCount, delay)) {
+            FastLED.show();
+            return;
+        }
+
+        // Behavior over, reset pointer
+        behavior = nullptr;
     }
 
     if (!rotationSensor->isReliable()) {
-        drawRGB(0);
+        fill_solid(leds, ledCount, CRGB::Black);
+        FastLED.show();
         return;
     }
 
@@ -109,19 +112,6 @@ void Screen::determineMode(unsigned long milliseconds) {
             mode = mostRecentInput;
         }
     }
-}
-
-void Screen::drawError() {
-    drawRGB(0);
-}
-
-void Screen::drawRGB(float red, float green, float blue) {
-    fill_solid(leds, ledCount, CRGB(
-            (int)(red * 255),
-            (int)(green * 255),
-            (int)(blue * 255)
-    ));
-    FastLED.show();
 }
 
 void Screen::drawCartesian() {
@@ -236,12 +226,6 @@ int Screen::noteInput(Mode mode) {
     determineMode(lastUpdateTimestamp);
     return lastUpdateTimestamp;
 }
-
-int Screen::ping() {
-    millisecondsPingLeft = 2000;
-    return 2000;
-}
-
 void Screen::setCorrection(float correction) {
     for (int b = 0; b < bladeCount; ++b) {
         Blade *blade = blades[b];

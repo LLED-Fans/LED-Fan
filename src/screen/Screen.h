@@ -8,6 +8,7 @@
 #include <FastLED.h>
 #include <util/IntRoller.h>
 #include <sensor/RotationSensor.h>
+#include <screen/behavior/NativeBehavior.h>
 
 class Blade {
 public:
@@ -62,7 +63,7 @@ public:
 
     IntRoller *concentricResolution;
 
-    unsigned long millisecondsPingLeft = 0;
+    NativeBehavior *behavior = nullptr;
     unsigned long inputTimestamps[Mode::count];
 
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
@@ -72,12 +73,8 @@ public:
     void drawDemo();
     void drawCartesian();
     void drawConcentric();
-    void drawError();
-
-    void drawRGB(float red, float green = 0, float blue = 0);
 
     int noteInput(Mode mode);
-    int ping();
 
     void determineMode(unsigned long milliseconds);
 

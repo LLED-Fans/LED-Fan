@@ -9,6 +9,7 @@
 #include <SPIFFS.h>
 #include <esp_wifi.h>
 #include <util/Logger.h>
+#include <screen/behavior/Ping.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -189,7 +190,10 @@ void HttpServer::setupRoutes() {
     });
 
     _server.on("/ping", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", String(screen->ping()));
+        unsigned long time = 2000;
+
+        screen->behavior = new Ping(time);
+        request->send(200, "text/plain", String(time));
     });
 
     _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
