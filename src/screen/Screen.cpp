@@ -34,9 +34,10 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
         );
         int bladePolarity = b * 2 - 1;
         int bladeStartLED = ledCount / 2 - (bladePolarity < 0 ? 1 : 0);
+        int bladeRingOffset = b == 0 ? 1 : 0;
 
         for (int p = 0; p < blade->pixelCount; ++p) {
-            int ringIdx = b + p * bladeCount;
+            int ringIdx = bladeRingOffset + p * bladeCount;
 
             blade->pixels[p] = Blade::Pixel{
                 ringRadii[ringIdx],
