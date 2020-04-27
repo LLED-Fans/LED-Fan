@@ -61,7 +61,6 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
 void Screen::draw() {
     auto milliseconds = millis();
-    auto delay = milliseconds - lastUpdateTimestamp;
     lastUpdateTimestamp = milliseconds;
 
     for (int i = 0; i < overflowWall; ++i) {
@@ -69,6 +68,8 @@ void Screen::draw() {
     }
 
     if (behavior != nullptr) {
+        auto delay = milliseconds - lastUpdateTimestamp;
+
         if (behavior->update(leds, ledCount, delay)) {
             FastLED.show();
             return;
