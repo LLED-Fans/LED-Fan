@@ -18,6 +18,9 @@ public:
         fract8 correction;
 
         CRGB *color;
+
+        // Cached for performance
+        int concentricResolution;
         CRGB *concentricPointer;
     };
 

@@ -44,6 +44,7 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
                 ringIdx,
                 1,
                 leds + bladeStartLED + p * bladePolarity,
+                (*concentricResolution)[ringIdx],
                 buffer + std::accumulate((*concentricResolution).data, (*concentricResolution).data + ringIdx, 0)
             };
         }
@@ -205,19 +206,18 @@ void Screen::drawConcentric() {
         for (int p = blade->pixelCount - 1; p >= 0; --p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
-            int ringResolution = (*concentricResolution)[pixel.ringIndex];
-
+            int ringResolution = pixel.concentricResolution;
             float relativeIndex = bladeRotation * (float) ringResolution;
 
             int leftIndex = (int) relativeIndex % ringResolution;
             int rightIndex = (int)(leftIndex + 1) % ringResolution;
-            float rightPart = std::fmod(relativeIndex, 1.0f);
-            float leftPart = 1.0f - rightPart;
+            fract8 rightPart = fract8(relativeIndex * 255);
+            fract8 leftPart = 255 - rightPart;
 
             auto leftPixel = pixel.concentricPointer[leftIndex];
             auto rightPixel = pixel.concentricPointer[rightIndex];
 
-            *pixel.color = leftPixel * fract8(leftPart) + rightPixel * fract8(rightPart);
+            *pixel.color = leftPixel * leftPart + rightPixel * rightPart;
             pixel.color->nscale8_video(pixel.correction);
         }
     }
