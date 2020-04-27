@@ -81,7 +81,7 @@ void setup() {
 
     screen = new Screen(
 #if LED_TYPE == APA102Controller
-            new LED_TYPE<LED_DATA_PIN, LED_CLOCK_PIN, COLOR_ORDER>(),
+            new LED_TYPE<LED_DATA_PIN, LED_CLOCK_PIN, COLOR_ORDER, DATA_RATE_MHZ(LED_CLOCK_SPEED_MHZ)>(),
 #else
             new LED_TYPE<LED_DATA_PIN, COLOR_ORDER>(),
 #endif
