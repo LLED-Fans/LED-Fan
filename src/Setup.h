@@ -78,6 +78,11 @@
 // After this idle time, we're considered to be paused.
 #define ROTATION_PAUSED_MS 2000
 
+// How many checkpoints to account for during extrapolation
+// High numbers are stabler under stable conditions,
+// low numbers are quicker to adjust
+#define CHECKPOINT_HISTORY_COUNT 12
+
 // ------------------------------------------
 // ---- Motor Control
 // ------------------------------------------

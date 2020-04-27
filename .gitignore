@@ -3,3 +3,11 @@ CMakeListsPrivate.txt
 
 .idea
 cmake-build-esp32dev
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
