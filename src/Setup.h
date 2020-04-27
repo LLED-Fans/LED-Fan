@@ -26,6 +26,8 @@
 // ------------------------------------------
 
 // Upper cap
+// Some LED Strip types have a max rate, e.g.
+// WS2813: 2000
 #define MAX_FRAMES_PER_SECOND 10000
 
 // ------------------------------------------
