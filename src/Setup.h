@@ -25,9 +25,8 @@
 // ---- General
 // ------------------------------------------
 
-// Upper cap. Consider the chipset of the LEDs' max framerate:
-// WS2812b: 400; WS2813: 2000
-#define MAX_FRAMES_PER_SECOND 2000
+// Upper cap
+#define MAX_FRAMES_PER_SECOND 10000
 
 // ------------------------------------------
 // ---- Wifi
