@@ -174,6 +174,8 @@ void Screen::drawDemo() {
         auto blade = blades[b];
         auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
+        auto hueShift = milliseconds * 255 / 1000 / 10  + (unsigned long)(bladeRotation * 255);
+
         for (int p = blade->pixelCount - 1; p >= 0; --p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
@@ -183,7 +185,7 @@ void Screen::drawDemo() {
             else {
                 fill_rainbow(
                     pixel.color, 1,
-                    pixel.radius * 10 + milliseconds * 255 / 1000 / 10 + (int)(bladeRotation * 255),
+                    pixel.radius * 10 + hueShift,
                     0
                 );
             }
