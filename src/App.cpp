@@ -102,11 +102,9 @@ App::App() {
     Network::setHostname(WIFI_HOSTNAME);
 
     artnetServer = new ArtnetServer(screen, speedControl);
+    updater = new Updater();
 
     server = new HttpServer(this);
-
-    // Updater
-    updater = new Updater();
 }
 
 void App::run() {
@@ -119,5 +117,5 @@ void App::run() {
     EVERY_N_SECONDS(2) {
         Network::checkStatus();
     }
-    updater->check();
+    updater->handle();
 }

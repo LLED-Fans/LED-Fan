@@ -8,9 +8,13 @@
 
 class Updater {
 public:
+    bool shouldCheckUpdate;
+    unsigned long checkUntilTimestamp;
+
     Updater();
 
-    void check();
+    int check();
+    bool handle();
 };
 
 

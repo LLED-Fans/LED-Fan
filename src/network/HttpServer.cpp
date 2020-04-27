@@ -134,6 +134,7 @@ void HttpServer::setupRoutes() {
     auto videoInterface = this->videoInterface;
     auto screen = app->screen;
     auto rotationSensor = app->rotationSensor;
+    auto updater = app->updater;
 
     _server.serveStatic("/material.min.js", SPIFFS, "/material.min.js");
     _server.serveStatic("/material.min.css", SPIFFS, "/material.min.css");
@@ -202,6 +203,10 @@ void HttpServer::setupRoutes() {
     _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", "5000");
         ESP.restart();
+    });
+
+    _server.on("/checkupdate", HTTP_POST, [updater](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", String(updater->check()));
     });
 
     _server.on("/log", HTTP_GET, [screen](AsyncWebServerRequest *request) {

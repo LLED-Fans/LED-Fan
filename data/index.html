@@ -78,17 +78,24 @@
                         <h4>Sensors</h4>
                         <p><b>Magnet Read:</b> %MAGNET_VALUE%</p>
                         <p><b>Rotation Speed:</b> %ROTATION_SPEED%</p>
+
                         <h4>Actions</h4>
                         <div class="mdl-grid controls">
-                            <div class="mdl-cell mdl-cell--6-col">
+                            <div class="mdl-cell mdl-cell--4-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                        name="mode" value="screen" onclick="accentAction(this, 'ping')">
+                                        onclick="accentAction(this, 'ping')">
                                     Ping
                                 </button>
                             </div>
-                            <div class="mdl-cell mdl-cell--6-col">
+                            <div class="mdl-cell mdl-cell--4-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                        name="mode" value="screen" onclick="accentAction(this, 'reboot')">
+                                        onclick="accentAction(this, 'checkupdate')">
+                                    Check for Updates
+                                </button>
+                            </div>
+                            <div class="mdl-cell mdl-cell--4-col">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                        onclick="accentAction(this, 'reboot')">
                                     Reboot
                                 </button>
                             </div>

@@ -38,10 +38,29 @@ Updater::Updater() {
                 else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
                 else if (error == OTA_END_ERROR) Serial.println("End Failed");
             });
-
-    ArduinoOTA.begin();
 }
 
-void Updater::check() {
+int Updater::check() {
+    shouldCheckUpdate = true;
+    return 10000;
+}
+
+bool Updater::handle() {
+    if (shouldCheckUpdate) {
+        checkUntilTimestamp = millis() + 10000;
+        shouldCheckUpdate = false;
+    }
+
+    if (checkUntilTimestamp > 0) {
+        if (millis() < checkUntilTimestamp) {
+            // May run already but we can't check lol
+            ArduinoOTA.begin();
+        }
+        else {
+            ArduinoOTA.end();
+            checkUntilTimestamp = 0;
+        }
+    }
+
     ArduinoOTA.handle();
 }
