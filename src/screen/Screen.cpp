@@ -211,13 +211,16 @@ void Screen::drawConcentric() {
 
             int leftIndex = (int) relativeIndex % ringResolution;
             int rightIndex = (int)(leftIndex + 1) % ringResolution;
+
+            // Get / Copy pixels
+            CRGB leftPixel = pixel.concentricPointer[leftIndex];
+            CRGB rightPixel = pixel.concentricPointer[rightIndex];
+
             fract8 rightPart = fract8(relativeIndex * 255);
-            fract8 leftPart = 255 - rightPart;
+            leftPixel.nscale8_video(255 - rightPart);
+            rightPixel.nscale8_video(rightPart);
 
-            auto leftPixel = pixel.concentricPointer[leftIndex];
-            auto rightPixel = pixel.concentricPointer[rightIndex];
-
-            *pixel.color = leftPixel * leftPart + rightPixel * rightPart;
+            *pixel.color = leftPixel + rightPixel;
             pixel.color->nscale8_video(pixel.correction);
         }
     }
