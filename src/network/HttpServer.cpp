@@ -11,6 +11,7 @@
 #include <util/Logger.h>
 #include <screen/behavior/Ping.h>
 #include <screen/behavior/StrobeDemo.h>
+#include <App.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -23,11 +24,7 @@ using namespace std::placeholders;
 // FIXME This should be per-instance. Or something.
 AsyncWebServer _server(80);
 
-HttpServer::HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, RegularClock *clockSynchronizer)
-        : screen(videoInterface->screen),
-          videoInterface(videoInterface),
-          rotationSensor(rotationSensor),
-          clockSynchronizer(clockSynchronizer) {
+HttpServer::HttpServer(App *app) : app(app), videoInterface(new VideoInterface(app->screen, app->artnetServer)) {
     setupRoutes();
     _server.begin();
 }
@@ -47,7 +44,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(WiFi.SSID());
 
     if (var == "LED_PIN")
-        return String(screen->pin);
+        return String(app->screen->pin);
     if (var == "MAGNET_PIN") {
         String r = "";
         for (auto pin : {ROTATION_SENSOR_PINS}) {
@@ -57,52 +54,52 @@ String HttpServer::processTemplates(const String &var) {
     }
 
     if (var == "S_MODE_DEMO") {
-        return screen->mode == Screen::demo ? "mdl-button--accent" : "";
+        return app->screen->mode == Screen::demo ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_SCREEN") {
-        return screen->mode == Screen::cartesian ? "mdl-button--accent" : "";
+        return app->screen->mode == Screen::cartesian ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_CONCENTRIC") {
-        return screen->mode == Screen::concentric ? "mdl-button--accent" : "";
+        return app->screen->mode == Screen::concentric ? "mdl-button--accent" : "";
     }
     if (var == "VIRTUAL_SCREEN_SIZE") {
-        return String(screen->cartesianResolution);
+        return String(app->screen->cartesianResolution);
     }
     if (var == "MAGNET_VALUE") {
-        return rotationSensor->stateDescription();
+        return app->rotationSensor->stateDescription();
     }
     if (var == "ROTATION_SPEED") {
-        if (rotationSensor->fixedRotation >= 0)
-            return "Fixed: " + String(rotationSensor->fixedRotation);
+        if (app->rotationSensor->fixedRotation >= 0)
+            return "Fixed: " + String(app->rotationSensor->fixedRotation);
 
-        IntRoller *timestamps = rotationSensor->checkpointTimestamps;
-        IntRoller *indices = rotationSensor->checkpointIndices;
+        IntRoller *timestamps = app->rotationSensor->checkpointTimestamps;
+        IntRoller *indices = app->rotationSensor->checkpointIndices;
         String history = "";
         for (int i = 1; i < timestamps->count; ++i) {
             int diffMS = ((*timestamps)[i] - (*timestamps)[i - 1]) / 1000;
             history += String(diffMS) + "ms (" + (*indices)[i] + "), ";
         }
 
-        if (rotationSensor->isPaused) {
+        if (app->rotationSensor->isPaused) {
             return "Paused";
         }
 
-        if (!rotationSensor->isReliable())
+        if (!app->rotationSensor->isReliable())
             return "Unreliable (" + history + ")";
 
-        return String(int(rotationSensor->rotationsPerSecond())) + "r/s (" + history + ")";
+        return String(int(app->rotationSensor->rotationsPerSecond())) + "r/s (" + history + ")";
     }
     if (var == "MOTOR_SPEED") {
-        return String(videoInterface->artnetServer->speedControl->getDesiredSpeed());
+        return String(app->speedControl->getDesiredSpeed());
     }
     if (var == "UPTIME") {
         return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
     }
     if (var == "FPS") {
-        float meanMicrosPerFrame = clockSynchronizer->frameTimeHistory->mean();
+        float meanMicrosPerFrame = app->regularClock->frameTimeHistory->mean();
 
-        auto fpsString = String(1000 * 1000 / _max(meanMicrosPerFrame, clockSynchronizer->microsecondsPerFrame))
-            + " (slack: " + String(_max(0, (int) (clockSynchronizer->microsecondsPerFrame - meanMicrosPerFrame))) + "µs)";
+        auto fpsString = String(1000 * 1000 / _max(meanMicrosPerFrame, app->regularClock->microsecondsPerFrame))
+            + " (slack: " + String(_max(0, (int) (app->regularClock->microsecondsPerFrame - meanMicrosPerFrame))) + "µs)";
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
         float meanHallMicrosPerFrame = hallTimer->frameTimes.mean();
@@ -135,8 +132,8 @@ bool handlePartialFile(AsyncWebServerRequest *request, uint8_t *data, size_t len
 void HttpServer::setupRoutes() {
     auto template_processor = std::bind(&HttpServer::processTemplates, this, _1);
     auto videoInterface = this->videoInterface;
-    auto screen = this->screen;
-    auto rotationSensor = this->rotationSensor;
+    auto screen = app->screen;
+    auto rotationSensor = app->rotationSensor;
 
     _server.serveStatic("/material.min.js", SPIFFS, "/material.min.js");
     _server.serveStatic("/material.min.css", SPIFFS, "/material.min.css");

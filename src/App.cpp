@@ -103,11 +103,7 @@ App::App() {
 
     artnetServer = new ArtnetServer(screen, speedControl);
 
-    server = new HttpServer(
-            new VideoInterface(screen, artnetServer),
-            rotationSensor,
-            regularClock
-    );
+    server = new HttpServer(this);
 
     // Updater
     updater = new Updater();

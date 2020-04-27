@@ -16,19 +16,14 @@
 #include <util/XTaskTimer.h>
 #endif
 
+class App;
+
 class HttpServer {
 public:
-    Screen *screen;
+    App *app;
     VideoInterface *videoInterface;
 
-    RotationSensor *rotationSensor;
-    RegularClock *clockSynchronizer;
-
-#if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
-    XTaskTimer *hallTimer;
-#endif
-
-    HttpServer(VideoInterface *videoInterface, RotationSensor *rotationSensor, RegularClock *clockSynchronizer);
+    HttpServer(App *app);
 
     void setupRoutes();
     String processTemplates(const String &var);
