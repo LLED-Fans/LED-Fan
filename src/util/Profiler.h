@@ -5,8 +5,7 @@
 #ifndef LED_FAN_PROFILER_H
 #define LED_FAN_PROFILER_H
 
-
-#include <ArduinoJson/Strings/String.hpp>
+#include <WString.h>
 
 class Profiler {
 public:
