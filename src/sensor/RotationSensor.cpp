@@ -19,6 +19,8 @@ RotationSensor::RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolat
 }
 
 void RotationSensor::update() {
+    didUpdate = false;
+
     int checkpoint = -1;
     unsigned long time;
     visitor->update(&checkpoint, &time);
@@ -32,6 +34,7 @@ void RotationSensor::update() {
         checkpointIndices->fill(-1);
         _isReliable = false;
         isPaused = true;
+        didUpdate = true;
 
         return;
     }
@@ -48,6 +51,7 @@ void RotationSensor::update() {
     }
 
     registerCheckpoint(time, checkpoint);
+    didUpdate = true;
 }
 
 void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {

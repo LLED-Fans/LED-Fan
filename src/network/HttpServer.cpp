@@ -12,6 +12,7 @@
 #include <screen/behavior/Ping.h>
 #include <screen/behavior/StrobeDemo.h>
 #include <App.h>
+#include <screen/behavior/Dotted.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -195,8 +196,25 @@ void HttpServer::setupRoutes() {
         request->send(200, "text/plain", String(time));
     });
 
-    _server.on("/strobe-demo", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        screen->behavior = new StrobeDemo();
+    _server.on("/behavior/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+        if (!request->hasParam("id")) {
+            request_result(false);
+        }
+
+        auto id = request->getParam("id")->value();
+
+        if (id == "none") {
+            screen ->behavior = nullptr;
+        }
+        else if (id == "strobe") {
+            screen->behavior = new StrobeDemo();
+        }
+        else if (id == "dotted")
+            screen -> behavior = new Dotted();
+        else {
+            request_result(false);
+        }
+
         request->send(200, "text/plain", String(2000));
     });
 

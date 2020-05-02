@@ -17,7 +17,7 @@ public:
     bool isWhite = false;
     unsigned long timeUntilSwitch;
 
-    virtual bool update(CRGB *leds, int ledCount, unsigned long delay);
+    virtual bool update(Screen *screen, unsigned long delay);
 };
 
 

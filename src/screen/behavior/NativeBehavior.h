@@ -7,9 +7,11 @@
 
 #include <FastLED.h>
 
+class Screen;
+
 class NativeBehavior {
 public:
-    virtual bool update(CRGB *leds, int ledCount, unsigned long delay);
+    virtual bool update(Screen *screen, unsigned long delay);
 };
 
 

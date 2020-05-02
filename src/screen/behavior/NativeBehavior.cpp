@@ -4,6 +4,6 @@
 
 #include "NativeBehavior.h"
 
-bool NativeBehavior::update(CRGB *leds, int ledCount, unsigned long delay) {
+bool NativeBehavior::update(Screen *screen, unsigned long delay) {
     return false;
 }

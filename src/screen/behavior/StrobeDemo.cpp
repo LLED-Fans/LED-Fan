@@ -3,8 +3,9 @@
 //
 
 #include "StrobeDemo.h"
+#include <screen/Screen.h>
 
-bool StrobeDemo::update(CRGB *leds, int ledCount, unsigned long delay) {
+bool StrobeDemo::update(Screen *screen, unsigned long delay) {
     if (currentDelay > maxDelay)
         return false;
 
@@ -15,7 +16,7 @@ bool StrobeDemo::update(CRGB *leds, int ledCount, unsigned long delay) {
         timeUntilSwitch = currentDelay;
 
         isWhite = !isWhite;
-        fill_solid(leds, ledCount, isWhite ? CRGB::White : CRGB::Black);
+        fill_solid(screen->leds, screen->ledCount, isWhite ? CRGB::White : CRGB::Black);
     }
 
     return true;

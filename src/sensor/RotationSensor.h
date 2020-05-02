@@ -30,6 +30,9 @@ public:
     // Tool to fix rotation to a specific value
     float fixedRotation = -1;
 
+    // Whether the last frame was a checkpoint frame
+    bool didUpdate = false;
+
     RotationSensor(GPIOVisitor *visitor, int historySize, Extrapolator *extrapolator);
 
     void update();

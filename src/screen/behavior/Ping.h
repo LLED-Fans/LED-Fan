@@ -14,7 +14,7 @@ public:
 
     Ping(unsigned long timeLeft);
 
-    virtual bool update(CRGB *leds, int ledCount, unsigned long delay);
+    virtual bool update(Screen *screen, unsigned long delay);
 };
 
 

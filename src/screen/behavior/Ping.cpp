@@ -3,14 +3,15 @@
 //
 
 #include "Ping.h"
+#include <screen/Screen.h>
 
 Ping::Ping(unsigned long timeLeft) : timeLeft(timeLeft) {}
 
-bool Ping::update(CRGB *leds, int ledCount, unsigned long delay) {
+bool Ping::update(Screen *screen, unsigned long delay) {
     if (timeLeft <= 0)
         return false;
 
-    fill_solid(leds, ledCount, CRGB(
+    fill_solid(screen->leds, screen->ledCount, CRGB(
         (((timeLeft - 1) / 500) % 2) == 0 ? 0 : 255,
         0,
         0

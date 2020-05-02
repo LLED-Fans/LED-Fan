@@ -71,7 +71,7 @@ void Screen::draw() {
     if (behavior != nullptr) {
         auto delay = milliseconds - lastUpdateTimestamp;
 
-        if (behavior->update(leds, ledCount, delay)) {
+        if (behavior->update(this, delay)) {
             FastLED.show();
             return;
         }
