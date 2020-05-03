@@ -71,8 +71,9 @@ public:
 
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
-    void draw();
+    void update();
 
+    void draw(unsigned long milliseconds);
     void drawDemo();
     void drawCartesian();
     void drawConcentric();

@@ -111,7 +111,7 @@ void App::run() {
     regularClock->sync();
     rotationSensor->update();
 
-    screen->draw();
+    screen->update();
     speedControl->update();
 
     EVERY_N_SECONDS(2) {
