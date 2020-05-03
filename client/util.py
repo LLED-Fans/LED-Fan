@@ -1,7 +1,7 @@
 import math
 from datetime import datetime, timedelta
 from time import sleep
-from typing import Iterable, TypeVar, List, Callable
+from typing import Iterable, TypeVar, List, Callable, Generic, Tuple
 from itertools import zip_longest
 
 from PIL import Image
@@ -51,13 +51,13 @@ class RepeatTimer(Timer):
 
 
 @dataclass
-class BufferedResource:
+class BufferedResource(Generic[T]):
     max_buffer_size: int
-    buffer: List = field(default_factory=list)
+    buffer: List[T] = field(default_factory=list)
 
     condition: Condition = field(default_factory=Condition)
 
-    def push(self, resource):
+    def push(self, resource: T):
         with self.condition:
             while len(self.buffer) >= self.max_buffer_size:
                 self.condition.wait(2)
@@ -65,7 +65,7 @@ class BufferedResource:
             self.buffer.append(resource)
             self.condition.notify()
 
-    def pop(self):
+    def pop(self) -> T:
         with self.condition:
             while len(self.buffer) == 0:
                 self.condition.wait(2)
@@ -74,6 +74,14 @@ class BufferedResource:
             self.condition.notify()
 
         return resource
+
+    def start_async_factory(self, function: Callable[[], T]) -> RepeatTimer:
+        timer = RepeatTimer(
+            interval=0,
+            function=lambda: self.push(function())
+        )
+        timer.start()
+        return timer
 
 
 class RegularClock:

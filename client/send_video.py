@@ -77,11 +77,7 @@ def run_main(args):
             }
 
         raw_image_resource = BufferedResource(max_buffer_size=2)
-        raw_capture_thread = RepeatTimer(
-            interval=0,
-            function=lambda: raw_image_resource.push(capturer.grab(monitor))
-        )
-        raw_capture_thread.start()
+        raw_image_resource.start_async_factory(lambda: capturer.grab(monitor))
 
         def capture_image():
             image = raw_image_resource.pop()
@@ -93,11 +89,7 @@ def run_main(args):
         image_provider = lambda: image
 
     resource = BufferedResource(max_buffer_size=2)
-    capture_thread = RepeatTimer(
-        interval=0,
-        function=lambda: resource.push(image_provider())
-    )
-    capture_thread.start()
+    resource.start_async_factory(image_provider)
 
     video_interface.run(
         ip=args.ip,

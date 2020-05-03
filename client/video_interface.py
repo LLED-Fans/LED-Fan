@@ -57,11 +57,7 @@ def run(
             return img.tobytes("raw")
 
     data_resource = BufferedResource(max_buffer_size=2)
-    capture_frame_thread = RepeatTimer(
-        interval=0,
-        function=lambda: data_resource.push(grab_frame())
-    )
-    capture_frame_thread.start()
+    data_resource.start_async_factory(grab_frame)
 
     # ------------------------------------------------------
     # --- Packet Assembly
@@ -77,11 +73,7 @@ def run(
         return list(map(bytes, artnet_provider(data_resource.pop())))
 
     packets_resource = BufferedResource(max_buffer_size=2)
-    capture_packets_thread = RepeatTimer(
-        interval=0,
-        function=lambda: packets_resource.push(grab_artnet_packets())
-    )
-    capture_packets_thread.start()
+    packets_resource.start_async_factory(grab_artnet_packets)
 
     # ------------------------------------------------------
     # --- Loop
