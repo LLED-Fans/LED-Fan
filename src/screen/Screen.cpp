@@ -62,7 +62,6 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
 void Screen::draw() {
     auto milliseconds = millis();
-    lastUpdateTimestamp = milliseconds;
 
     for (int i = 0; i < overflowWall; ++i) {
         this->leds[ledCount + i] = CRGB::Black;
@@ -79,6 +78,8 @@ void Screen::draw() {
         // Behavior over, reset pointer
         behavior = nullptr;
     }
+
+    lastUpdateTimestamp = milliseconds;
 
     if (!rotationSensor->isReliable()) {
         fill_solid(leds, ledCount, CRGB::Black);
