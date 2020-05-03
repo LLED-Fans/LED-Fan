@@ -201,7 +201,7 @@ float RotationSensor::rotationsPerSecond() {
     if (isPaused)
         return 0;
 
-    return extrapolator->slope() * 1000 * 1000;
+    return extrapolator->slope() * 1000 * 1000 / visitor->checkpointCount;
 }
 
 bool RotationSensor::isReliable() {
