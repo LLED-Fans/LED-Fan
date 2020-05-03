@@ -2,7 +2,7 @@ from typing import Callable
 
 import requests
 import socket
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 from datetime import datetime, timedelta
 
@@ -20,7 +20,8 @@ def run(
     ip: str,
     endpoint: str,
     image_provider: Callable[[], Image.Image],
-    frames_per_second: int = 30
+    frames_per_second: int = 30,
+    contrast=2
 ):
     print("Getting Server Info")
 
@@ -53,6 +54,8 @@ def run(
             ))
         else:
             img = img.resize(resolution)
+            if contrast > 1:
+                img = ImageEnhance.Contrast(img).enhance(contrast)
             # img.save("backup.png")
             return img.tobytes("raw")
 
