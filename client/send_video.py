@@ -5,7 +5,7 @@ from mss import mss
 
 import argparse
 
-import fan_interface
+import video_interface
 from util import BufferedResource, RepeatTimer
 
 
@@ -99,7 +99,7 @@ def run_main(args):
     )
     capture_thread.start()
 
-    fan_interface.run(
+    video_interface.run(
         ip=args.ip,
         endpoint=args.endpoint,
         image_provider=resource.pop,
