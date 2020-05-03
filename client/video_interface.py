@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 from artnet import ArtnetProvider
 
-from util import grouper, flatmap, bilinear, BufferedResource, RepeatTimer, RegularClock
+from util import grouper, flatmap, bilinear, BufferedResource, RegularClock
 
 
 def pixel_at(image: Image, x: float, y: float):

@@ -1,30 +1,22 @@
-import argparse
-
 import time
-from datetime import datetime
+from argparse import ArgumentParser
+from datetime import timedelta
 import requests
 
-command_parser = argparse.ArgumentParser()
-
-command_parser.add_argument(
-    "ip", default="192.168.1.4",
-)
-
-command_parser.add_argument(
-    "--frames-per-second",
-    type=float, default=1
-)
+from util import RegularClock
 
 
-def run_main(args):
+def run(args):
     ip = args.ip
 
-    seconds_per_frame = 1.0 / args.frames_per_second
+    time_per_frame = timedelta(seconds=(1.0 / args.frames_per_second))
+    clock = RegularClock()
 
     full_log = ""
 
     while True:
-        frame_start = datetime.now()
+        clock.elapse(time_per_frame)
+
         log = requests.get(f"http://{ip}/log").text
 
         index = 0
@@ -39,11 +31,10 @@ def run_main(args):
             print(log, end='')
             full_log += log
 
-        time_this_frame = datetime.now() - frame_start
-        if time_this_frame.total_seconds() < seconds_per_frame:
-            time.sleep(seconds_per_frame - time_this_frame.total_seconds())
 
-
-if __name__ == "__main__":
-    run_main(command_parser.parse_args())
-
+def setup(command: ArgumentParser):
+    command.add_argument(
+        "--frames-per-second",
+        type=float, default=1
+    )
+    command.set_defaults(func=run)

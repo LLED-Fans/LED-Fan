@@ -1,12 +1,11 @@
 import random
+from argparse import ArgumentParser
 
 from PIL import Image
 from mss import mss
 
-import argparse
-
 import video_interface
-from util import BufferedResource, RepeatTimer
+from util import BufferedResource
 
 
 def get_white_noise_image(width, height):
@@ -20,35 +19,7 @@ def get_white_noise_image(width, height):
     return pil_map
 
 
-command_parser = argparse.ArgumentParser()
-
-command_parser.add_argument(
-    "ip", default="192.168.4.1",
-)
-command_parser.add_argument(
-    "--endpoint", "-e",
-    default="concentric"
-)
-command_parser.add_argument(
-    "--image", "-i",
-    default="img/test.png"
-)
-command_parser.add_argument(
-    "--capture-window", "-w",
-    help="Capture Screen Recording. Input: top,left,width,height"
-)
-command_parser.add_argument(
-    "--monitor", "-m",
-    help="Capture Screen Recording on a specific monitor (number).",
-    type=int
-)
-command_parser.add_argument(
-    "--frames_per_second",
-    type=int, default=30
-)
-
-
-def run_main(args):
+def run(args):
     if args.capture_window or args.monitor is not None:
         capturer = mss()
 
@@ -99,5 +70,26 @@ def run_main(args):
     )
 
 
-if __name__ == "__main__":
-    run_main(command_parser.parse_args())
+def setup(command: ArgumentParser):
+    command.add_argument(
+        "--endpoint", "-e",
+        default="concentric"
+    )
+    command.add_argument(
+        "--image", "-i",
+        default="img/test.png"
+    )
+    command.add_argument(
+        "--capture-window", "-w",
+        help="Capture Screen Recording. Input: top,left,width,height"
+    )
+    command.add_argument(
+        "--monitor", "-m",
+        help="Capture Screen Recording on a specific monitor (number).",
+        type=int
+    )
+    command.add_argument(
+        "--frames_per_second",
+        type=int, default=30
+    )
+    command.set_defaults(func=run)

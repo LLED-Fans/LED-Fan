@@ -1,28 +1,12 @@
-import argparse
+from argparse import ArgumentParser
 from datetime import datetime, timedelta
 
 import requests
 
 from util import RegularClock
 
-command_parser = argparse.ArgumentParser()
 
-command_parser.add_argument(
-    "ip", default="192.168.4.1",
-)
-command_parser.add_argument(
-    "--seconds_per_rotation",
-    help="Seconds per rotation",
-    type=int, default=2, required=False
-)
-command_parser.add_argument(
-    "--frames_per_second",
-    help="FPS for rotation sending",
-    type=float, default=30, required=False
-)
-
-
-def run_main(args):
+def run(args):
     seconds_per_rotation = args.seconds_per_rotation
     ip = args.ip
     time_per_frame = timedelta(seconds=1.0 / args.frames_per_second)
@@ -47,5 +31,15 @@ def run_main(args):
             requests.post(f"http://{ip}/rotation/set", data={"rotation": "-1"})
 
 
-if __name__ == "__main__":
-    run_main(command_parser.parse_args())
+def setup(command: ArgumentParser):
+    command.add_argument(
+        "--seconds_per_rotation",
+        help="Seconds per rotation",
+        type=int, default=2, required=False
+    )
+    command.add_argument(
+        "--frames_per_second",
+        help="FPS for rotation sending",
+        type=float, default=30, required=False
+    )
+    command.set_defaults(func=run)
