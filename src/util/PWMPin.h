@@ -6,6 +6,7 @@
 #ifndef LED_FAN_PWMPIN_H
 #define LED_FAN_PWMPIN_H
 
+static const float SPEED_CONSTANT_THRESHOLD = 0.0001f;
 
 #include <stdint.h>
 
@@ -13,6 +14,7 @@ class PWMPin {
 public:
     int pin;
     int pwmChannel;
+    bool isAttached = false;
 
     PWMPin(int pin, int pwmChannel);
 
@@ -23,6 +25,7 @@ public:
 private:
     double frequency;
     uint8_t resolution;
+    float maxValue;
 };
 
 

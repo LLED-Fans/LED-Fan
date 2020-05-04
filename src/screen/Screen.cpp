@@ -60,21 +60,18 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 }
 
 
-void Screen::update() {
-    auto milliseconds = millis();
-    draw(milliseconds);
-    lastUpdateTimestamp = milliseconds;
+void Screen::update(unsigned long delayMicros) {
+    lastUpdateTimestamp = micros();
+    draw(delayMicros);
 }
 
-void Screen::draw(unsigned long milliseconds) {
+void Screen::draw(unsigned long delayMicros) {
     for (int i = 0; i < overflowWall; ++i) {
         this->leds[ledCount + i] = CRGB::Black;
     }
 
     if (behavior != nullptr) {
-        auto delay = milliseconds - lastUpdateTimestamp;
-
-        if (behavior->update(this, delay)) {
+        if (behavior->update(this, delayMicros)) {
             FastLED.show();
             return;
         }
@@ -102,12 +99,12 @@ void Screen::draw(unsigned long milliseconds) {
     }
 }
 
-void Screen::determineMode(unsigned long milliseconds) {
-    if (milliseconds > inputTimestamps[mode] + 5000) {
+void Screen::determineMode(unsigned long microseconds) {
+    if (microseconds > inputTimestamps[mode] + MICROS_INPUT_ACTIVE) {
         // No recent signal on input
 
         Mode mostRecentInput = Mode::count;
-        unsigned long mostRecentInputTimestamp = milliseconds - 5000;
+        unsigned long mostRecentInputTimestamp = microseconds - MICROS_INPUT_ACTIVE;
         for (int i = 0; i < Mode::count; i++) {
             if (inputTimestamps[i] > mostRecentInputTimestamp) {
                 mostRecentInput = static_cast<Mode>(i);

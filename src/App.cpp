@@ -108,11 +108,11 @@ App::App() {
 }
 
 void App::run() {
-    regularClock->sync();
+    auto delayMicros = regularClock->sync();
     rotationSensor->update();
 
-    screen->update();
-    speedControl->update();
+    screen->update(delayMicros);
+    speedControl->update(delayMicros);
 
     EVERY_N_SECONDS(2) {
         Network::checkStatus();

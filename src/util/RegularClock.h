@@ -11,6 +11,8 @@ class RegularClock {
 public:
     unsigned long lastSyncTimestamp;
     unsigned long microsecondsPerFrame;
+
+    unsigned long timeSinceLastSync;
     IntRoller *frameTimeHistory;
 
     RegularClock(unsigned long microsecondsPerFrame, int historyLength);

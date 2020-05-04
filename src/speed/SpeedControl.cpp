@@ -19,17 +19,27 @@ rotationSensor(rotationSensor), maxSpeedRotationsPerSecond(maxSpeedRotationsPerS
 void SpeedControl::setDesiredSpeed(float speed) {
     speed = fminf(1.0f, fmaxf(-1.0f, speed));
     desiredSpeed = speed;
-    update();
+    flush();
 }
 
 float SpeedControl::getDesiredSpeed() {
     return desiredSpeed;
 }
 
-void SpeedControl::update() {
+void SpeedControl::update(unsigned long microsDelay) {
     if (desiredSpeed == speed)
         return; // No need to recompute
 
+    if (microsDelay < microsUntilUpdate) {
+        microsUntilUpdate -= microsDelay;
+        return;
+    }
+    microsUntilUpdate = microsPerUpdate;
+
+    flush();
+}
+
+void SpeedControl::flush() {
     float estimatedSpeed = rotationSensor->rotationsPerSecond() / maxSpeedRotationsPerSecond;
 
     float direction = signum(desiredSpeed);
@@ -67,14 +77,6 @@ void SpeedControl::setSpeed(float speed) {
     this->speed = speed;
     int direction = signum(speed);
     float speedRatio = std::abs(speed);
-
-    if (speedRatio < SPEED_CONSTANT_THRESHOLD || speedRatio > (1.0f - SPEED_CONSTANT_THRESHOLD)) {
-        forwardPin->setConstant(speed > SPEED_CONSTANT_THRESHOLD ? HIGH : LOW);
-        backwardPin->setConstant(speed < SPEED_CONSTANT_THRESHOLD ? HIGH : LOW);
-
-        // Constant speed, don't need PWM
-        return;
-    }
 
     auto lowChannel = direction == 1 ? forwardPin : backwardPin;
     auto highChannel = direction == 1 ? backwardPin : forwardPin;

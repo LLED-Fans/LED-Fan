@@ -20,6 +20,7 @@ unsigned long RegularClock::sync() {
 
     unsigned long frameTime = (microseconds - lastSyncTimestamp);
     frameTimeHistory->push(frameTime);
+    auto previousTimestamp = lastSyncTimestamp;
 
     if (microsecondsPerFrame > frameTime) {
         delayMicroseconds(microsecondsPerFrame - frameTime);
@@ -29,5 +30,5 @@ unsigned long RegularClock::sync() {
         // Can't keep up! Accept lower framerate and just continue running.
         lastSyncTimestamp = microseconds;
 
-    return lastSyncTimestamp;
+    return timeSinceLastSync = lastSyncTimestamp - previousTimestamp;
 }

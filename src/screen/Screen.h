@@ -5,6 +5,8 @@
 #ifndef LED_FAN_SCREEN_H
 #define LED_FAN_SCREEN_H
 
+static const int MICROS_INPUT_ACTIVE = 5000 * 1000;
+
 #include <FastLED.h>
 #include <util/IntRoller.h>
 #include <sensor/RotationSensor.h>
@@ -71,16 +73,16 @@ public:
 
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
-    void update();
+    void update(unsigned long delayMicros);
 
-    void draw(unsigned long milliseconds);
+    void draw(unsigned long delayMicros);
     void drawDemo();
     void drawCartesian();
     void drawConcentric();
 
     int noteInput(Mode mode);
 
-    void determineMode(unsigned long milliseconds);
+    void determineMode(unsigned long microseconds);
 
     void setCorrection(float ratio);
 };
