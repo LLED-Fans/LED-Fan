@@ -4,6 +4,7 @@
 
 #include "App.h"
 
+#include "util/spi/ESP32SPI.h"
 #include <SPIFFS.h>
 #include <screen/ConcentricCoordinates.h>
 #include <network/Network.h>

@@ -1,3 +1,6 @@
+#ifndef LED_FAN_SETUP_H
+#define LED_FAN_SETUP_H
+
 // ==================================================================
 // ===================== Constants  =================================
 // ==================================================================
@@ -17,9 +20,6 @@
 // ==================================================================
 // ======================  Setup  ===================================
 // ==================================================================
-
-#ifndef LED_FAN_SETUP_H
-#define LED_FAN_SETUP_H
 
 // ------------------------------------------
 // ---- General
@@ -46,12 +46,12 @@
 // APA102Controller recommended, WS2013 etc. work too
 #define LED_TYPE APA102Controller
 #define COLOR_ORDER BGR
-#define LED_DATA_PIN 26
+#define LED_DATA_PIN 13
 
 // Only in use for clock-based LED strips (e.g. APA102)
-#define LED_CLOCK_PIN 27
+#define LED_CLOCK_PIN 14
 // Max 80, higher values need shorter wire length
-#define LED_CLOCK_SPEED_MHZ 40
+#define LED_CLOCK_SPEED_MHZ 9
 
 #define LED_COUNT 42
 // How many additional LEDs we should set to black, just to be safe
@@ -106,5 +106,8 @@
 // ------------------------------------------
 
 #define LUT_SIN_COUNT 1000
+// In bytes
+// 2 words per LED, + some boundary + buffer
+#define SPI_BUFFER_SIZE (4 * LED_COUNT + 100)
 
 #endif //LED_FAN_SETUP_H

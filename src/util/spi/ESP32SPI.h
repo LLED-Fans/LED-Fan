@@ -22,7 +22,7 @@ typedef struct {
     spi_bus_config_t buscfg;
 } SPI_settings_t;
 
-template <uint8_t _DATA_PIN, uint8_t _CLOCK_PIN, uint32_t _CLOCK_SPEED>
+template <uint8_t _DATA_PIN, uint8_t _CLOCK_PIN, uint32_t _CLOCK_SPEED, spi_host_device_t host>
 class ESP32SPI {
 public:
     int bufferSize = SPI_BUFFER_SIZE;
@@ -41,8 +41,8 @@ public:
 
         spi_bus_config_t buscfg = {};
         buscfg.miso_io_num = -1;
-        buscfg.mosi_io_num = GPIO_NUM_2;
-        buscfg.sclk_io_num = -1;
+        buscfg.mosi_io_num = _DATA_PIN;
+        buscfg.sclk_io_num = _CLOCK_PIN;
         buscfg.quadwp_io_num = -1;
         buscfg.quadhd_io_num = -1;
         buscfg.max_transfer_sz = bufferSize;
@@ -121,12 +121,11 @@ public:
 };
 
 
-#define ESPHardwareSPIOutput(_SPI_CLOCK, _SPI_DATA)\
+#define ESPHardwareSPIOutput(_SPI_HOST, _SPI_CLOCK, _SPI_DATA)\
 template<uint32_t SPI_SPEED>\
-class SPIOutput<_SPI_DATA, _SPI_CLOCK, SPI_SPEED> : public ESP32SPI<_SPI_DATA, _SPI_CLOCK, SPI_SPEED> {};
+class SPIOutput<_SPI_DATA, _SPI_CLOCK, SPI_SPEED> : public ESP32SPI<_SPI_DATA, _SPI_CLOCK, SPI_SPEED, _SPI_HOST> {};
 
-ESPHardwareSPIOutput(6, 8)
-ESPHardwareSPIOutput(6, 9)
-ESPHardwareSPIOutput(6, 10)
+ESPHardwareSPIOutput(VSPI_HOST, 18, 23)
+ESPHardwareSPIOutput(HSPI_HOST, 14, 13)
 
 #endif //LED_FAN_ESP32SPI_H
