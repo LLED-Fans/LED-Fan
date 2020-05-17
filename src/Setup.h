@@ -73,7 +73,7 @@
 // See ROTATION_EXTRAPOLATION_XXX
 #define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_REGRESSION
 // Comma-Separated list of pins in use
-#define ROTATION_SENSOR_PINS 14,18,23,4
+#define ROTATION_SENSOR_PINS 26,18,23,4
 // If true, calculate the time per checkpoint separately (for wobbly fans)
 #define ROTATION_SENSOR_SEPARATE_CHECKPOINTS false
 // If applicable, max framerate of rotation sensor task
@@ -109,5 +109,8 @@
 // In bytes
 // 2 words per LED, + some boundary + buffer
 #define SPI_BUFFER_SIZE (4 * LED_COUNT + 100)
+
+// Set to a valid SPI host to route all SPI outputs to this
+#define SPI_ESP32_HARDWARE_SPI_HOST HSPI_HOST
 
 #endif //LED_FAN_SETUP_H
