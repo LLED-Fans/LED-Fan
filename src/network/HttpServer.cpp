@@ -45,7 +45,11 @@ String HttpServer::processTemplates(const String &var) {
         return String(WiFi.SSID());
 
     if (var == "LED_PIN")
+#if LED_TYPE == APA102Controller
+        return String(app->screen->pin) + ", Clock: " + String(LED_CLOCK_PIN);
+#else
         return String(app->screen->pin);
+#endif
     if (var == "MAGNET_PIN") {
         String r = "";
         for (auto pin : {ROTATION_SENSOR_PINS}) {
