@@ -13,6 +13,7 @@
 #include <screen/behavior/StrobeDemo.h>
 #include <App.h>
 #include <screen/behavior/Dotted.h>
+#include <util/Profiler.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -100,7 +101,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(app->speedControl->getDesiredSpeed());
     }
     if (var == "UPTIME") {
-        return String((int) (esp_timer_get_time() / 1000 / 1000 / 60)) + " minutes";
+        return Profiler::readableTime(esp_timer_get_time());
     }
     if (var == "FPS") {
         float meanMicrosPerFrame = app->regularClock->frameTimeHistory->mean();
