@@ -115,7 +115,9 @@ public:
     }
 
     void inline writeWord(uint16_t w) __attribute__((always_inline)) {
-        *reinterpret_cast<uint16_t *>(&buffer[transactionLength]) = w;
+//        writeByte(w >> 8);
+//        writeByte(w & 0xff);
+        *reinterpret_cast<uint16_t *>(&buffer[transactionLength]) = (w >> 8) | (w << 8);
         transactionLength += 2;
     }
 };
