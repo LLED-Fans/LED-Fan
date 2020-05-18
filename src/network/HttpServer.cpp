@@ -101,7 +101,7 @@ String HttpServer::processTemplates(const String &var) {
         return String(app->speedControl->getDesiredSpeed());
     }
     if (var == "UPTIME") {
-        return Profiler::readableTime(esp_timer_get_time());
+        return Profiler::readableTime(esp_timer_get_time(), 2);
     }
     if (var == "FPS") {
         float meanMicrosPerFrame = app->regularClock->frameTimeHistory->mean();

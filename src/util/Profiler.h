@@ -16,7 +16,7 @@ public:
     void mark(String section);
     void end();
 
-    static String readableTime(unsigned long micros);
+    static String readableTime(unsigned long micros, unsigned long turnover = 5);
 };
 
 

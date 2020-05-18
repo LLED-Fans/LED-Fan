@@ -27,20 +27,20 @@ void Profiler::end() {
     currentSection = String();
 }
 
-String Profiler::readableTime(unsigned long micros) {
-    if (micros < 10000)
+String Profiler::readableTime(unsigned long micros, unsigned long turnover) {
+    if (micros < 1000 * turnover)
         return String(micros) + String("us");
     micros /= 1000;
 
-    if (micros < 10000)
+    if (micros < 1000 * turnover)
         return String(micros) + String("ms");
     micros /= 1000;
 
-    if (micros < 10000)
+    if (micros < 60 * turnover)
         return String(micros) + String("s");
     micros /= 60;
 
-    if (micros < 60)
+    if (micros < 60 * turnover)
         return String(micros) + String("m");
     micros /= 60;
 
