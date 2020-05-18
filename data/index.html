@@ -28,7 +28,7 @@
             xhttp.onreadystatechange = function() {
                 if (this.readyState !== 4 || this.status !== 200) return;
 
-                let pingTime = parseInt(this.responseText);
+                let pingTime = parseInt(this.responseText) / 1000;
                 element.classList.add("mdl-button--accent");
                 setTimeout(function () {
                     element.classList.remove("mdl-button--accent");

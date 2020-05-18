@@ -12,7 +12,7 @@ bool Ping::update(Screen *screen, unsigned long delay) {
         return false;
 
     fill_solid(screen->leds, screen->ledCount, CRGB(
-        (((timeLeft - 1) / 500) % 2) == 0 ? 0 : 255,
+            (((timeLeft - 1) / blinkTime) % 2) == 0 ? 0 : 255,
         0,
         0
     ));

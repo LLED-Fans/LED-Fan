@@ -197,7 +197,7 @@ void HttpServer::setupRoutes() {
     });
 
     _server.on("/ping", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        unsigned long time = 2000;
+        unsigned long time = 2000 * 1000;
 
         screen->behavior = new Ping(time);
         request->send(200, "text/plain", String(time));

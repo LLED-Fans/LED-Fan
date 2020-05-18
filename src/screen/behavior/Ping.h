@@ -11,6 +11,7 @@
 class Ping : public NativeBehavior {
 public:
     unsigned long timeLeft;
+    unsigned long blinkTime = 500 * 1000;
 
     Ping(unsigned long timeLeft);
 
