@@ -22,7 +22,7 @@ typedef struct {
     spi_bus_config_t buscfg;
 } SPI_settings_t;
 
-template <uint8_t _DATA_PIN, uint8_t _CLOCK_PIN, uint32_t _CLOCK_SPEED, spi_host_device_t host>
+template <uint8_t _DATA_PIN, uint8_t _CLOCK_PIN, uint32_t _CLOCK_SPEED, spi_host_device_t _HOST>
 class ESP32SPI {
 public:
     int bufferSize = SPI_BUFFER_SIZE;
@@ -56,7 +56,7 @@ public:
         devcfg.command_bits = 0;
         devcfg.address_bits = 0;
 
-        SPI_settings.host = HSPI_HOST;
+        SPI_settings.host = _HOST;
         SPI_settings.dma_chan = 2;
         SPI_settings.buscfg = buscfg;
         SPI_settings.devcfg = devcfg;
