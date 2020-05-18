@@ -51,7 +51,7 @@
 // Only in use for clock-based LED strips (e.g. APA102)
 #define LED_CLOCK_PIN 14
 // Max 80, higher values need shorter wire length
-#define LED_CLOCK_SPEED_MHZ 9
+#define LED_CLOCK_SPEED_MHZ 40
 
 #define LED_COUNT 42
 // How many additional LEDs we should set to black, just to be safe
