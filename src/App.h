@@ -30,6 +30,8 @@ public:
     App();
 
     void run();
+
+    int pairPin;
 };
 
 

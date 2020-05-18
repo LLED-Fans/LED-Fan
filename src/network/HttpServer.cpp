@@ -32,7 +32,9 @@ HttpServer::HttpServer(App *app) : app(app), videoInterface(new VideoInterface(a
 
 String HttpServer::processTemplates(const String &var) {
     if (var == "AP_IP")
-        return WiFi.softAPIP().toString();
+        return Network::status == ConnectStatus::accessPoint
+        ? WiFi.softAPIP().toString()
+        : "Not running";
     if (var == "AP_SSID") {
         wifi_config_t conf_current;
         esp_wifi_get_config(WIFI_IF_AP, &conf_current);
@@ -181,8 +183,9 @@ void HttpServer::setupRoutes() {
         auto ssid = request->getParam("ssid", true)->value();
         auto password = request->getParam("password", true)->value();
 
-        auto result = Network::connect(ssid.begin(), password.begin());
-        request_result(result);
+        Network::connect(ssid.begin(), password.begin(), true, -1);
+        // We may connect later, but it's deferred
+        request_result(true);
     });
 
     // -----------------------------------------------

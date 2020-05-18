@@ -102,8 +102,10 @@
 #define MOTOR_PWM_RESOLUTION 8
 
 // ------------------------------------------
-// ---- Accuracy
+// ---- Other
 // ------------------------------------------
+
+#define PAIR_PIN 27
 
 #define LUT_SIN_COUNT 1000
 // In bytes

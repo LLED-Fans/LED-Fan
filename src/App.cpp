@@ -97,10 +97,17 @@ App::App() {
     server->hallTimer = ((XTaskGPIOSwitch *) rotationSensor->visitor)->timer;
 #endif
 
+    pairPin = PAIR_PIN;
+    pinMode(pairPin, INPUT_PULLUP);
+
     // Initialize Server
-    Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
-    Network::connectToPreset();
     Network::setHostname(WIFI_HOSTNAME);
+    Network::connectToPreset();
+    if (Network::status == ConnectStatus::invalidNetwork) {
+        Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
+    }
+    // else, we may not be connected (yet)
+    // but the user can always press 'pair'
 
     artnetServer = new ArtnetServer(screen, speedControl);
     updater = new Updater();
@@ -116,6 +123,10 @@ void App::run() {
     speedControl->update(delayMicros);
 
     EVERY_N_SECONDS(2) {
+        if (digitalRead(pairPin) == LOW) {
+            Network::pair(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
+        }
+
         Network::checkStatus();
     }
     updater->handle();
