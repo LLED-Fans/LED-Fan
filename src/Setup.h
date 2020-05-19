@@ -79,7 +79,7 @@
 // If applicable, max framerate of rotation sensor task
 #define ROTATION_SENSOR_MS 1
 // How much offset the fan has for correct image rotation
-#define ROTATION_SENSOR_OFFSET 0.6
+#define ROTATION_SENSOR_OFFSET 0.47
 
 // After this idle time, we're considered to be paused.
 #define ROTATION_PAUSED_MS 2000
