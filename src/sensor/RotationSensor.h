@@ -21,6 +21,8 @@ public:
     unsigned long pauseInterval = 2000 * 1000;
     bool separateCheckpoints = false;
 
+    float rotationOffset = 10;
+
     GPIOVisitor *visitor;
 
     // x = micros, y = rotation 0 to switches.count

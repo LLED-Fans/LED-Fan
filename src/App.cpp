@@ -66,6 +66,8 @@ App::App() {
     rotationSensor->minCheckpointTime = 1000 * 1000 / (MAX_ROTATIONS_PER_SECOND * rotationSensorPins.size());
     rotationSensor->pauseInterval = ROTATION_PAUSED_MS * 1000;
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
+    // Add 10 to always be positive
+    rotationSensor->rotationOffset = ROTATION_SENSOR_OFFSET + 10;
 
     screen = new Screen(
 #if LED_TYPE == APA102Controller
