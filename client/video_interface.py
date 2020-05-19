@@ -1,3 +1,4 @@
+import math
 from typing import Callable
 
 import requests
@@ -34,8 +35,29 @@ def run(
     port = 6454  # default artnet port
 
     if endpoint == "concentric":
-        pixels = list(grouper(2, endpoint_info["pixels"]))
-        print(f"Sampled Pixels: {pixels}")
+        import numexpr
+
+        def adding_var(name, formula, infos):
+            return [
+                {name: numexpr.evaluate(formula, info).item(), **info}
+                for info in infos
+            ]
+
+        infos = [{'pi': math.pi}]
+        for name, equation in zip(endpoint_info['names'], endpoint_info['equations']):
+            if name.startswith("|"):
+                name = name[1:]
+                infos = adding_var(name, equation, infos)
+                infos = [
+                    {**info, name: i}
+                    for info in infos
+                    for i in range(info[name])
+                ]
+            else:
+                infos = adding_var(name, equation, infos)
+        pixels = [(info['x'], info['y']) for info in infos]
+
+        print(f"Sampled Pixels: {len(pixels)}")
     elif endpoint == "cartesian":
         resolution = (endpoint_info["width"], endpoint_info["height"])
         print(f"Screen Size: {resolution[0]}x{resolution[1]}")

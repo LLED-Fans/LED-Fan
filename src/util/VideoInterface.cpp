@@ -3,6 +3,7 @@
 //
 
 #include <screen/ConcentricCoordinates.h>
+#include <Setup.h>
 #include "VideoInterface.h"
 #include "Printf.h"
 
@@ -55,11 +56,11 @@ bool VideoInterface::acceptJpeg(File file) {
 }
 
 DynamicJsonDocument VideoInterface::info() {
-//    IntRoller *concentricResolution = screen->concentricResolution;
-//    int pixelCount;
-//    auto ringRadii = new float[screen->concentricResolution->count];
-//    ConcentricCoordinates::ringRadii(ringRadii, screen->concentricResolution->count);
-//    float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, ringRadii, &pixelCount);
+    IntRoller *concentricResolution = screen->concentricResolution;
+    int pixelCount;
+    auto ringRadii = new float[screen->concentricResolution->count];
+    ConcentricCoordinates::ringRadii(ringRadii, screen->concentricResolution->count);
+    float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, ringRadii, &pixelCount);
 
     const std::vector<ArtnetEndpoint *> *endpoints = artnetServer->endpoints();
 
@@ -69,8 +70,8 @@ DynamicJsonDocument VideoInterface::info() {
             + JSON_OBJECT_SIZE(3)
             // Concentric Screen
             + JSON_OBJECT_SIZE(3)
-//            + JSON_ARRAY_SIZE(concentricResolution->count)
-//            + JSON_ARRAY_SIZE(pixelCount * 2)
+            + JSON_ARRAY_SIZE(8)
+            + JSON_ARRAY_SIZE(8)
     );
 
     // ==============================================
@@ -89,23 +90,38 @@ DynamicJsonDocument VideoInterface::info() {
     // ================Concentric=====================
     // ==============================================
 
-    // Fails if too large??
-//    {
-//        auto object = doc.createNestedObject("concentric");
-//
-//        object["net"] = artnetServer->endpoints[1].net;
-//
-//        JsonArray pixels = object.createNestedArray("pixels");
-//        for (int i = 0; i < pixelCount * 2; ++i) {
-//            pixels.add(rawPixels[i]);
-//        }
-//        delete[] rawPixels;
-//
-//        JsonArray resolution = object.createNestedArray("resolution");
-//        for (int j = 0; j < concentricResolution->count; ++j) {
-//            resolution.add((*concentricResolution)[j]);
-//        }
-//    }
+    {
+        auto object = doc.createNestedObject("concentric");
+
+        object["net"] = (*endpoints)[1]->net;
+
+        auto names = object.createNestedArray("names");
+        auto equations = object.createNestedArray("equations");
+
+        names.add("|ring");
+        equations.add(String(screen->concentricResolution->count));
+
+        names.add("radius");
+        equations.add(ConcentricCoordinates::radiusExpression(screen->concentricResolution->count));
+
+        names.add("resolution");
+        equations.add(String(CONCENTRIC_RESOLUTION_ADD) + "*ring+" + String(CONCENTRIC_RESOLUTION_MIN));
+
+        names.add("|i");
+        equations.add("resolution");
+
+        names.add("theta");
+        equations.add("(i/resolution)*2*pi");
+
+        names.add("x");
+        equations.add("(sin(theta)+1)*0.5*radius");
+        names.add("y");
+        equations.add("(cos(theta)+1)*0.5*radius");
+
+        // Last add is ignored somehow....
+        names.add("");
+        equations.add("");
+    }
 
     return doc;
 }

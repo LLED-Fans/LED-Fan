@@ -4,7 +4,7 @@
 
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
-#include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
+#include <cmath>
 
 float *ConcentricCoordinates::ringRadii(float *result, int count) {
     // a * 0 + b = (1 / 4) / (count - 1)
@@ -17,6 +17,13 @@ float *ConcentricCoordinates::ringRadii(float *result, int count) {
         // -1 to 1
         result[i] = a * (float) i + b;
     }
+}
+
+String ConcentricCoordinates::radiusExpression(unsigned int count) {
+    float b = 0.25f / (float) (count - 1);
+    float a = (1 - b) / (float) (count - 1);
+
+    return String(a) + "*ring+" + String(b);
 }
 
 float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, float *radii, int* count) {

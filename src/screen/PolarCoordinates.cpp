@@ -4,9 +4,8 @@
 
 #include "PolarCoordinates.h"
 
-#include <cmath>
 #include <util/LUT.h>
-#include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/math.h"
+#include <cmath>
 
 void PolarCoordinates::asCartesian(float theta, float r, float *x, float *y, bool positive) {
     // -r to r

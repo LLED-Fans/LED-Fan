@@ -7,10 +7,13 @@
 
 
 #include <util/IntRoller.h>
+#include <WString.h>
 
 class ConcentricCoordinates {
 public:
     static float *ringRadii(float *result, int count);
+    static String radiusExpression(unsigned int count);
+
     static float *sampledCartesian(IntRoller *resolution, float *radii, int *count);
 
     static IntRoller *resolution(int ringCount, int a, int b);

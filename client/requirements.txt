@@ -1,3 +1,4 @@
 PILLOW
 mss
 requests
+numexpr
