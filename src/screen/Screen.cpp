@@ -121,6 +121,7 @@ void Screen::drawCartesian() {
     // Do not query this more than once since we only
     // show at FastLED.show() anyway
     unsigned long microseconds = micros();
+    int cartesianMax = cartesianResolution - 1;
 
     for (int b = 0; b < bladeCount; ++b) {
         auto blade = blades[b];
@@ -147,14 +148,14 @@ void Screen::drawCartesian() {
                             return reinterpret_cast<uint8_t*>(&buffer[x + y * cartesianResolution]);
                         },
                         reinterpret_cast<uint8_t*>(pixel.color), 3,
-                        relativeX * cartesianResolution,
-                        relativeY * cartesianResolution
+                        relativeX * cartesianMax,
+                        relativeY * cartesianMax
                 );
             }
             else {
                 // 0 to cartesianSize - 1
-                int x = std::lround(relativeX * (cartesianResolution - 1));
-                int y = std::lround(relativeY * (cartesianResolution - 1));
+                int x = std::lround(relativeX * cartesianMax);
+                int y = std::lround(relativeY * cartesianMax);
 
                 // For plotting coords
 //        Logger::println(ringIndex);
