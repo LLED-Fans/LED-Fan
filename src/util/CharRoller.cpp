@@ -3,8 +3,8 @@
 //
 
 #include "CharRoller.h"
-#include "../../../../.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h"
-#include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/string.h"
+#include <WString.h>
+#include <Arduino.h>
 
 CharRoller::CharRoller(const int c) : count(c), head(0) {
     data = new char[count + 1];

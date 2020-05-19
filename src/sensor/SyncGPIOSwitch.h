@@ -8,7 +8,6 @@
 
 #include "GPIOVisitor.h"
 #include "SensorSwitch.h"
-#include "../../../../.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include/c++/5.2.0/vector"
 
 #include <vector>
 
