@@ -60,13 +60,9 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
         inputTimestamps[i] = 0;
 }
 
-Profiler *profiler = new Profiler();
-
 void Screen::update(unsigned long delayMicros) {
-    profiler->start("Prepare");
     lastUpdateTimestamp = micros();
     draw(delayMicros);
-    profiler->end();
 }
 
 void Screen::draw(unsigned long delayMicros) {
@@ -90,7 +86,6 @@ void Screen::draw(unsigned long delayMicros) {
         return;
     }
 
-    profiler->mark("Draw");
     switch (mode) {
         default:
             drawCartesian();
@@ -173,7 +168,6 @@ void Screen::drawCartesian() {
         }
     }
 
-    profiler->mark("Show");
     FastLED.show();
 }
 
