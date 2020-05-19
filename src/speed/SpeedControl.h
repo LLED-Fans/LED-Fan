@@ -22,6 +22,8 @@ public:
     unsigned long microsPerUpdate = 1000 * 200;
     unsigned long microsUntilUpdate = 0;
 
+    float accelerationLimit = 0;
+
     SpeedControl(PWMPin *forwardPin, PWMPin *backwardPin, RotationSensor *rotationSensor, float maxSpeedRotationsPerSecond);
 
     void setDesiredSpeed(float speed);

@@ -56,6 +56,11 @@ void SpeedControl::flush() {
         return;
     }
 
+    if (accelerationLimit <= 0) {
+        setSpeed(desiredSpeed);
+        return;
+    }
+
     if (desiredSpeedP > estimatedSpeedP) {
         // Accelerate
         // ... but not too strongly
