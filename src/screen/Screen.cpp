@@ -25,7 +25,7 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
     int cartesianBufferSize = cartesianResolution * cartesianResolution;
     int concentricBufferSize = concentricResolution->sum();
-    bufferSize = _max(cartesianBufferSize, concentricBufferSize);
+    bufferSize = std::max(cartesianBufferSize, concentricBufferSize);
     buffer = new CRGB[bufferSize]{CRGB::Black};
 
     auto ringRadii = new float[ledCount];

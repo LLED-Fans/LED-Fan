@@ -104,9 +104,9 @@ String HttpServer::processTemplates(const String &var) {
         return Profiler::readableTime(esp_timer_get_time(), 2);
     }
     if (var == "FPS") {
-        float meanMicrosPerFrame = app->regularClock->frameTimeHistory->mean();
+        unsigned long meanMicrosPerFrame = app->regularClock->frameTimeHistory->mean();
 
-        auto fpsString = String(1000 * 1000 / _max(meanMicrosPerFrame, app->regularClock->microsecondsPerFrame))
+        auto fpsString = String(1000 * 1000 / std::max(meanMicrosPerFrame, app->regularClock->microsecondsPerFrame))
             + " (slack: " + String(_max(0, (int) (app->regularClock->microsecondsPerFrame - meanMicrosPerFrame))) + "µs)";
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_XTASK
