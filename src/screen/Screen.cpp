@@ -120,13 +120,11 @@ void Screen::determineMode(unsigned long microseconds) {
 void Screen::drawCartesian() {
     // Do not query this more than once since we only
     // show at FastLED.show() anyway
-    unsigned long microseconds = micros();
+    float rotation = rotationSensor->estimatedRotation(micros());
     int cartesianMax = cartesianResolution - 1;
 
     for (int b = 0; b < bladeCount; ++b) {
         auto blade = blades[b];
-
-        float rotation = rotationSensor->estimatedRotation(microseconds);
 
         float vectorX, vectorY;
         PolarCoordinates::asCartesian(
@@ -173,10 +171,10 @@ void Screen::drawCartesian() {
 }
 
 void Screen::drawDemo() {
-    for (int b = 0; b < bladeCount; ++b) {
-        float rotation = rotationSensor->estimatedRotation(micros());
-        auto milliseconds = millis();
+    float rotation = rotationSensor->estimatedRotation(micros());
+    auto milliseconds = millis();
 
+    for (int b = 0; b < bladeCount; ++b) {
         auto blade = blades[b];
         auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
@@ -202,11 +200,9 @@ void Screen::drawDemo() {
 }
 
 void Screen::drawConcentric() {
-    unsigned long microseconds = micros();
+    float rotation = rotationSensor->estimatedRotation(micros());
 
     for (int b = 0; b < bladeCount; ++b) {
-        float rotation = rotationSensor->estimatedRotation(microseconds);
-
         auto blade = blades[b];
         auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
 
