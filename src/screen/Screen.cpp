@@ -23,6 +23,11 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
     // Disable max refresh rates; we set this in Setup.h.
     FastLED.setMaxRefreshRate(0);
 
+    int cartesianBufferSize = cartesianResolution * cartesianResolution;
+    int concentricBufferSize = concentricResolution->sum();
+    bufferSize = _max(cartesianBufferSize, concentricBufferSize);
+    buffer = new CRGB[bufferSize]{CRGB::Black};
+
     auto ringRadii = new float[ledCount];
     ConcentricCoordinates::ringRadii(ringRadii, ledCount);
 
@@ -46,15 +51,10 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
                 1,
                 leds + bladeStartLED + p * bladePolarity,
                 (*concentricResolution)[ringIdx],
-                buffer + std::accumulate((*concentricResolution).data, (*concentricResolution).data + ringIdx, 0)
+                buffer + std::accumulate(concentricResolution->data, concentricResolution->data + ringIdx, 0)
             };
         }
     }
-
-    int cartesianBufferSize = cartesianResolution * cartesianResolution;
-    int concentricBufferSize = concentricResolution->sum();
-    bufferSize = _max(cartesianBufferSize, concentricBufferSize);
-    buffer = new CRGB[bufferSize]{CRGB::Black};
 
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
@@ -212,14 +212,14 @@ void Screen::drawConcentric() {
             int ringResolution = pixel.concentricResolution;
             float relativeIndex = bladeRotation * (float) ringResolution;
 
-            int leftIndex = (int) relativeIndex % ringResolution;
-            int rightIndex = (int)(leftIndex + 1) % ringResolution;
+            int leftIndex = int(relativeIndex) % ringResolution;
+            int rightIndex = (leftIndex + 1) % ringResolution;
 
             // Get / Copy pixels
             CRGB leftPixel = pixel.concentricPointer[leftIndex];
             CRGB rightPixel = pixel.concentricPointer[rightIndex];
 
-            fract8 rightPart = fract8(relativeIndex * 255);
+            auto rightPart = fract8(relativeIndex * 255);
             leftPixel.nscale8_video(255 - rightPart);
             rightPixel.nscale8_video(rightPart);
 
