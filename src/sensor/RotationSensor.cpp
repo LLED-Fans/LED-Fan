@@ -44,7 +44,8 @@ void RotationSensor::update() {
 
     int checkpointCount = visitor->checkpointCount;
     // 0->1 = 1; 0->0 = count
-    int elapsedCheckpoints = ((checkpoint - checkpointIndices->last()) + checkpointCount - 1) % checkpointCount + 1;
+    int diff = std::abs(checkpoint - checkpointIndices->last());
+    int elapsedCheckpoints = diff == 0 ? checkpointCount : std::min(diff, checkpointCount - diff);
 
     if (checkpointTime < minCheckpointTime * elapsedCheckpoints) {
         return;
