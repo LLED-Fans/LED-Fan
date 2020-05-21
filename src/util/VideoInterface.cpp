@@ -114,9 +114,9 @@ DynamicJsonDocument VideoInterface::info() {
         equations.add("(i/resolution)*2*pi");
 
         names.add("x");
-        equations.add("(sin(theta)+1)*0.5*radius");
+        equations.add("sin(theta)*0.5*radius+0.5");
         names.add("y");
-        equations.add("(cos(theta)+1)*0.5*radius");
+        equations.add("cos(theta)*0.5*radius+0.5");
 
         // Last add is ignored somehow....
         names.add("");
