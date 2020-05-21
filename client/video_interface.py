@@ -56,30 +56,33 @@ def run(
             else:
                 infos = adding_var(name, equation, infos)
         pixels = [(info['x'], info['y']) for info in infos]
-
+        resolution = (infos[0]["rings"]*2,) * 2
         print(f"Sampled Pixels: {len(pixels)}")
-    elif endpoint == "cartesian":
-        resolution = (endpoint_info["width"], endpoint_info["height"])
-        print(f"Screen Size: {resolution[0]}x{resolution[1]}")
 
-    # ------------------------------------------------------
-    # --- Frame Conversion
-    # ------------------------------------------------------
+        def grab_frame():
+            img = image_provider().resize(resolution)
 
-    def grab_frame():
-        img = image_provider()
-
-        if endpoint == "concentric":
             return bytes(flatmap(
                 lambda t: pixel_at(img, *t),
                 pixels
             ))
-        else:
-            img = img.resize(resolution)
+
+    elif endpoint == "cartesian":
+        resolution = (endpoint_info["width"], endpoint_info["height"])
+        print(f"Screen Size: {resolution[0]}x{resolution[1]}")
+
+        def grab_frame():
+            img = image_provider().resize(resolution)
             if contrast > 1:
                 img = ImageEnhance.Contrast(img).enhance(contrast)
             # img.save("backup.png")
             return img.tobytes("raw")
+    else:
+        raise Exception()
+
+# ------------------------------------------------------
+    # --- Frame Conversion
+    # ------------------------------------------------------
 
     data_resource = BufferedResource(max_buffer_size=2)
     data_resource.start_async_factory(grab_frame)

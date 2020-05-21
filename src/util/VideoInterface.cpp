@@ -72,6 +72,7 @@ DynamicJsonDocument VideoInterface::info() {
             + JSON_OBJECT_SIZE(3)
             + JSON_ARRAY_SIZE(8)
             + JSON_ARRAY_SIZE(8)
+            + 512 // Capacity for strings
     );
 
     // ==============================================
@@ -98,8 +99,11 @@ DynamicJsonDocument VideoInterface::info() {
         auto names = object.createNestedArray("names");
         auto equations = object.createNestedArray("equations");
 
-        names.add("|ring");
+        names.add("rings");
         equations.add(String(screen->concentricResolution->count));
+
+        names.add("|ring");
+        equations.add("rings");
 
         names.add("radius");
         equations.add(ConcentricCoordinates::radiusExpression(screen->concentricResolution->count));
@@ -117,10 +121,6 @@ DynamicJsonDocument VideoInterface::info() {
         equations.add("sin(theta)*0.5*radius+0.5");
         names.add("y");
         equations.add("cos(theta)*0.5*radius+0.5");
-
-        // Last add is ignored somehow....
-        names.add("");
-        equations.add("");
     }
 
     return doc;

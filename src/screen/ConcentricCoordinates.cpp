@@ -23,7 +23,7 @@ String ConcentricCoordinates::radiusExpression(unsigned int count) {
     float b = 0.25f / (float) (count - 1);
     float a = (1 - b) / (float) (count - 1);
 
-    return String(a) + "*ring+" + String(b);
+    return String(a, 5) + "*ring+" + String(b, 5);
 }
 
 float *ConcentricCoordinates::sampledCartesian(IntRoller *resolution, float *radii, int* count) {
