@@ -77,8 +77,6 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         _isReliable = false;
         return;
     }
-    // -1 if backwards
-    auto backwardsAdjust = (direction - 1) / 2;
 
     // Raw Data Collection
     std::vector<double> x{};
@@ -113,8 +111,8 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     // Go back in reverse, setting reached checkpoint as baseline Y
     y[n - 1] = estimatedY[n - 1];
     for (int j = n - 2; j >= 0; --j) {
-        int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount) % checkpointCount + backwardsAdjust;
-        double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff;
+        int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount * direction) % checkpointCount;
+        double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff * direction;
 
         // Accept +- multiples of checkpointCount
         y[j] = y[j + 1] - (round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps);
