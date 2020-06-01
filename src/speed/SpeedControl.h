@@ -27,12 +27,15 @@ public:
     SpeedControl(PWMPin *forwardPin, PWMPin *backwardPin, RotationSensor *rotationSensor, float maxSpeedRotationsPerSecond);
 
     void setDesiredSpeed(float speed);
-    float getDesiredSpeed();
+    float getDesiredSpeed() { return desiredSpeed; };
+
+    float getSpeed() { return speed; };
 
     void update(unsigned long millisDelay);
 private:
     float desiredSpeed = 0;
     float speed = NAN;
+    unsigned long microsAccelerating = 0;
 
     void setSpeed(float speed);
 

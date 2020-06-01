@@ -5,6 +5,8 @@
 #include <util/Math.h>
 #include <cmath>
 #include <esp32-hal-gpio.h>
+#include <Setup.h>
+#include <HardwareSerial.h>
 #include "SpeedControl.h"
 
 SpeedControl::SpeedControl(
@@ -22,11 +24,19 @@ void SpeedControl::setDesiredSpeed(float speed) {
     flush();
 }
 
-float SpeedControl::getDesiredSpeed() {
-    return desiredSpeed;
-}
-
 void SpeedControl::update(unsigned long microsDelay) {
+#ifdef EMERGENCY_BRAKE_ENABLED
+    if (speed != 0) {
+        if (microsAccelerating < ROTATION_PAUSED_MS)
+            microsAccelerating += microsDelay;
+        else if (rotationSensor->isPaused) {
+            Serial.println("Motor appears to be stuck - Emergency brake engaged!");
+            setDesiredSpeed(0);
+            return;
+        }
+    }
+#endif
+
     if (desiredSpeed == speed)
         return; // No need to recompute
 
@@ -34,12 +44,13 @@ void SpeedControl::update(unsigned long microsDelay) {
         microsUntilUpdate -= microsDelay;
         return;
     }
-    microsUntilUpdate = microsPerUpdate;
 
     flush();
 }
 
 void SpeedControl::flush() {
+    microsUntilUpdate = microsPerUpdate;
+
     float estimatedSpeed = rotationSensor->rotationsPerSecond() / maxSpeedRotationsPerSecond;
 
     float direction = signum(desiredSpeed);
@@ -74,6 +85,9 @@ void SpeedControl::flush() {
 }
 
 void SpeedControl::setSpeed(float speed) {
+    if (speed == 0)
+        microsAccelerating = 0;
+
     speed = fminf(1.0f, fmaxf(-1.0f, speed));
 
     if (this->speed == speed)

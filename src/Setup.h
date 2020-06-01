@@ -117,4 +117,7 @@
 // Set to a valid SPI host to route all SPI outputs to this
 #define SPI_ESP32_HARDWARE_SPI_HOST HSPI_HOST
 
+// Comment out to disable emergency brake
+#define EMERGENCY_BRAKE_ENABLED
+
 #endif //LED_FAN_SETUP_H
