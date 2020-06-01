@@ -75,7 +75,7 @@ void SpeedControl::flush() {
     if (desiredSpeedP > estimatedSpeedP) {
         // Accelerate
         // ... but not too strongly
-        setSpeed(fminf(estimatedSpeedP + 0.5f, desiredSpeedP) * direction);
+        setSpeed(fminf(estimatedSpeedP + accelerationLimit, desiredSpeedP) * direction);
     }
     else {
         // Decelerate
