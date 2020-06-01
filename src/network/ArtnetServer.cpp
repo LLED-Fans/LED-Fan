@@ -26,12 +26,14 @@ ArtnetServer::ArtnetServer(Screen *screen, SpeedControl *speedControl)
         Screen::Mode::cartesian
     ));
 
-    artnet->channels->push_back(new VISUAL_CLASS(
-        1,
-        screen->concentricResolution->sum() * 3,
-        "Concentric",
-        Screen::Mode::concentric
-    ));
+    auto *concentric = new VISUAL_CLASS(
+            1,
+            screen->concentricResolution->sum() * 3,
+            "Concentric",
+            Screen::Mode::concentric
+    );
+    concentric->isAdvertised = false;
+    artnet->channels->push_back(concentric);
 
     artnet->channels->push_back(new SPEED_CLASS(
         2,

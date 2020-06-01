@@ -12,6 +12,7 @@
 class ArtnetEndpoint: public ArtnetChannel {
 public:
     unsigned int net;
+    bool isAdvertised = true;
 
 #ifdef RTTI_SUPPORTED
     virtual ~ArtnetEndpoint() = default;

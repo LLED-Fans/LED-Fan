@@ -114,6 +114,9 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
         sprintf((char *) artPollReply.nodereport, "%i DMX output universes active.", artPollReply.numbports);
 
         for (const auto& channel : *channels) {
+            if (!channel->isAdvertised)
+                continue;
+
             uint8_t shortname[18];
             uint8_t longname[64];
             sprintf((char *) shortname, "Fan - %s", channel->name.c_str());
