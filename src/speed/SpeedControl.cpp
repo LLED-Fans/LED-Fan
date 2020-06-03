@@ -27,7 +27,7 @@ void SpeedControl::setDesiredSpeed(float speed) {
 void SpeedControl::update(unsigned long microsDelay) {
 #ifdef EMERGENCY_BRAKE_ENABLED
     if (speed != 0) {
-        if (microsAccelerating < ROTATION_PAUSED_MS)
+        if (microsAccelerating < ROTATION_PAUSED_MS * 1000)
             microsAccelerating += microsDelay;
         else if (rotationSensor->isPaused) {
             Serial.println("Motor appears to be stuck - Emergency brake engaged!");
