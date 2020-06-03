@@ -42,7 +42,7 @@ Updater::Updater() {
 
 int Updater::check() {
     shouldCheckUpdate = true;
-    return 10000;
+    return 10000 * 1000;
 }
 
 bool Updater::handle() {
