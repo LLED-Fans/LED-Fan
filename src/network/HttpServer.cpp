@@ -223,11 +223,11 @@ void HttpServer::setupRoutes() {
             request_result(false);
         }
 
-        request->send(200, "text/plain", String(2000));
+        request->send(200, "text/plain", String(2000 * 1000));
     });
 
     _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", "5000");
+        request->send(200, "text/plain", String(5000 * 1000));
         ESP.restart();
     });
 
