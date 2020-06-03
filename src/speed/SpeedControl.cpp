@@ -26,7 +26,7 @@ void SpeedControl::setDesiredSpeed(float speed) {
 
 void SpeedControl::update(unsigned long microsDelay) {
 #ifdef EMERGENCY_BRAKE_ENABLED
-    if (speed != 0) {
+    if (speed != 0.0f) {
         if (microsAccelerating < ROTATION_PAUSED_MS * 1000)
             microsAccelerating += microsDelay;
         else if (rotationSensor->isPaused) {
@@ -58,12 +58,13 @@ void SpeedControl::flush() {
     float desiredSpeedP = desiredSpeed * direction;
     float estimatedSpeedP = estimatedSpeed * direction;
 
-    if (std::abs(estimatedSpeed) > 0.2f && estimatedSpeedP < 0) {
+    if (desiredSpeedP == 0.0f || (std::abs(estimatedSpeed) > 0.2f && estimatedSpeedP < 0)) {
         // We're spinning fast and want to change direction
         // Brake at full power
         // Don't dare to accelerate in the other direction yet,
         // since it will put awkward forces on the motor.
-        setSpeed(0);
+        setSpeed(0.0f);
+        microsAccelerating = 0;
         return;
     }
 
@@ -85,9 +86,6 @@ void SpeedControl::flush() {
 }
 
 void SpeedControl::setSpeed(float speed) {
-    if (speed == 0)
-        microsAccelerating = 0;
-
     speed = fminf(1.0f, fmaxf(-1.0f, speed));
 
     if (this->speed == speed)
