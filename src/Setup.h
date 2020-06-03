@@ -74,6 +74,8 @@
 #define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_REGRESSION
 // Comma-Separated list of pins in use
 #define ROTATION_SENSOR_PINS 26,18,23,4
+// If defined, only use this checkpoint for final position calculation.
+//#define ROTATION_SENSOR_CRITICAL_CHECKPOINT 0
 // If true, calculate the time per checkpoint separately (for wobbly fans)
 #define ROTATION_SENSOR_SEPARATE_CHECKPOINTS false
 // If applicable, max framerate of rotation sensor task

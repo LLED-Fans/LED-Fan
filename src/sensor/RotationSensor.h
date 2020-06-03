@@ -19,9 +19,10 @@ public:
     int minCheckpointPasses = 2;
     unsigned long minCheckpointTime = 10 * 1000;
     unsigned long pauseInterval = 2000 * 1000;
-    bool separateCheckpoints = false;
 
     float rotationOffset = 10;
+    bool separateCheckpoints = false;
+    int criticalCheckpoint = -1;
 
     GPIOVisitor *visitor;
 

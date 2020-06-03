@@ -118,6 +118,15 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         y[j] = y[j + 1] - (round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps);
     }
 
+    if (criticalCheckpoint >= 0) {
+        for (int i = n - 1; i >= 0; --i) {
+            if (estimatedY[i] != criticalCheckpoint) {
+                x.erase(x.begin() + i);
+                y.erase(y.begin() + i);
+            }
+        }
+    }
+
     if (separateCheckpoints) {
         // Expand any available checkpoint -> (checkpoint + 1) to full rotation
         // -- Practically 'deleting' any other segments from time history
