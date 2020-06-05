@@ -14,12 +14,11 @@ using namespace std::placeholders;
 template <typename T>
 bool AsyncArtnet<T>::listen(uint16_t port) {
     if (!udp.listen(port)) {
-        Logger.println("UDP Listen failed!");
+        Logger.print("UDP Listen failed!").ln();
         return false;
     }
 
-    Logger.println("UDP Listening on Port: ");
-    Logger.println(port);
+    Logger.print("UDP Listening on Port: ").print(port).ln();
     udp.onPacket(std::bind(&AsyncArtnet::accept, this, _1));
 
     return true;
@@ -31,7 +30,7 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
     auto packetSize = packet.length();
 
     if (packetSize > MAX_BUFFER_ARTNET || packetSize <= 0) {
-        Logger.println("Got packet too large to read: " + String(packetSize));
+        Logger.print("Got packet too large to read: " + String(packetSize)).ln();
         return 0;
     }
 
@@ -156,26 +155,26 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
         return ART_SYNC;
     }
 
-    Logger.println("Got unrecognized packet with opcode: " + String(opcode));
+    Logger.print("Got unrecognized packet with opcode: " + String(opcode)).ln();
 
     return 0;
 }
 
 template <typename T>
 bool AsyncArtnet<T>::print(AsyncUDPPacket packet) {
-    Logger.println("UDP Packet Type: ");
-    Logger.println(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-    Logger.println(", From: ");
-    Logger.println(packet.remoteIP());
-    Logger.println(":");
-    Logger.println(packet.remotePort());
-    Logger.println(", To: ");
-    Logger.println(packet.localIP());
-    Logger.println(":");
-    Logger.println(packet.localPort());
-    Logger.println(", Length: ");
-    Logger.println(packet.length());
-    Logger.println(", Data: ");
+    Logger.print("UDP Packet Type: ");
+    Logger.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+    Logger.print(", From: ");
+    Logger.print(packet.remoteIP());
+    Logger.print(":");
+    Logger.print(packet.remotePort());
+    Logger.print(", To: ");
+    Logger.print(packet.localIP());
+    Logger.print(":");
+    Logger.print(packet.localPort());
+    Logger.print(", Length: ");
+    Logger.print(packet.length());
+    Logger.print(", Data: ");
     Serial.write(packet.data(), packet.length());
     //reply to the client
 //    packet.printf("Got %u bytes of data", packet.length());

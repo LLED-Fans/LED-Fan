@@ -8,7 +8,7 @@
 #include <esp32-hal.h>
 
 void Profiler::start(String section) {
-    Logger.println("----------");
+    Logger.print("----------").ln();
 
     timestamp = micros();
     currentSection = std::move(section);
@@ -23,7 +23,7 @@ void Profiler::mark(String section) {
 }
 
 void Profiler::end() {
-    Logger.println(currentSection + String(": ") + readableTime(micros() - timestamp));
+    Logger.print(currentSection + String(": ") + readableTime(micros() - timestamp)).ln();
     currentSection = String();
 }
 

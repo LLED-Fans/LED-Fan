@@ -16,17 +16,19 @@ public:
 
     String string();
 
-    void clear();
-    void println(char *value);
-    void println(String value);
+    WifiLogger clear();
+    WifiLogger ln();
+    
+    WifiLogger print(char *value);
+    WifiLogger print(String value);
 
-    void println(bool v);
-    void println(unsigned int v);
-    void println(int v);
-    void println(long v);
-    void println(unsigned long v);
-    void println(float v);
-    void println(double v);
+    WifiLogger print(bool v);
+    WifiLogger print(unsigned int v);
+    WifiLogger print(int v);
+    WifiLogger print(long v);
+    WifiLogger print(unsigned long v);
+    WifiLogger print(float v);
+    WifiLogger print(double v);
 };
 
 extern WifiLogger Logger;

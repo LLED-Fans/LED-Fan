@@ -68,7 +68,7 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
 #endif
 
     if (!endpoint) {
-        Logger.println("Error: Unknown Endpoint");
+        Logger.print("Error: Unknown Endpoint").ln();
         return;
     }
 
