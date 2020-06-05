@@ -11,17 +11,22 @@ WifiLogger Logger = WifiLogger(1024);
 WifiLogger::WifiLogger(int bufferSize) : data(new CharRoller(bufferSize)) {}
 
 WifiLogger WifiLogger::ln() {
-    return WifiLogger(0);
+    return print('\n');
 }
 
 WifiLogger WifiLogger::print(char *value) {
     data->push(value);
-    data->push('\n');
+    return *this;
 }
 
 WifiLogger WifiLogger::print(String value) {
     data->push(std::move(value));
-    data->push('\n');
+    return *this;
+}
+
+WifiLogger WifiLogger::print(char v) {
+    data->push(v);
+    return *this;
 }
 
 WifiLogger WifiLogger::clear() {

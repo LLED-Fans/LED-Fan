@@ -21,6 +21,7 @@ public:
     
     WifiLogger print(char *value);
     WifiLogger print(String value);
+    WifiLogger print(char v);
 
     WifiLogger print(bool v);
     WifiLogger print(unsigned int v);
