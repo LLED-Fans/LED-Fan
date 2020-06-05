@@ -5,7 +5,6 @@
 #include <esp32-hal-ledc.h>
 #include <esp32-hal-gpio.h>
 #include "PWMPin.h"
-#include "Logger.h"
 
 PWMPin::PWMPin(int pin, int pwmChannel) : pin(pin), pwmChannel(pwmChannel) {}
 
@@ -24,7 +23,6 @@ void PWMPin::setConstant(int mode) {
         pinMode(pin, OUTPUT);
     }
 
-    Logger.print(String(pin) + ": " + String(mode)).ln();
     digitalWrite(pin, mode);
 }
 
@@ -43,6 +41,5 @@ void PWMPin::setRatio(float ratio) {
         ledcAttachPin(pin, pwmChannel);
     }
 
-    Logger.print(String(pin) + ": " + String(ratio)).ln();
     ledcWrite(pwmChannel, uint32_t(ratio * maxValue));
 }
