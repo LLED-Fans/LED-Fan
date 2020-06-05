@@ -7,18 +7,19 @@
 #include "HardwareSerial.h"
 #include "ArtnetEndpoint.h"
 #include <WiFi.h>
+#include <util/Logger.h>
 
 using namespace std::placeholders;
 
 template <typename T>
 bool AsyncArtnet<T>::listen(uint16_t port) {
     if (!udp.listen(port)) {
-        Serial.println("UDP Listen failed!");
+        Logger.println("UDP Listen failed!");
         return false;
     }
 
-    Serial.print("UDP Listening on Port: ");
-    Serial.println(port);
+    Logger.println("UDP Listening on Port: ");
+    Logger.println(port);
     udp.onPacket(std::bind(&AsyncArtnet::accept, this, _1));
 
     return true;
@@ -30,8 +31,7 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
     auto packetSize = packet.length();
 
     if (packetSize > MAX_BUFFER_ARTNET || packetSize <= 0) {
-        Serial.print("Got packet too large to read: ");
-        Serial.println(packetSize);
+        Logger.println("Got packet too large to read: " + String(packetSize));
         return 0;
     }
 
@@ -156,29 +156,27 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
         return ART_SYNC;
     }
 
-    Serial.print("Got unrecognized packet with opcode: ");
-    Serial.println(opcode);
+    Logger.println("Got unrecognized packet with opcode: " + String(opcode));
 
     return 0;
 }
 
 template <typename T>
 bool AsyncArtnet<T>::print(AsyncUDPPacket packet) {
-    Serial.print("UDP Packet Type: ");
-    Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-    Serial.print(", From: ");
-    Serial.print(packet.remoteIP());
-    Serial.print(":");
-    Serial.print(packet.remotePort());
-    Serial.print(", To: ");
-    Serial.print(packet.localIP());
-    Serial.print(":");
-    Serial.print(packet.localPort());
-    Serial.print(", Length: ");
-    Serial.print(packet.length());
-    Serial.print(", Data: ");
+    Logger.println("UDP Packet Type: ");
+    Logger.println(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+    Logger.println(", From: ");
+    Logger.println(packet.remoteIP());
+    Logger.println(":");
+    Logger.println(packet.remotePort());
+    Logger.println(", To: ");
+    Logger.println(packet.localIP());
+    Logger.println(":");
+    Logger.println(packet.localPort());
+    Logger.println(", Length: ");
+    Logger.println(packet.length());
+    Logger.println(", Data: ");
     Serial.write(packet.data(), packet.length());
-    Serial.println();
     //reply to the client
 //    packet.printf("Got %u bytes of data", packet.length());
 

@@ -24,7 +24,7 @@ void PWMPin::setConstant(int mode) {
         pinMode(pin, OUTPUT);
     }
 
-    Logger::println(String(pin) + ": " + String(mode));
+    Logger.println(String(pin) + ": " + String(mode));
     digitalWrite(pin, mode);
 }
 
@@ -43,6 +43,6 @@ void PWMPin::setRatio(float ratio) {
         ledcAttachPin(pin, pwmChannel);
     }
 
-    Logger::println(String(pin) + ": " + String(ratio));
+    Logger.println(String(pin) + ": " + String(ratio));
     ledcWrite(pwmChannel, uint32_t(ratio * maxValue));
 }

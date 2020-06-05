@@ -236,7 +236,7 @@ void HttpServer::setupRoutes() {
     });
 
     _server.on("/log", HTTP_GET, [screen](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", Logger::string());
+        request->send(200, "text/plain", Logger.string());
     });
 
     _server.on("/rotation/set", HTTP_POST, [rotationSensor](AsyncWebServerRequest *request) {

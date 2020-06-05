@@ -6,39 +6,38 @@
 
 #include <utility>
 
-CharRoller *Logger::data = new CharRoller(1024);
+WifiLogger Logger = WifiLogger(1024);
 
-void Logger::println(char *value) {
+WifiLogger::WifiLogger(int bufferSize) : data(new CharRoller(bufferSize)) {}
+
+void WifiLogger::println(char *value) {
     data->push(value);
     data->push('\n');
 }
 
-void Logger::println(String value) {
+void WifiLogger::println(String value) {
     data->push(std::move(value));
     data->push('\n');
 }
 
-void Logger::clear() {
+void WifiLogger::clear() {
     data->clear();
 }
 
-String Logger::string() {
+String WifiLogger::string() {
     return data->toString();
 }
 
-void Logger::println(bool v) { println(String(v ? "true" : "false")); }
+void WifiLogger::println(bool v) { println(String(v ? "true" : "false")); }
 
-void Logger::println(unsigned int v) { println(String(v)); }
+void WifiLogger::println(unsigned int v) { println(String(v)); }
 
-void Logger::println(int v) { println(String(v)); }
+void WifiLogger::println(int v) { println(String(v)); }
 
-void Logger::println(long v) { println(String(v)); }
+void WifiLogger::println(long v) { println(String(v)); }
 
-void Logger::println(unsigned long v) { println(String(v)); }
+void WifiLogger::println(unsigned long v) { println(String(v)); }
 
-void Logger::println(float v) { println(String(v)); }
+void WifiLogger::println(float v) { println(String(v)); }
 
-void Logger::println(double v) { println(String(v)); }
-
-void Logger::init() {
-}
+void WifiLogger::println(double v) { println(String(v)); }

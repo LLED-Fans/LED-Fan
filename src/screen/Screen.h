@@ -30,7 +30,7 @@ public:
     int pixelCount;
     Pixel *pixels;
 
-    Blade(int pixelCoun, float rotationOffset);
+    Blade(int pixelCount, float rotationOffset);
 };
 
 class Screen {

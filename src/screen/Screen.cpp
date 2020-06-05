@@ -156,9 +156,9 @@ void Screen::drawCartesian() {
                 int y = std::lround(relativeY * cartesianMax);
 
                 // For plotting coords
-//        Logger::println(ringIndex);
-//        Logger::println(x);
-//        Logger::println(y);
+//        Logger.println(ringIndex);
+//        Logger.println(x);
+//        Logger.println(y);
 
                 *pixel.color = buffer[x + y * cartesianResolution];
             }

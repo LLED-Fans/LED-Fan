@@ -8,26 +8,28 @@
 
 #include "CharRoller.h"
 
-class Logger {
+class WifiLogger {
 public:
-    static CharRoller *data;
+    CharRoller *data;
 
-    static String string();
+    WifiLogger(int bufferSize);
 
-    static void init();
+    String string();
 
-    static void clear();
-    static void println(char *value);
-    static void println(String value);
+    void clear();
+    void println(char *value);
+    void println(String value);
 
-    static void println(bool v);
-    static void println(unsigned int v);
-    static void println(int v);
-    static void println(long v);
-    static void println(unsigned long v);
-    static void println(float v);
-    static void println(double v);
+    void println(bool v);
+    void println(unsigned int v);
+    void println(int v);
+    void println(long v);
+    void println(unsigned long v);
+    void println(float v);
+    void println(double v);
 };
+
+extern WifiLogger Logger;
 
 
 #endif //LED_FAN_LOGGER_H
