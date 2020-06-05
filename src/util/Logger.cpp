@@ -31,22 +31,23 @@ WifiLogger WifiLogger::print(char v) {
 
 WifiLogger WifiLogger::clear() {
     data->clear();
+    return *this;
 }
 
 String WifiLogger::string() {
     return data->toString();
 }
 
-WifiLogger WifiLogger::print(bool v) { print(String(v ? "true" : "false")); }
+WifiLogger WifiLogger::print(bool v) { return print(String(v ? "true" : "false")); }
 
-WifiLogger WifiLogger::print(unsigned int v) { print(String(v)); }
+WifiLogger WifiLogger::print(unsigned int v) { return print(String(v)); }
 
-WifiLogger WifiLogger::print(int v) { print(String(v)); }
+WifiLogger WifiLogger::print(int v) { return print(String(v)); }
 
-WifiLogger WifiLogger::print(long v) { print(String(v)); }
+WifiLogger WifiLogger::print(long v) { return print(String(v)); }
 
-WifiLogger WifiLogger::print(unsigned long v) { print(String(v)); }
+WifiLogger WifiLogger::print(unsigned long v) { return print(String(v)); }
 
-WifiLogger WifiLogger::print(float v) { print(String(v)); }
+WifiLogger WifiLogger::print(float v) { return print(String(v)); }
 
-WifiLogger WifiLogger::print(double v) { print(String(v)); }
+WifiLogger WifiLogger::print(double v) { return print(String(v)); }
