@@ -201,6 +201,7 @@ void HttpServer::setupRoutes() {
         unsigned long time = 2000 * 1000;
 
         screen->behavior = new Ping(time);
+        Logger.print("Pong").ln();
         request->send(200, "text/plain", String(time));
     });
 
