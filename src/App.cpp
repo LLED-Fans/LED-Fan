@@ -87,6 +87,14 @@ App::App() {
     screen->setCorrection(LED_BRIGHTNESS_CORRECTION);
     screen->rotationSensor = rotationSensor;
 
+#ifdef MAX_AMPERE
+    float maxAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
+    if (maxAmpereDrawn > MAX_AMPERE) {
+        // Each LED has a lightness of 255 * 3 (r+g+b)
+        screen->maxLightness = MAX_AMPERE / AMPERE_PER_LED * 255 * 3;
+    }
+#endif
+
     auto motorForwardPin = new PWMPin(MOTOR_FORWARD_PIN, 0);
     auto motorBackwardPin = new PWMPin(MOTOR_BACKWARD_PIN, 1);
     motorForwardPin->setup(MOTOR_PWM_FREQUENCY, MOTOR_PWM_RESOLUTION);

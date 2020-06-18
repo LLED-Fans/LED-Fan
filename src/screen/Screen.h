@@ -71,6 +71,8 @@ public:
     NativeBehavior *behavior = nullptr;
     unsigned long inputTimestamps[Mode::count];
 
+    unsigned long maxLightness;
+
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
     void update(unsigned long delayMicros);
@@ -79,6 +81,8 @@ public:
     void drawDemo();
     void drawCartesian();
     void drawConcentric();
+
+    void show();
 
     int noteInput(Mode mode);
 

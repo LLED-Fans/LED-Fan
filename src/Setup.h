@@ -53,7 +53,7 @@
 // Max 80, higher values need shorter wire length
 #define LED_CLOCK_SPEED_MHZ 40
 
-#define LED_COUNT 42
+#define LED_COUNT 72
 // How many additional LEDs we should set to black, just to be safe
 #define LED_OVERFLOW_WALL 5
 
@@ -108,6 +108,10 @@
 // ------------------------------------------
 // ---- Other
 // ------------------------------------------
+
+// If the power supply is limited, define this to dynamically limit drawn power
+#define MAX_AMPERE 1.5
+#define AMPERE_PER_LED 0.06
 
 #define PAIR_PIN 27
 

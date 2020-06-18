@@ -72,7 +72,7 @@ void Screen::draw(unsigned long delayMicros) {
 
     if (behavior != nullptr) {
         if (behavior->update(this, delayMicros)) {
-            FastLED.show();
+            show();
             return;
         }
 
@@ -82,7 +82,7 @@ void Screen::draw(unsigned long delayMicros) {
 
     if (!rotationSensor->isReliable()) {
         fill_solid(leds, ledCount, CRGB::Black);
-        FastLED.show();
+        show();
         return;
     }
 
@@ -167,7 +167,7 @@ void Screen::drawCartesian() {
         }
     }
 
-    FastLED.show();
+    show();
 }
 
 void Screen::drawDemo() {
@@ -196,7 +196,7 @@ void Screen::drawDemo() {
         }
     }
 
-    FastLED.show();
+    show();
 }
 
 void Screen::drawConcentric() {
@@ -231,6 +231,25 @@ void Screen::drawConcentric() {
         }
     }
 
+    show();
+}
+
+void Screen::show() {
+    if (maxLightness > 0) {
+        unsigned long lightness = 0;
+        for (int i = 0; i < ledCount; i++) {
+            CRGB &led = leds[i];
+            lightness += led.r + led.g + led.b;
+        }
+
+        if (lightness > maxLightness) {
+            uint8_t scale = maxLightness * 255 / lightness;
+            for (int i = 0; i < ledCount; i++) {
+                leds[i].nscale8_video(scale);
+            }
+        }
+    }
+
     FastLED.show();
 }
 
@@ -239,6 +258,7 @@ int Screen::noteInput(Mode mode) {
     determineMode(lastUpdateTimestamp);
     return lastUpdateTimestamp;
 }
+
 void Screen::setCorrection(float correction) {
     for (int b = 0; b < bladeCount; ++b) {
         Blade *blade = blades[b];
