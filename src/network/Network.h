@@ -25,6 +25,7 @@ public:
     static void pair(char *ssid, char *password);
 
     static bool checkStatus();
+    static IPAddress address();
 };
 
 

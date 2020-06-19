@@ -96,3 +96,10 @@ void Network::pair(char *ssid, char *password) {
 
     host(ssid, password);
 }
+
+IPAddress Network::address() {
+    if (WiFi.getMode() == WIFI_MODE_STA)
+        return WiFi.localIP();
+
+    return WiFi.softAPIP();
+}

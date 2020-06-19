@@ -6,6 +6,7 @@
 
 #include "HardwareSerial.h"
 #include "ArtnetEndpoint.h"
+#include "Network.h"
 #include <WiFi.h>
 #include <util/Logger.h>
 
@@ -69,7 +70,7 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
 #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
         IPAddress local_ip = Ethernet.localIP();
 #else
-        IPAddress local_ip = WiFi.localIP();
+        IPAddress local_ip = Network::address();
 #endif
         uint8_t node_ip_address[4];
         node_ip_address[0] = local_ip[0];

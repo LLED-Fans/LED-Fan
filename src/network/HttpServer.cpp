@@ -33,9 +33,9 @@ HttpServer::HttpServer(App *app) : app(app), videoInterface(new VideoInterface(a
 
 String HttpServer::processTemplates(const String &var) {
     if (var == "AP_IP")
-        return Network::status == ConnectStatus::accessPoint
-        ? WiFi.softAPIP().toString()
-        : "Not running";
+        return Network::status == ConnectStatus::invalidNetwork
+        ? "Not running"
+        : Network::address().toString();
     if (var == "AP_SSID") {
         wifi_config_t conf_current;
         esp_wifi_get_config(WIFI_IF_AP, &conf_current);
