@@ -110,7 +110,7 @@
 // ------------------------------------------
 
 // If the power supply is limited, define this to dynamically limit drawn power
-#define MAX_AMPERE 1.5
+#define MAX_AMPERE 3.9
 #define AMPERE_PER_LED 0.06
 
 #define PAIR_PIN 27
