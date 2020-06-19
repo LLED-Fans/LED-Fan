@@ -30,6 +30,10 @@ which creates and deletes a temporary __dmp.txt file.
 Run 
 
     platformio run --target upload --upload-port IP-ADDRESS
+
+To update using a non-default setup file, create SomeSetup.h in builds/. The file will "inherit" from the default setup, so it can focus on overriding variables.
+
+    SETUP_FILE="SomeSetup" bash -c "platformio run --target upload --upload-port IP-ADDRESS"
     
 as per http://docs.platformio.org/en/latest/platforms/espressif32.html#over-the-air-ota-update.
 

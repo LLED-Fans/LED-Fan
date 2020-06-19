@@ -1,3 +1,7 @@
+# App-Specific
+src/builds/*
+!src/builds/.gitkeep
+
 .pio
 CMakeListsPrivate.txt
 

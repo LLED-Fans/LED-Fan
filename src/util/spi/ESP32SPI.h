@@ -122,7 +122,7 @@ public:
     }
 };
 
-#ifdef SPI_ESP32_HARDWARE_SPI_HOST
+#if defined(SPI_ESP32_HARDWARE_SPI_HOST) && defined(SPI_DATA) && defined(SPI_CLOCK)
 template<uint32_t SPI_SPEED>\
 class SPIOutput<SPI_DATA, SPI_CLOCK, SPI_SPEED> : public ESP32SPI<SPI_DATA, SPI_CLOCK, SPI_SPEED, SPI_ESP32_HARDWARE_SPI_HOST> {};
 #endif

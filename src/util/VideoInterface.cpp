@@ -57,10 +57,6 @@ bool VideoInterface::acceptJpeg(File file) {
 
 DynamicJsonDocument VideoInterface::info() {
     IntRoller *concentricResolution = screen->concentricResolution;
-    int pixelCount;
-    auto ringRadii = new float[screen->concentricResolution->count];
-    ConcentricCoordinates::ringRadii(ringRadii, screen->concentricResolution->count);
-    float *rawPixels = ConcentricCoordinates::sampledCartesian(concentricResolution, ringRadii, &pixelCount);
 
     const std::vector<ArtnetEndpoint *> *endpoints = artnetServer->endpoints();
 
