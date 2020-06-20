@@ -21,9 +21,11 @@ public:
 
     WifiSetup(const String &ssid, const String &password);
 
+    void trim();
     void write(String file);
     bool read(String file);
 
+    char *passwordPtr() { return password.isEmpty() ? nullptr : password.begin(); };
     bool isComplete();
 
     bool operator==(const WifiSetup &rhs) const;

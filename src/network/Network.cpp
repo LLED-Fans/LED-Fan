@@ -16,6 +16,11 @@ WifiSetup *Network::softAPSetup = new WifiSetup("", "");
 
 WifiSetup::WifiSetup(const String &ssid, const String &password) : ssid(ssid), password(password) {}
 
+void WifiSetup::trim() {
+    password.trim();
+    ssid.trim();
+}
+
 void WifiSetup::write(String file) {
     TextFiles::write(file, ssid + "\n" + password);
 }
@@ -36,20 +41,7 @@ bool WifiSetup::read(String file) {
 }
 
 bool WifiSetup::isComplete() {
-    if (ssid.isEmpty() || password.isEmpty())
-        return false;
-
-    String ssidCopy = ssid;
-    ssidCopy.trim();
-    if (ssidCopy.isEmpty())
-        return false;
-
-    String passwordCopy = password;
-    passwordCopy.trim();
-    if (passwordCopy.isEmpty())
-        return false;
-
-    return true;
+    return !ssid.isEmpty() && (password.isEmpty() || password.length() >= 8);
 }
 
 bool WifiSetup::operator==(const WifiSetup &rhs) const {
@@ -98,7 +90,7 @@ bool Network::connectToStation(int tries) {
 
     needsReconnect = false;
     WiFi.mode(WIFI_MODE_STA);
-    WiFi.begin(stationSetup->ssid.begin(), stationSetup->password.begin());
+    WiFi.begin(stationSetup->ssid.begin(), stationSetup->passwordPtr());
 
     for (int i = tries; i > 0; --i) {
         if (WiFi.status() == WL_CONNECTED) {
@@ -150,7 +142,7 @@ void Network::hostSoftAP() {
     needsReconnect = false;
 
     WiFi.mode(WIFI_MODE_AP);
-    WiFi.softAP(softAPSetup->ssid.begin(), softAPSetup->password.begin());
+    WiFi.softAP(softAPSetup->ssid.begin(), softAPSetup->passwordPtr());
 }
 
 WifiSetup *Network::getSoftApSetup() {
@@ -158,6 +150,8 @@ WifiSetup *Network::getSoftApSetup() {
 }
 
 void Network::setSoftApSetup(WifiSetup *softAPSetup) {
+    softAPSetup->trim();
+
     if (mode == WifiMode::accessPoint && Network::softAPSetup != softAPSetup)
         needsReconnect = true;
 
@@ -169,6 +163,8 @@ WifiSetup *Network::getStationSetup() {
 }
 
 void Network::setStationSetup(WifiSetup *stationSetup) {
+    stationSetup->trim();
+
     if (mode == WifiMode::station && Network::stationSetup != stationSetup)
         needsReconnect = true;
 
