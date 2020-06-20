@@ -115,7 +115,7 @@ IPAddress Network::address() {
 }
 
 void Network::pair() {
-    Serial.println("Pairing…").ln();
+    Serial.println("Pairing…");
 
     // Clear current pairing
     setStationSetup(new WifiSetup("", ""));
