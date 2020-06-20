@@ -60,12 +60,15 @@ void Network::setHostname(String hostname) {
 bool Network::checkStatus() {
     switch (mode) {
         case WifiMode::station:
-            if (needsReconnect || WiFi.getMode() != WIFI_MODE_STA || !WiFi.isConnected())
+            // Don't call connect() again if status != connected
+            // because it will cancel current connection attempts.
+
+            if (needsReconnect || WiFi.getMode() != WIFI_MODE_STA)
                 connectToStation(1);
 
             break;
         case WifiMode::accessPoint:
-            if (needsReconnect || WiFi.getMode() != WIFI_MODE_AP || WiFi.softAPBroadcastIP() == IPAddress())
+            if (needsReconnect || WiFi.getMode() != WIFI_MODE_AP)
                 hostSoftAP();
 
             break;
