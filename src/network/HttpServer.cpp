@@ -33,9 +33,7 @@ HttpServer::HttpServer(App *app) : app(app), videoInterface(new VideoInterface(a
 
 String HttpServer::processTemplates(const String &var) {
     if (var == "AP_IP")
-        return Network::status == ConnectStatus::invalidNetwork
-        ? "Not running"
-        : Network::address().toString();
+        return Network::address().toString();
     if (var == "AP_SSID") {
         wifi_config_t conf_current;
         esp_wifi_get_config(WIFI_IF_AP, &conf_current);
@@ -176,7 +174,7 @@ void HttpServer::setupRoutes() {
         request_result(true);
     });
 
-    _server.on("/wifi/connect", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+    _server.on("/wifi/connect", HTTP_POST, [](AsyncWebServerRequest *request) {
         if (!request->hasParam("ssid", true) || !request->hasParam("password", true)) {
             request_result(false);
         }
@@ -184,8 +182,15 @@ void HttpServer::setupRoutes() {
         auto ssid = request->getParam("ssid", true)->value();
         auto password = request->getParam("password", true)->value();
 
-        Network::connect(ssid.begin(), password.begin(), true, -1);
+        Network::setStationSetup(new WifiSetup(ssid, password));
+        Network::mode = WifiMode::station;
+
         // We may connect later, but it's deferred
+        request_result(true);
+    });
+
+    _server.on("/wifi/pair", HTTP_POST, [](AsyncWebServerRequest *request) {
+        Network::pair();
         request_result(true);
     });
 

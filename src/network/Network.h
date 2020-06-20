@@ -8,24 +8,57 @@
 
 static const int CONNECT_RETRIES = 5;
 
-enum ConnectStatus {
-    accessPoint, station, invalidNetwork
+static const char *const STATION_SETUP_FILE = "/wifi/station";
+
+enum WifiMode {
+    accessPoint, station
+};
+
+class WifiSetup {
+public:
+    String ssid;
+    String password;
+
+    WifiSetup(const String &ssid, const String &password);
+
+    void write(String file);
+    bool read(String file);
+
+    bool isComplete();
+
+    bool operator==(const WifiSetup &rhs) const;
+
+    bool operator!=(const WifiSetup &rhs) const;
 };
 
 class Network {
 public:
-    static ConnectStatus status;
+    static WifiMode mode;
 
-    static bool host(char *ssid, char *password);
-    static void setHostname(char *hostname);
+    static WifiSetup *getSoftApSetup();
 
-    static bool connectToPreset();
-    static bool connect(char *ssid, char *password, bool savePreset=true, int retries=CONNECT_RETRIES);
+    static void setSoftApSetup(WifiSetup *softAPSetup);
 
-    static void pair(char *ssid, char *password);
+    static WifiSetup *getStationSetup();
+
+    static void setStationSetup(WifiSetup *stationSetup);
+
+    static void setHostname(String hostname);
+    static void pair();
+
+    static void readConfig();
+
+    static bool connectToStation(int tries=CONNECT_RETRIES);
+    static void hostSoftAP();
 
     static bool checkStatus();
     static IPAddress address();
+
+private:
+    static WifiSetup *softAPSetup;
+    static WifiSetup *stationSetup;
+
+    static bool needsReconnect;
 };
 
 

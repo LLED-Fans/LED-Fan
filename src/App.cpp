@@ -115,12 +115,8 @@ App::App() {
 
     // Initialize Server
     Network::setHostname(WIFI_HOSTNAME);
-    Network::connectToPreset();
-    if (Network::status == ConnectStatus::invalidNetwork) {
-        Network::host(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
-    }
-    // else, we may not be connected (yet)
-    // but the user can always press 'pair'
+    Network::setSoftApSetup(new WifiSetup(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD));
+    Network::readConfig();
 
     artnetServer = new ArtnetServer(screen, speedControl);
     updater = new Updater();
@@ -137,7 +133,7 @@ void App::run() {
 
     EVERY_N_SECONDS(2) {
         if (digitalRead(pairPin) == LOW) {
-            Network::pair(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD);
+            Network::pair();
         }
 
         Network::checkStatus();
