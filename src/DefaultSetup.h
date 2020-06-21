@@ -58,7 +58,10 @@
 #define LED_OVERFLOW_WALL 5
 
 // 0 to 1, at 0.5 half of the pixels will be brightness-adjusted for the rest.
-#define LED_BRIGHTNESS_CORRECTION 0.15
+#define LED_BRIGHTNESS_CORRECTION 0.75
+// To accurately depict color even among corrections, this is the minimum
+//  color correction (pre-ampere-correction) to stay true to.
+#define LED_CORRECTION_MIN_COLORS 8
 
 // RingResolution = add * x + min
 #define CONCENTRIC_RESOLUTION_MIN 2

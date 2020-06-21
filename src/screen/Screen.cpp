@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <util/Profiler.h>
+#include <Setup.h>
 #include "Screen.h"
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
@@ -279,6 +280,8 @@ void Screen::setBrightness(float brightness) {
 }
 
 void Screen::_flushCorrection() {
+    fract8 maxCorrection = LED_CORRECTION_MIN_COLORS;
+
     for (int b = 0; b < bladeCount; ++b) {
         Blade *blade = blades[b];
 
@@ -291,6 +294,8 @@ void Screen::_flushCorrection() {
             else {
                 pixel.correction = fract8(brightness * 255);
             }
+
+            pixel.correction = _max(maxCorrection, pixel.correction);
         }
     }
 }
