@@ -258,6 +258,12 @@ void HttpServer::setupRoutes() {
         return "Success";
     }, [videoInterface]() { return String(videoInterface->artnetServer->speedControl->getDesiredSpeed()); });
 
+    registerREST("/brightness", "brightness", [screen](String value) {
+        auto brightness = value.toFloat();
+        screen->setBrightness(brightness);
+        return "Success";
+    }, [screen]() { return String(screen->getBrightness()); });
+
     // -----------------------------------------------
     // ------------------- Data ----------------------
     // -----------------------------------------------
