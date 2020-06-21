@@ -12,6 +12,9 @@ class TextFiles {
 public:
     static bool write(String path, String s);
     static String read(String path);
+
+    static bool writeConf(String path, String s);
+    static String readConf(String path);
 };
 
 

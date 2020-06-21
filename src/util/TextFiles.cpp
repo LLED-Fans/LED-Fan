@@ -31,3 +31,11 @@ String TextFiles::read(String path) {
     file.close();
     return string;
 }
+
+bool TextFiles::writeConf(String path, String s) {
+    return write("/cfg/" + path, s);
+}
+
+String TextFiles::readConf(String path) {
+    return read("/cfg/" + path);
+}

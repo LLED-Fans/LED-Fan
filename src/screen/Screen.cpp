@@ -8,6 +8,8 @@
 #include <cmath>
 #include <util/Profiler.h>
 #include <Setup.h>
+#include <util/TextFiles.h>
+#include <util/StringRep.h>
 #include "Screen.h"
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
@@ -59,6 +61,12 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
+
+    readConfig();
+}
+
+void Screen::readConfig() {
+    setBrightness(StringRep::toFloat(TextFiles::readConf("brightness"), 1.0f));
 }
 
 void Screen::update(unsigned long delayMicros) {
@@ -276,6 +284,7 @@ float Screen::getBrightness() const {
 
 void Screen::setBrightness(float brightness) {
     this->brightness = std::min(brightness, 1.0f);
+    TextFiles::writeConf("brightness", String(brightness));
     _flushCorrection();
 }
 

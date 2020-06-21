@@ -75,6 +75,8 @@ public:
 
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
+    void readConfig();
+
     void update(unsigned long delayMicros);
 
     void draw(unsigned long delayMicros);
@@ -87,13 +89,10 @@ public:
     int noteInput(Mode mode);
 
     void determineMode(unsigned long microseconds);
-
     void setCorrection(float ratio);
 
     float getBrightness() const;
-
     void setBrightness(float brightness);
-
 private:
     float correction = 0.0f, brightness = 1.0f;
     void _flushCorrection();
