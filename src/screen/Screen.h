@@ -89,6 +89,14 @@ public:
     void determineMode(unsigned long microseconds);
 
     void setCorrection(float ratio);
+
+    float getBrightness() const;
+
+    void setBrightness(float brightness);
+
+private:
+    float correction = 0.0f, brightness = 1.0f;
+    void _flushCorrection();
 };
 
 

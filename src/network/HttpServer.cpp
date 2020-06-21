@@ -135,6 +135,30 @@ bool handlePartialFile(AsyncWebServerRequest *request, uint8_t *data, size_t len
     return false;
 }
 
+void registerREST(const char* url, String param, const std::function<String(String)>& set, const std::function<String()>& get) {
+    _server.on(url, HTTP_GET, [param, set](AsyncWebServerRequest *request) {
+        if (!request->hasParam(param)) {
+            request_result(false);
+        }
+
+        auto value = request->getParam(param)->value();
+        auto result = set(value);
+        if (result.isEmpty())
+            request->send(400, "text/plain", "Failure");
+        else
+            request->send(200, "text/plain", result);
+    });
+
+    _server.on(url, HTTP_POST, [param, get](AsyncWebServerRequest *request) {
+        if (!request->hasParam(param)) {
+            request_result(false);
+        }
+
+        auto value = request->getParam(param)->value();
+        request->send(200, "text/plain", get());
+    });
+}
+
 void HttpServer::setupRoutes() {
     auto template_processor = std::bind(&HttpServer::processTemplates, this, _1);
     auto videoInterface = this->videoInterface;
@@ -156,23 +180,6 @@ void HttpServer::setupRoutes() {
     // -----------------------------------------------
 
     SERVE_HTML("/settings", "/settings.html")
-
-    _server.on("/mode/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        if (!request->hasParam("mode", true)) {
-            request_result(false);
-        }
-
-        auto mode = request->getParam("mode", true)->value();
-        if (mode == "demo") {
-            screen->mode = Screen::demo;
-        } else if (mode == "screen") {
-            screen->mode = Screen::cartesian;
-        } else if (mode == "concentric") {
-            screen->mode = Screen::concentric;
-        }
-
-        request_result(true);
-    });
 
     _server.on("/wifi/connect", HTTP_POST, [](AsyncWebServerRequest *request) {
         if (!request->hasParam("ssid", true) || !request->hasParam("password", true)) {
@@ -210,13 +217,7 @@ void HttpServer::setupRoutes() {
         request->send(200, "text/plain", String(time));
     });
 
-    _server.on("/behavior/set", HTTP_POST, [screen](AsyncWebServerRequest *request) {
-        if (!request->hasParam("id")) {
-            request_result(false);
-        }
-
-        auto id = request->getParam("id")->value();
-
+    registerREST("/behavior", "id", [screen](String id) {
         if (id == "none") {
             screen ->behavior = nullptr;
         }
@@ -226,13 +227,13 @@ void HttpServer::setupRoutes() {
         else if (id == "dotted")
             screen -> behavior = new Dotted();
         else {
-            request_result(false);
+            return String();
         }
 
-        request->send(200, "text/plain", String(2000 * 1000));
-    });
+        return String(2000 * 1000);
+    }, [](){ return ""; });
 
-    _server.on("/reboot", HTTP_POST, [screen](AsyncWebServerRequest *request) {
+    _server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", String(5000 * 1000));
         ESP.restart();
     });
@@ -241,29 +242,21 @@ void HttpServer::setupRoutes() {
         request->send(200, "text/plain", String(updater->check()));
     });
 
-    _server.on("/log", HTTP_GET, [screen](AsyncWebServerRequest *request) {
+    _server.on("/log", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", Logger.string());
     });
 
-    _server.on("/rotation/set", HTTP_POST, [rotationSensor](AsyncWebServerRequest *request) {
-        if (!request->hasParam("rotation", true)) {
-            request_result(false);
-        }
-        auto rotation = request->getParam("rotation", true)->value().toFloat();
+    registerREST("/rotation", "rotation", [rotationSensor](String value) {
+        auto rotation = value.toFloat();
         rotationSensor->fixedRotation = rotation;
+        return "Success";
+    }, [rotationSensor]() { return String(rotationSensor->fixedRotation); });
 
-        request_result(true);
-    });
-
-    _server.on("/speed/set", HTTP_POST, [videoInterface](AsyncWebServerRequest *request) {
-        if (!request->hasParam("speed-control", true)) {
-            request_result(false);
-        }
-        auto speed = request->getParam("speed-control", true)->value().toFloat();
+    registerREST("/speed", "speed-control", [videoInterface](String value) {
+        auto speed = value.toFloat();
         videoInterface->artnetServer->speedControl->setDesiredSpeed(speed);
-
-        request_result(true);
-    });
+        return "Success";
+    }, [videoInterface]() { return String(videoInterface->artnetServer->speedControl->getDesiredSpeed()); });
 
     // -----------------------------------------------
     // ------------------- Data ----------------------

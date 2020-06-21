@@ -260,6 +260,20 @@ int Screen::noteInput(Mode mode) {
 }
 
 void Screen::setCorrection(float correction) {
+    this->correction = correction;
+    _flushCorrection();
+}
+
+float Screen::getBrightness() const {
+    return brightness;
+}
+
+void Screen::setBrightness(float brightness) {
+    this->brightness = std::min(brightness, 1.0f);
+    _flushCorrection();
+}
+
+void Screen::_flushCorrection() {
     for (int b = 0; b < bladeCount; ++b) {
         Blade *blade = blades[b];
 
@@ -267,10 +281,10 @@ void Screen::setCorrection(float correction) {
             Blade::Pixel &pixel = blade->pixels[p];
 
             if (correction > 0) {
-                pixel.correction = fract8(_min(pixel.radius / correction, 1) * 255);
+                pixel.correction = fract8(_min(pixel.radius / correction * brightness, 1) * 255);
             }
             else {
-                pixel.correction = 255;
+                pixel.correction = fract8(_min(brightness, 1) * 255);
             }
         }
     }

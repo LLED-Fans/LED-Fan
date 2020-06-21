@@ -23,12 +23,12 @@ def run(args):
         while True:
             uptime = datetime.now() - start
             simulated_rotation = (uptime.total_seconds() / seconds_per_rotation) % 1.0
-            requests.post(f"http://{ip}/rotation/set", data={"rotation": simulated_rotation})
+            requests.post(f"http://{ip}/rotation", data={"rotation": simulated_rotation})
 
             clock.elapse(time_per_frame)
     finally:
         if seconds_per_rotation > 0:
-            requests.post(f"http://{ip}/rotation/set", data={"rotation": "-1"})
+            requests.post(f"http://{ip}/rotation", data={"rotation": "-1"})
 
 
 def setup(command: ArgumentParser):

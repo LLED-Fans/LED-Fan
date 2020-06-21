@@ -23,5 +23,5 @@ def post(command: ArgumentParser, name: str, help: str, uri: Callable[[Any], str
 def setup_set_behavior(command: ArgumentParser):
     post(
         command, "id", "The behavior ID",
-        lambda args: f"behavior/set?id={args.id}"
+        lambda args: f"behavior?id={args.id}"
     )

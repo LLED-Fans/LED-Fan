@@ -59,21 +59,21 @@
                         <div class="mdl-grid controls">
                             <div class="mdl-cell mdl-cell--4-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_SCREEN%"
-                                        onclick="postRequest('/mode/set', {mode: 'screen'})">
+                                        onclick="postRequest('/mode', {mode: 'screen'})">
                                     Screen
                                 </button>
                             </div>
 
                             <div class="mdl-cell mdl-cell--4-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_DEMO%"
-                                        onclick="postRequest('/mode/set', {mode: 'demo'})">
+                                        onclick="postRequest('/mode', {mode: 'demo'})">
                                     Demo
                                 </button>
                             </div>
 
                             <div class="mdl-cell mdl-cell--4-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect %S_MODE_CONCENTRIC%"
-                                        onclick="postRequest('/mode/set', {mode: 'concentric'})">
+                                        onclick="postRequest('/mode', {mode: 'concentric'})">
                                     Concentric
                                 </button>
                             </div>
@@ -111,13 +111,13 @@
 
                             <div class="mdl-cell mdl-cell--6-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                        onclick="postRequest('/speed/set', {'speed-control': 0.0})">
+                                        onclick="postRequest('/speed', {'speed-control': 0.0})">
                                     Stop
                                 </button>
                             </div>
                             <div class="mdl-cell mdl-cell--6-col">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                        onclick="postRequest('/speed/set', {'speed-control': document.getElementById('speed-control').value})">
+                                        onclick="postRequest('/speed', {'speed-control': document.getElementById('speed-control').value})">
                                     Update
                                 </button>
                             </div>
