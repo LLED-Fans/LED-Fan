@@ -68,6 +68,9 @@ App::App() {
     rotationSensor->separateCheckpoints = ROTATION_SENSOR_SEPARATE_CHECKPOINTS;
     // Add 10 to always be positive
     rotationSensor->rotationOffset = ROTATION_SENSOR_OFFSET + 10;
+#ifdef ROTATION_SENSOR_FLIP
+    rotationSensor->rotationFlip = true;
+#endif
 #ifdef ROTATION_SENSOR_CRITICAL_CHECKPOINT
     rotationSensor->criticalCheckpoint = ROTATION_SENSOR_CRITICAL_CHECKPOINT;
 #endif

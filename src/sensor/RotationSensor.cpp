@@ -202,7 +202,7 @@ float RotationSensor::estimatedRotation(unsigned long time) {
         return NAN;
 
     // Add 10 beforehand so we're always positive
-    return std::fmod(rotation + rotationOffset, 1.0f);
+    return std::fmod(rotationOffset + (rotationFlip ? -rotation : rotation), 1.0f);
 }
 
 float RotationSensor::rotationsPerSecond() {

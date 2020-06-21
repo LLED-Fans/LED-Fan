@@ -21,6 +21,7 @@ public:
     unsigned long pauseInterval = 2000 * 1000;
 
     float rotationOffset = 10;
+    bool rotationFlip = false;
     bool separateCheckpoints = false;
     int criticalCheckpoint = -1;
 
