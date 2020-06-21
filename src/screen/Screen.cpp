@@ -162,8 +162,6 @@ void Screen::drawCartesian() {
 
                 *pixel.color = buffer[x + y * cartesianResolution];
             }
-
-            pixel.color->nscale8_video(pixel.correction);
         }
     }
 
@@ -193,8 +191,6 @@ void Screen::drawDemo() {
                     0
                 );
             }
-
-            pixel.color->nscale8_video(pixel.correction);
         }
     }
 
@@ -229,7 +225,6 @@ void Screen::drawConcentric() {
                 leftPixel.g * leftPart + rightPixel.g * rightPart,
                 leftPixel.b * leftPart + rightPixel.b * rightPart
             );
-            pixel.color->nscale8_video(pixel.correction);
         }
     }
 
@@ -237,6 +232,14 @@ void Screen::drawConcentric() {
 }
 
 void Screen::show() {
+    for (int b = 0; b < bladeCount; ++b) {
+        auto blade = blades[b];
+        for (int p = blade->pixelCount - 1; p >= 0; --p) {
+            Blade::Pixel &pixel = blade->pixels[p];
+            pixel.color->nscale8_video(pixel.correction);
+        }
+    }
+
     if (maxLightness > 0) {
         unsigned long lightness = 0;
         for (int i = 0; i < ledCount; i++) {
