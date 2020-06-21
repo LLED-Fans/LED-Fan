@@ -136,12 +136,12 @@ bool handlePartialFile(AsyncWebServerRequest *request, uint8_t *data, size_t len
 }
 
 void registerREST(const char* url, String param, const std::function<String(String)>& set, const std::function<String()>& get) {
-    _server.on(url, HTTP_GET, [param, set](AsyncWebServerRequest *request) {
-        if (!request->hasParam(param)) {
+    _server.on(url, HTTP_POST, [param, set](AsyncWebServerRequest *request) {
+        if (!request->hasParam(param, true)) {
             request_result(false);
         }
 
-        auto value = request->getParam(param)->value();
+        auto value = request->getParam(param, true)->value();
         auto result = set(value);
         if (result.isEmpty())
             request->send(400, "text/plain", "Failure");
@@ -149,7 +149,7 @@ void registerREST(const char* url, String param, const std::function<String(Stri
             request->send(200, "text/plain", result);
     });
 
-    _server.on(url, HTTP_POST, [param, get](AsyncWebServerRequest *request) {
+    _server.on(url, HTTP_GET, [param, get](AsyncWebServerRequest *request) {
         if (!request->hasParam(param)) {
             request_result(false);
         }

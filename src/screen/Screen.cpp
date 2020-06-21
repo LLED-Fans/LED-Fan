@@ -193,6 +193,8 @@ void Screen::drawDemo() {
                     0
                 );
             }
+
+            pixel.color->nscale8_video(pixel.correction);
         }
     }
 
@@ -281,10 +283,10 @@ void Screen::_flushCorrection() {
             Blade::Pixel &pixel = blade->pixels[p];
 
             if (correction > 0) {
-                pixel.correction = fract8(_min(pixel.radius / correction * brightness, 1) * 255);
+                pixel.correction = fract8(_min(pixel.radius / correction, 1) * brightness * 255);
             }
             else {
-                pixel.correction = fract8(_min(brightness, 1) * 255);
+                pixel.correction = fract8(brightness * 255);
             }
         }
     }
