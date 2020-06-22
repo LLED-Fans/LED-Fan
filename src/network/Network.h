@@ -8,7 +8,7 @@
 
 static const int CONNECT_RETRIES = 5;
 
-static const char *const STATION_SETUP_FILE = "/wifi/station";
+static const char *const STATION_SETUP_FILE = "station";
 
 enum WifiMode {
     accessPoint, station

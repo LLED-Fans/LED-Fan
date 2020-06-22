@@ -6,6 +6,8 @@
 #define LED_FAN_TEXTFILES_H
 
 
+static const char *const CFG_PATH = "/cfg/";
+
 #include <WString.h>
 
 class TextFiles {

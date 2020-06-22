@@ -33,9 +33,9 @@ String TextFiles::read(String path) {
 }
 
 bool TextFiles::writeConf(String path, String s) {
-    return write("/cfg/" + path, s);
+    return write(CFG_PATH + path, s);
 }
 
 String TextFiles::readConf(String path) {
-    return read("/cfg/" + path);
+    return read(CFG_PATH + path);
 }

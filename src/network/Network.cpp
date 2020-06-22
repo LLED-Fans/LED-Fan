@@ -22,11 +22,11 @@ void WifiSetup::trim() {
 }
 
 void WifiSetup::write(String file) {
-    TextFiles::write(file, ssid + "\n" + password);
+    TextFiles::writeConf(file, ssid + "\n" + password);
 }
 
 bool WifiSetup::read(String file) {
-    String s = TextFiles::read(file);
+    String s = TextFiles::readConf(file);
 
     int newline = s.indexOf('\n');
     if (newline <= 0) {
