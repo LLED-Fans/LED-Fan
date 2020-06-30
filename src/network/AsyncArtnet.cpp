@@ -30,13 +30,11 @@ template <typename T>
 bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
     auto remoteIP = packet.remoteIP();
 
-    // Check that packetID is "Art-Net" else ignore
     uint8_t *packetData = packet.data();
 
-    for (byte i = 0; i < 8; i++) {
-        if (packetData[i] != ART_NET_ID[i])
-            return 0;
-    }
+    // Check that packetID is "Art-Net" else ignore
+    if (memcmp(packetData, ART_NET_ID, 8) != 0)
+        return 0;
 
     auto opcode = packetData[8] | packetData[9] << 8;
 
