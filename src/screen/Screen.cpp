@@ -271,7 +271,8 @@ void Screen::show() {
 
 int Screen::noteInput(Mode mode) {
     inputTimestamps[mode] = lastUpdateTimestamp;
-    determineMode(lastUpdateTimestamp);
+    if (this->mode != mode)
+        determineMode(lastUpdateTimestamp);
     return lastUpdateTimestamp;
 }
 
