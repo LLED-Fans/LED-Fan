@@ -45,7 +45,7 @@ int Updater::check() {
     return 10000 * 1000;
 }
 
-bool Updater::handle() {
+void Updater::handle() {
     if (shouldCheckUpdate) {
         checkUntilTimestamp = millis() + 10000;
         shouldCheckUpdate = false;

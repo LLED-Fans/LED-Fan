@@ -19,8 +19,8 @@
 #define ART_DMX_START 18
 
 #include <vector>
-#include "Stream.h" // Will fail without this explicit import
-#include "AsyncUDP.h"
+#include <Stream.h> // Will fail without this explicit import
+#include <AsyncUDP.h>
 
 
 struct artnet_reply_s {

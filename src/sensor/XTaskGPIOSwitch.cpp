@@ -5,7 +5,6 @@
 #include "XTaskGPIOSwitch.h"
 
 #include <util/XTaskTimer.h>
-#include <sensor/XTaskGPIOSwitch.h>
 
 void XTaskGPIOSwitch::update(int *visitCheckpoint, unsigned long *visitTime) {
     if (lastCheckpoint >= 0) {

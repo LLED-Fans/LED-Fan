@@ -17,6 +17,14 @@ Run uploadfs as well as upload to flash the ESP32.
 
 Take a look at Setup.h to see if it fits your build.
 
+# Hacks
+
+Since some stuff currently works... sub-bar, do the following steps too:
+
+    #include <Arduino.h>  // On top of FastLED.h
+    // Merge this: 
+    https://github.com/5chmidti/FastLED/commit/1550a942ba69272e10e4ca56fd51dd9f074e1671
+
 ## Debug
 
 (macOS only) To debug a message, run

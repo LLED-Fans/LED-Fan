@@ -8,7 +8,7 @@
 
 static const float SPEED_CONSTANT_THRESHOLD = 0.0001f;
 
-#include <stdint.h>
+#include <cstdint>
 
 class PWMPin {
 public:

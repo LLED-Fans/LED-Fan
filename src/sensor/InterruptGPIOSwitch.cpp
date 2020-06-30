@@ -8,7 +8,7 @@
 #include <esp_attr.h>
 #include <esp32-hal-gpio.h>
 #include <pins_arduino.h>
-#include "util/Logger.h"
+#include <util/Logger.h>
 
 int __interruptSwitchLastCheckpoint;
 unsigned long __interruptSwitchLastVisitTime;

@@ -2,6 +2,8 @@
 // Created by Lukas Tenbrink on 20.01.20.
 //
 
+#include "Screen.h"
+
 #include <util/Logger.h>
 #include <util/Image.h>
 
@@ -10,7 +12,7 @@
 #include <Setup.h>
 #include <util/TextFiles.h>
 #include <util/StringRep.h>
-#include "Screen.h"
+#include <numeric>
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
 
@@ -298,13 +300,13 @@ void Screen::_flushCorrection() {
             Blade::Pixel &pixel = blade->pixels[p];
 
             if (correction > 0) {
-                pixel.correction = fract8(_min(pixel.radius / correction, 1) * brightness * 255);
+                pixel.correction = fract8(std::min(pixel.radius / correction, 1.0f) * brightness * 255);
             }
             else {
                 pixel.correction = fract8(brightness * 255);
             }
 
-            pixel.correction = _max(maxCorrection, pixel.correction);
+            pixel.correction = std::max(maxCorrection, pixel.correction);
         }
     }
 }

@@ -5,7 +5,6 @@
 #include "StepExtrapolator.h"
 
 #include <algorithm>
-#include <util/Logger.h>
 
 void StepExtrapolator::adjust(std::vector<double> x, std::vector<double> y) {
     int n = x.size();

@@ -11,7 +11,7 @@
 
 class ConcentricCoordinates {
 public:
-    static float *ringRadii(float *result, int count);
+    static void ringRadii(float *result, int count);
     static String radiusExpression(unsigned int count);
 
     static float *sampledCartesian(IntRoller *resolution, float *radii, int *count);

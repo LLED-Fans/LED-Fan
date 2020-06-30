@@ -6,6 +6,7 @@
 #define LED_FAN_ESP32SPI_H
 
 #include "Setup.h"
+#include <HardwareSerial.h>
 
 #include <FastLED.h>
 #include <driver/spi_common.h>
@@ -70,9 +71,10 @@ public:
 
         // Allocate DMA memory
         buffer = reinterpret_cast<uint8_t *>(heap_caps_malloc(bufferSize, MALLOC_CAP_DMA));
-        if (!buffer)
-            // Probably not enough DMA memory
-            throw std::bad_exception();
+        if (!buffer) {
+            Serial.println("Failed to allocate SPI buffer; possibly too little DMA memory available?");
+            exit(1);
+        }
     }
 
     void inline select() __attribute__((always_inline)) {
@@ -91,10 +93,12 @@ public:
     }
 
     void inline release() __attribute__((always_inline)) {
-        if (transactionLength > bufferSize)
+        if (transactionLength > bufferSize) {
+            Serial.println("Too little DMA buffer! Run while you can!");
             // Oh god, we fucked up
             // If you get this error, re-calculate your buffer size
-            throw std::bad_exception();
+            return;
+        }
 
         spi_transaction_t *transaction = transactions + currentTransaction;
         memset(transaction, 0, sizeof(*transaction));

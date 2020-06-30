@@ -14,7 +14,7 @@ public:
     Updater();
 
     int check();
-    bool handle();
+    void handle();
 };
 
 

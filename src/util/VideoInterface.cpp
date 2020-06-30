@@ -52,16 +52,16 @@ DynamicJsonDocument VideoInterface::info() {
         auto equations = object.createNestedArray("equations");
 
         names.add("rings");
-        equations.add(String(screen->concentricResolution->count));
+        equations.add(String(screen->concentricResolution->count).begin());
 
         names.add("|ring");
         equations.add("rings");
 
         names.add("radius");
-        equations.add(ConcentricCoordinates::radiusExpression(screen->concentricResolution->count));
+        equations.add(ConcentricCoordinates::radiusExpression(screen->concentricResolution->count).begin());
 
         names.add("resolution");
-        equations.add(String(CONCENTRIC_RESOLUTION_ADD) + "*ring+" + String(CONCENTRIC_RESOLUTION_MIN));
+        equations.add((String(CONCENTRIC_RESOLUTION_ADD) + "*ring+" + String(CONCENTRIC_RESOLUTION_MIN)).begin());
 
         names.add("|i");
         equations.add("resolution");

@@ -3,7 +3,7 @@
 //
 
 #include "SyncGPIOSwitch.h"
-#include "../util/PeakDetector.h"
+#include <util/PeakDetector.h>
 #include <vector>
 #include <esp32-hal.h>
 

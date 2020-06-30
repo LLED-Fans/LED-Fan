@@ -2,6 +2,10 @@
 src/builds/*
 !src/builds/.gitkeep
 
+# Auto-Generated
+sdkconfig
+
+# IDE
 .pio
 CMakeListsPrivate.txt
 

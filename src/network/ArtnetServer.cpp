@@ -3,6 +3,7 @@
 //
 
 #include <util/Logger.h>
+#include <HardwareSerial.h>
 #include "ArtnetServer.h"
 
 using namespace std::placeholders;
@@ -81,13 +82,17 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
     int bufferSize = screen->bufferSize * 3;
 
     unsigned int offset = (unsigned int) packet->channelUniverse << (uint8_t) 9;
-    int arrayCount = bufferSize - (int) offset;
-    if (arrayCount <= 0) {
+    if (offset >= bufferSize) {
         return; // Out of scope
     }
+    uint16_t arrayCount = bufferSize - (int) offset;
     uint8_t *array = buffer + offset;
 
-    memcpy(array, packet->data, _min(arrayCount, packet->length));
+    memcpy(array, packet->data, std::min(arrayCount, packet->length));
+    Serial.print("UDP Core: ");
+    Serial.println(xPortGetCoreID());
+    Serial.print("Wanted Core: ");
+    Serial.println(CONFIG_ARDUINO_UDP_RUNNING_CORE);
 }
 
 void ArtnetServer::acceptSync(IPAddress *remoteIP) {

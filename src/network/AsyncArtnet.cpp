@@ -4,10 +4,11 @@
 
 #include "AsyncArtnet.h"
 
-#include "HardwareSerial.h"
+#include <HardwareSerial.h>
+#include <WiFi.h>
+
 #include "ArtnetEndpoint.h"
 #include "Network.h"
-#include <WiFi.h>
 #include <util/Logger.h>
 
 using namespace std::placeholders;

@@ -6,7 +6,7 @@
 #include "PolarCoordinates.h"
 #include <cmath>
 
-float *ConcentricCoordinates::ringRadii(float *result, int count) {
+void ConcentricCoordinates::ringRadii(float *result, int count) {
     // a * 0 + b = (1 / 4) / (count - 1)
     // a * (count - 1) + b = 1
 

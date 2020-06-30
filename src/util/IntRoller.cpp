@@ -5,6 +5,7 @@
 #include "IntRoller.h"
 
 #include <algorithm>
+#include <numeric>
 #include <climits>
 
 IntRoller::IntRoller(int c) : count(c), head(0) {
