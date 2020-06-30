@@ -24,9 +24,19 @@ unsigned long RegularClock::sync() {
 
     if (microsecondsPerFrame > frameTime) {
         unsigned long delay = microsecondsPerFrame - frameTime;
-        delayMicroseconds(delay);
-        // If the delay goes too long or too short, we can use that to calculate our next frame
+
+        // If the delay goes too long or too short, we can already
+        // factor it into the next frame time to sync better
         lastSyncTimestamp = microseconds + delay;
+
+        unsigned long delayTicks = delay / portTICK_PERIOD_MS;
+        if (delayTicks > 2) {
+            // Worth it to yield
+            vTaskDelay(delayTicks);
+            delay -= delayTicks * portTICK_PERIOD_MS;
+        }
+
+        delayMicroseconds(delay);
     }
     else
         // Can't keep up! Accept lower framerate and just continue running.
