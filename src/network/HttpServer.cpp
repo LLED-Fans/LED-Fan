@@ -60,13 +60,13 @@ String HttpServer::processTemplates(const String &var) {
     }
 
     if (var == "S_MODE_DEMO") {
-        return app->screen->mode == Screen::demo ? "mdl-button--accent" : "";
+        return app->screen->getMode() == Screen::demo ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_SCREEN") {
-        return app->screen->mode == Screen::cartesian ? "mdl-button--accent" : "";
+        return app->screen->getMode() == Screen::cartesian ? "mdl-button--accent" : "";
     }
     if (var == "S_MODE_CONCENTRIC") {
-        return app->screen->mode == Screen::concentric ? "mdl-button--accent" : "";
+        return app->screen->getMode() == Screen::concentric ? "mdl-button--accent" : "";
     }
     if (var == "VIRTUAL_SCREEN_SIZE") {
         return String(app->screen->cartesianResolution);

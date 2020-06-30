@@ -97,7 +97,7 @@ void Screen::draw(unsigned long delayMicros) {
         return;
     }
 
-    switch (mode) {
+    switch (_mode) {
         default:
             drawCartesian();
             break;
@@ -111,7 +111,7 @@ void Screen::draw(unsigned long delayMicros) {
 }
 
 void Screen::determineMode(unsigned long microseconds) {
-    if (microseconds > inputTimestamps[mode] + MICROS_INPUT_ACTIVE) {
+    if (microseconds > inputTimestamps[_mode] + MICROS_INPUT_ACTIVE) {
         // No recent signal on input
 
         Mode mostRecentInput = Mode::count;
@@ -123,7 +123,7 @@ void Screen::determineMode(unsigned long microseconds) {
             }
         }
         if (mostRecentInput != Mode::count) {
-            mode = mostRecentInput;
+            this->setMode(mostRecentInput);
         }
     }
 }
@@ -271,7 +271,7 @@ void Screen::show() {
 
 int Screen::noteInput(Mode mode) {
     inputTimestamps[mode] = lastUpdateTimestamp;
-    if (this->mode != mode)
+    if (this->_mode != mode)
         determineMode(lastUpdateTimestamp);
     return lastUpdateTimestamp;
 }
@@ -309,6 +309,19 @@ void Screen::_flushCorrection() {
 
             pixel.correction = std::max(maxCorrection, pixel.correction);
         }
+    }
+}
+
+Screen::Mode Screen::getMode() const {
+    return _mode;
+}
+
+void Screen::setMode(Mode mode) {
+    if (this->_mode != mode && mode < Mode::count) {
+        for (int i = 0; i < bufferSize; i++)
+            buffer[i] = CRGB::Black;
+
+        this->_mode = mode;
     }
 }
 

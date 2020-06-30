@@ -57,7 +57,8 @@ public:
 
     unsigned long lastUpdateTimestamp;
 
-    Mode mode = demo;
+    Mode getMode() const;
+    void setMode(Mode mode);
 
     // Multi-purpose buffer for any input mode
     CRGB *buffer;
@@ -94,6 +95,7 @@ public:
     float getBrightness() const;
     void setBrightness(float brightness);
 private:
+    Mode _mode = demo;
     float correction = 0.0f, brightness = 1.0f;
     void _flushCorrection();
 };

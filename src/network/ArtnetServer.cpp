@@ -75,7 +75,7 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
 
     screen->noteInput(endpoint->mode);
 
-    if (screen->mode != endpoint->mode)
+    if (screen->getMode() != endpoint->mode)
         return; // We're in another mode; don't jumble the buffer
 
     uint8_t *buffer = reinterpret_cast<uint8_t *>(screen->buffer);
