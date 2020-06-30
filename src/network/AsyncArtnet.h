@@ -12,8 +12,6 @@
 #define ART_POLL_REPLY 0x2100
 #define ART_DMX 0x5000
 #define ART_SYNC 0x5200
-// Buffers
-#define MAX_BUFFER_ARTNET 530
 // Packet
 #define ART_NET_ID "Art-Net\0"
 #define ART_DMX_START 18
@@ -87,7 +85,6 @@ template <typename T>
 class AsyncArtnet {
 public:
     AsyncUDP udp;
-    uint8_t artnetPacket[MAX_BUFFER_ARTNET] = {};
     IPAddress broadcast;
     uint8_t  id[8] = {};
 

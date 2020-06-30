@@ -29,31 +29,31 @@ bool AsyncArtnet<T>::listen(uint16_t port) {
 template <typename T>
 bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
     auto remoteIP = packet.remoteIP();
-    auto packetSize = packet.length();
-
-    if (packetSize > MAX_BUFFER_ARTNET || packetSize <= 0) {
-        Logger.print("Got packet too large to read: " + String(packetSize)).ln();
-        return 0;
-    }
-
-    packet.read(artnetPacket, MAX_BUFFER_ARTNET);
 
     // Check that packetID is "Art-Net" else ignore
+    uint8_t *packetData = packet.data();
+
     for (byte i = 0; i < 8; i++) {
-        if (artnetPacket[i] != ART_NET_ID[i])
+        if (packetData[i] != ART_NET_ID[i])
             return 0;
     }
 
-    auto opcode = artnetPacket[8] | artnetPacket[9] << 8;
+    auto opcode = packetData[8] | packetData[9] << 8;
 
     if (opcode == ART_DMX) {
-        channelPacket->sequence = artnetPacket[12];
+        if (packet.length() < 16)
+            return 0;  // Packet too short
+
+        channelPacket->sequence = packetData[12];
         channelPacket->remoteIP = remoteIP;
 
-        channelPacket->data = artnetPacket + ART_DMX_START;
-        channelPacket->length = artnetPacket[17] | artnetPacket[16] << 8;
+        channelPacket->data = packetData + ART_DMX_START;
+        channelPacket->length = std::min<uint16_t>(
+            packet.length() - ART_DMX_START,
+            uint16_t(packetData[17]) | (uint16_t(packetData[16]) << 8)
+        );
 
-        auto incomingUniverse = artnetPacket[14] | artnetPacket[15] << 8;
+        auto incomingUniverse = packetData[14] | packetData[15] << 8;
 
         if (artDmxCallback) {
             for (auto channel : *channels) {
