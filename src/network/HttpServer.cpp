@@ -274,14 +274,4 @@ void HttpServer::setupRoutes() {
         serializeJsonPretty(json, *response);
         request->send(response);
     });
-
-    _server.on("/i/img/jpg", HTTP_POST,[videoInterface](AsyncWebServerRequest *request) {
-                   request->send(200);
-               }, nullptr, [videoInterface](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-                   if (handlePartialFile(request, data, len, index, total)) {
-                       bool accepted = videoInterface->acceptJpeg(request->_tempFile);
-                       request_result(accepted);
-                   }
-               }
-    );
 }
