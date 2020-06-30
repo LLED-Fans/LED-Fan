@@ -93,7 +93,7 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
 
 void ArtnetServer::acceptSync(IPAddress *remoteIP) {
     Serial.print("Got Sync: ");
-    Serial.print(*remoteIP);
+    Serial.println(*remoteIP);
 }
 
 std::vector<ArtnetEndpoint *> *ArtnetServer::endpoints() {
