@@ -1,15 +1,21 @@
 # We're currently stuck on idf3 because of Clion compat, this has to be transferred manually.....
 
+# Required for Arduino framework
 CONFIG_ENABLE_ARDUINO_DEPENDS=y
 CONFIG_AUTOSTART_ARDUINO=y
 
-# Run all on core 0
+# Run networking on core 0, lights on core 1
+CONFIG_ARDUINO_UDP_RUN_CORE0=y
+CONFIG_ARDUINO_UDP_RUN_CORE1=
 CONFIG_ARDUINO_UDP_RUNNING_CORE=0
 
+# Flashsize
 CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
 CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
 
+# CPU Frequency of 240MHZ
 CONFIG_ESP32_DEFAULT_CPU_FREQ_240=y
 CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ=240
 
+# Required for network to compile
 CONFIG_MBEDTLS_PSK_MODES=y

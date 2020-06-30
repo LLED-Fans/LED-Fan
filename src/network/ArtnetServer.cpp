@@ -89,10 +89,6 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
     uint8_t *array = buffer + offset;
 
     memcpy(array, packet->data, std::min(arrayCount, packet->length));
-    Serial.print("UDP Core: ");
-    Serial.println(xPortGetCoreID());
-    Serial.print("Wanted Core: ");
-    Serial.println(CONFIG_ARDUINO_UDP_RUNNING_CORE);
 }
 
 void ArtnetServer::acceptSync(IPAddress *remoteIP) {
