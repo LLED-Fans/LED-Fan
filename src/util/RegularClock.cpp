@@ -23,8 +23,10 @@ unsigned long RegularClock::sync() {
     auto previousTimestamp = lastSyncTimestamp;
 
     if (microsecondsPerFrame > frameTime) {
-        delayMicroseconds(microsecondsPerFrame - frameTime);
-        lastSyncTimestamp = micros();
+        unsigned long delay = microsecondsPerFrame - frameTime;
+        delayMicroseconds(delay);
+        // If the delay goes too long or too short, we can use that to calculate our next frame
+        lastSyncTimestamp = microseconds + delay;
     }
     else
         // Can't keep up! Accept lower framerate and just continue running.
