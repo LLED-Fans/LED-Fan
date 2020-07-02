@@ -126,8 +126,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
             }
         }
     }
-
-    if (separateCheckpoints) {
+    else if (separateCheckpoints) {
         // Expand any available checkpoint -> (checkpoint + 1) to full rotation
         // -- Practically 'deleting' any other segments from time history
         // -- Regress, and then 'unexpand' the segment into its intended size
