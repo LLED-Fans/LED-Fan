@@ -24,6 +24,8 @@ Since some stuff currently works... sub-bar, do the following steps too:
     #include <Arduino.h>  // On top of FastLED.h
     // Merge this: 
     https://github.com/5chmidti/FastLED/commit/1550a942ba69272e10e4ca56fd51dd9f074e1671
+    // Set task priority to 20 in AsyncUDP.cpp
+
 
 ## Debug
 
