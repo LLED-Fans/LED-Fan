@@ -58,7 +58,7 @@ void SpeedControl::flush() {
     float desiredSpeedP = desiredSpeed * direction;
     float estimatedSpeedP = estimatedSpeed * direction;
 
-    if (desiredSpeedP == 0.0f || (std::abs(estimatedSpeed) > 0.2f && estimatedSpeedP < 0)) {
+    if (desiredSpeedP == 0.0f || estimatedSpeedP < -0.2f) {
         // We're spinning fast and want to change direction
         // Brake at full power
         // Don't dare to accelerate in the other direction yet,
