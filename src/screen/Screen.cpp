@@ -259,12 +259,11 @@ void Screen::show() {
         }
         // Adjust for global correction
         lightness = lightness * FastLED.getBrightness() / 255;
+        FastLED.setBrightness(brightness);
 
         if (lightness > maxLightness) {
-            uint8_t scale = maxLightness * 255 / lightness;
-            for (int i = 0; i < ledCount; i++) {
-                leds[i].nscale8_video(scale);
-            }
+            uint8_t scale = maxLightness * brightness / lightness;
+            FastLED.setBrightness(scale);
         }
     }
 
@@ -284,18 +283,15 @@ void Screen::setCorrection(float correction) {
 }
 
 float Screen::getBrightness() const {
-    return brightness;
+    return brightness / 255.0f;
 }
 
 void Screen::setBrightness(float brightness) {
-    this->brightness = std::min(brightness, 1.0f);
+    this->brightness = brightness * 255;
     TextFiles::writeConf("brightness", String(brightness));
-    _flushCorrection();
 }
 
 void Screen::_flushCorrection() {
-    FastLED.setBrightness(brightness * 255);
-
     fract8 maxCorrection = LED_CORRECTION_MIN_COLORS;
 
     for (int b = 0; b < bladeCount; ++b) {

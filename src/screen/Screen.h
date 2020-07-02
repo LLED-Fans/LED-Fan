@@ -96,7 +96,8 @@ public:
     void setBrightness(float brightness);
 private:
     Mode _mode = demo;
-    float correction = 0.0f, brightness = 1.0f;
+    float correction = 0.0f;
+    uint8_t brightness = 255;
     void _flushCorrection();
 };
 
