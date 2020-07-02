@@ -257,6 +257,8 @@ void Screen::show() {
             CRGB &led = leds[i];
             lightness += led.r + led.g + led.b;
         }
+        // Adjust for global correction
+        lightness = lightness * FastLED.getBrightness() / 255;
 
         if (lightness > maxLightness) {
             uint8_t scale = maxLightness * 255 / lightness;
@@ -292,6 +294,8 @@ void Screen::setBrightness(float brightness) {
 }
 
 void Screen::_flushCorrection() {
+    FastLED.setBrightness(brightness * 255);
+
     fract8 maxCorrection = LED_CORRECTION_MIN_COLORS;
 
     for (int b = 0; b < bladeCount; ++b) {
@@ -300,12 +304,10 @@ void Screen::_flushCorrection() {
         for (int p = 0; p < blade->pixelCount; ++p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
-            if (correction > 0) {
-                pixel.correction = fract8(std::min(pixel.radius / correction, 1.0f) * brightness * 255);
-            }
-            else {
-                pixel.correction = fract8(brightness * 255);
-            }
+            if (correction > 0)
+                pixel.correction = fract8(std::min(pixel.radius / correction, 1.0f) * 255);
+            else
+                pixel.correction = 255;
 
             pixel.correction = std::max(maxCorrection, pixel.correction);
         }
