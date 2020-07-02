@@ -149,12 +149,7 @@ void registerREST(const char* url, String param, const std::function<String(Stri
             request->send(200, "text/plain", result);
     });
 
-    _server.on(url, HTTP_GET, [param, get](AsyncWebServerRequest *request) {
-        if (!request->hasParam(param)) {
-            request_result(false);
-        }
-
-        auto value = request->getParam(param)->value();
+    _server.on(url, HTTP_GET, [get](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", get());
     });
 }
