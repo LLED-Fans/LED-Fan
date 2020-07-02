@@ -258,7 +258,7 @@ void Screen::show() {
             lightness += led.r + led.g + led.b;
         }
         // Adjust for global correction
-        lightness = lightness * FastLED.getBrightness() / 255;
+        lightness = lightness * brightness / 255;
         FastLED.setBrightness(brightness);
 
         if (lightness > maxLightness) {
