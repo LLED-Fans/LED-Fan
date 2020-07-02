@@ -8,7 +8,7 @@
 LUT::Table *LUT::create_LUT(int count, float min, float max, std::function<float(float)> fun) {
     auto table = new Table();
     table->values = new float[count];
-    table->a = float(count) / (max - min);
+    table->a = float(count - 1) / (max - min);
     table->b = -min;
     table->count = count;
 
