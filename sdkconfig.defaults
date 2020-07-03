@@ -24,6 +24,14 @@ CONFIG_ARDUINO_UDP_RUN_CORE0=y
 CONFIG_ARDUINO_UDP_RUN_CORE1=
 CONFIG_ARDUINO_UDP_RUNNING_CORE=0
 
+# We don't care about idle task since we don't delete xTasks
+CONFIG_ESP_TASK_WDT=0
+
+# We don't use timers, but apparently disabling them
+# stops compiling, says a comment in code
+CONFIG_FREERTOS_TIMER_TASK_PRIORITY=0
+CONFIG_TIMER_TASK_PRIORITY=0
+
 # ---------- Debug Tools --------------
 
 # If vTaskList is used
