@@ -81,7 +81,7 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
 void Screen::readConfig() {
     setBrightness(StringRep::toFloat(TextFiles::readConf("brightness"), 1.0f));
-    setResponse(StringRep::toInt(TextFiles::readConf("response"), 2));
+    setResponse(StringRep::toInt(TextFiles::readConf("response"), 3));
 }
 
 void Screen::update(unsigned long delayMicros) {
