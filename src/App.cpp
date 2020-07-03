@@ -120,6 +120,8 @@ App::App() {
     Network::setHostname(WIFI_HOSTNAME);
     Network::setSoftApSetup(new WifiSetup(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD));
     Network::readConfig();
+    // Start connecting
+    Network::checkStatus();
 
     artnetServer = new ArtnetServer(screen, speedControl);
     updater = new Updater();
