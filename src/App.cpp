@@ -139,7 +139,9 @@ void App::run() {
             Network::pair();
         }
 
-        if (speedControl->getDesiredSpeed() > 0 && !Network::checkStatus()) {
+        bool isNetworkConnected = Network::checkStatus();
+
+        if (speedControl->getDesiredSpeed() > 0 && !isNetworkConnected) {
             speedControl->stop();
             Serial.println("No WiFi! Stopping the motor, just in case.");
         }
