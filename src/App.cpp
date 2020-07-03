@@ -94,7 +94,7 @@ App::App() {
     float maxAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
     if (maxAmpereDrawn > MAX_AMPERE) {
         // Each LED has a lightness of 255 * 3 (r+g+b)
-        screen->maxLightness = MAX_AMPERE / AMPERE_PER_LED * 255 * 3;
+        screen->maxLightness = float(LED_COUNT * 3) / (maxAmpereDrawn / float(MAX_AMPERE));
     }
 #endif
 

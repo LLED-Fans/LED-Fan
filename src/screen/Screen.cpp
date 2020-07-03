@@ -13,6 +13,7 @@
 #include <util/TextFiles.h>
 #include <util/StringRep.h>
 #include <numeric>
+#include <HardwareSerial.h>
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
 
@@ -21,8 +22,16 @@
 Screen::Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution)
 : controller(controller), pin(pin), ledCount(ledCount), overflowWall(overflowWall),
 cartesianResolution(cartesianResolution), concentricResolution(concentricResolution) {
-    leds = new CRGB[ledCount + overflowWall]{CRGB::Black};
-    FastLED.addLeds(controller, leds, ledCount + overflowWall)
+    // Buffer for image data
+    leds = new CRGB[ledCount]{CRGB::Black};
+
+    // Buffer for filter operations (high-res)
+    responseBuffer = new uint32_t[ledCount * 3]{0};
+    responseLookup = new uint32_t[256]{0};
+
+    // Post-Filter (e.g. response) output buffer
+    ledsOutput = new CRGB[ledCount + overflowWall]{CRGB::Black};
+    FastLED.addLeds(controller, ledsOutput, ledCount + overflowWall)
             .setCorrection(TypicalLEDStrip);
 
     // Disable max refresh rates; we set this in Setup.h.
@@ -38,6 +47,7 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
     bladeCount = 2;
     blades = new Blade*[bladeCount];
+    pixelByLED = new Blade::Pixel*[ledCount];
     for (int b = 0; b < bladeCount; ++b) {
         Blade *blade = blades[b] = new Blade(
             ledCount / bladeCount,
@@ -49,15 +59,17 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
         for (int p = 0; p < blade->pixelCount; ++p) {
             int ringIdx = bladeRingOffset + p * bladeCount;
+            int ledIndex = bladeStartLED + p * bladePolarity;
 
             blade->pixels[p] = Blade::Pixel{
                 ringRadii[ringIdx],
                 ringIdx,
                 1,
-                leds + bladeStartLED + p * bladePolarity,
+                leds + ledIndex,
                 (*concentricResolution)[ringIdx],
                 buffer + std::accumulate(concentricResolution->data, concentricResolution->data + ringIdx, 0)
             };
+            pixelByLED[ledIndex] = &blade->pixels[p];
         }
     }
 
@@ -69,6 +81,7 @@ cartesianResolution(cartesianResolution), concentricResolution(concentricResolut
 
 void Screen::readConfig() {
     setBrightness(StringRep::toFloat(TextFiles::readConf("brightness"), 1.0f));
+    setResponse(StringRep::toInt(TextFiles::readConf("response"), 2));
 }
 
 void Screen::update(unsigned long delayMicros) {
@@ -77,10 +90,6 @@ void Screen::update(unsigned long delayMicros) {
 }
 
 void Screen::draw(unsigned long delayMicros) {
-    for (int i = 0; i < overflowWall; ++i) {
-        this->leds[ledCount + i] = CRGB::Black;
-    }
-
     if (behavior != nullptr) {
         if (behavior->update(this, delayMicros)) {
             show();
@@ -92,7 +101,7 @@ void Screen::draw(unsigned long delayMicros) {
     }
 
     if (!rotationSensor->isReliable()) {
-        fill_solid(leds, ledCount, CRGB::Black);
+        memset((void *)leds, 0, ledCount * 3); // Fill black
         show();
         return;
     }
@@ -243,28 +252,54 @@ void Screen::drawConcentric() {
 }
 
 void Screen::show() {
-    for (int b = 0; b < bladeCount; ++b) {
-        auto blade = blades[b];
-        for (int p = blade->pixelCount - 1; p >= 0; --p) {
-            Blade::Pixel &pixel = blade->pixels[p];
-            pixel.color->nscale8_video(pixel.correction);
-        }
+    auto *ledComponents = reinterpret_cast<uint8_t *>(leds);
+    auto *ledOutputComponents = reinterpret_cast<uint8_t *>(ledsOutput);
+
+    uint32_t peakBrightness = 0;
+    uint64_t totalLightness = 0;
+    for (int i = 0; i < ledCount * 3; i++) {
+        auto pixel = pixelByLED[i / 3];
+        uint32_t pCorrection = pixel->correction;
+        responseBuffer[i] = responseLookup[ledComponents[i]] * pCorrection;
+
+        peakBrightness = std::max(responseBuffer[i], peakBrightness);
+        totalLightness += responseBuffer[i];
     }
 
-    if (maxLightness > 0) {
-        unsigned long lightness = 0;
-        for (int i = 0; i < ledCount; i++) {
-            CRGB &led = leds[i];
-            lightness += led.r + led.g + led.b;
-        }
-        // Adjust for global correction
-        lightness = lightness * brightness / 255;
-        FastLED.setBrightness(brightness);
+    // 0 to 255
+    uint32_t dynamicBrightness = std::max(
+        uint32_t(MAX_DYNAMIC_COLOR_RESCALE),
+        peakBrightness / (255 * 255 * 255)
+    );
 
-        if (lightness > maxLightness) {
-            uint8_t scale = maxLightness * brightness / lightness;
-            FastLED.setBrightness(scale);
-        }
+    uint32_t globalBrightness = _brightness;
+
+    if (maxLightness > 0) {
+        // Any picture has an inherent unscaled lightness
+        // The user requests a maximum through _brightness, but if too much power is used,
+        // we might have to scale down further
+
+        // maxLightness assumes components each 0-1,
+        // totalBrightness components are 0 to 255^4
+        float lightnessRatio = float(maxLightness) / (float(totalLightness) / (255.0f * 255.0f * 255.0f * 255.0f));
+        auto maxBrightnessByPowerUse = uint32_t(lightnessRatio * 255);
+
+        globalBrightness = std::min(maxBrightnessByPowerUse, globalBrightness);
+    }
+
+    // Scale the brightness by
+    // a) our dynamic brightness downscale for rescaling pixels
+    // b) global brightness downscale which decreases total brightness
+    FastLED.setBrightness(dynamicBrightness * globalBrightness / 255);
+
+    // Copy to output buffer
+    dynamicBrightness = (dynamicBrightness > 0 && dynamicBrightness < 255) ? dynamicBrightness : 255;
+    for (int i = 0; i < ledCount * 3; i++) {
+        // Rounding errors might take us out > 255, causing overflow
+        ledOutputComponents[i] = uint8_t(std::min(
+            responseBuffer[i] / (dynamicBrightness * 255 * 255),
+            uint32_t(255)
+        ));
     }
 
     FastLED.show();
@@ -278,16 +313,17 @@ int Screen::noteInput(Mode mode) {
 }
 
 void Screen::setCorrection(float correction) {
-    this->correction = correction;
+    this->_correction = correction;
     _flushCorrection();
 }
 
 float Screen::getBrightness() const {
-    return brightness / 255.0f;
+    return _brightness / 255.0f;
 }
 
 void Screen::setBrightness(float brightness) {
-    this->brightness = brightness * 255;
+    // Let's not go overboard with the brightness
+    this->_brightness = std::max(uint8_t(10), uint8_t(brightness * 255));
     TextFiles::writeConf("brightness", String(brightness));
 }
 
@@ -300,13 +336,23 @@ void Screen::_flushCorrection() {
         for (int p = 0; p < blade->pixelCount; ++p) {
             Blade::Pixel &pixel = blade->pixels[p];
 
-            if (correction > 0)
-                pixel.correction = fract8(std::min(pixel.radius / correction, 1.0f) * 255);
+            if (_correction > 0)
+                pixel.correction = fract8(std::min(pixel.radius / _correction, 1.0f) * 255);
             else
                 pixel.correction = 255;
 
             pixel.correction = std::max(maxCorrection, pixel.correction);
         }
+    }
+
+    for (int i = 0; i < 256; ++i) {
+        double desiredValue = pow(double(i), _response) * pow(255.0f, 3 - _response);
+        // If this is > 255^3, we will get overflows later.
+        // Let's not trust double magic.
+        responseLookup[i] = std::min(
+            uint32_t(desiredValue),
+            uint32_t(255 * 255 * 255)
+        );
     }
 }
 
@@ -321,6 +367,15 @@ void Screen::setMode(Mode mode) {
 
         this->_mode = mode;
     }
+}
+
+float Screen::getResponse() const {
+    return _response;
+}
+
+void Screen::setResponse(float response) {
+    Screen::_response = std::max(1.0f, std::min(response, 10.0f));
+    _flushCorrection();
 }
 
 Blade::Blade(int pixelCount, float rotationOffset) {

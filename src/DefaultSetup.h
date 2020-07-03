@@ -64,6 +64,11 @@
 #define CONCENTRIC_RESOLUTION_MIN 2
 #define CONCENTRIC_RESOLUTION_ADD 1
 
+// A value of 0 to 255 where 255 is no rescale, and ~32 is max (sensible) rescale
+// Uses LED's "global brightness" parameter to dynamically recompute pixels
+// into a scale where we have better resolution
+#define MAX_DYNAMIC_COLOR_RESCALE 32
+
 // ------------------------------------------
 // ---- Rotation Sensor
 // ------------------------------------------

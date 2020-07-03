@@ -48,10 +48,12 @@ public:
     CLEDController *controller;
     const int pin; // Just for output
     int ledCount;
+
     CRGB *leds;
 
     int bladeCount;
     Blade **blades;
+    Blade::Pixel **pixelByLED;
 
     int overflowWall;
 
@@ -72,7 +74,7 @@ public:
     NativeBehavior *behavior = nullptr;
     unsigned long inputTimestamps[Mode::count];
 
-    unsigned long maxLightness;
+    float maxLightness;
 
     Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
 
@@ -94,10 +96,24 @@ public:
 
     float getBrightness() const;
     void setBrightness(float brightness);
-private:
+
+    float getResponse() const;
+    void setResponse(float response);
+
+protected:
     Mode _mode = demo;
-    float correction = 0.0f;
-    uint8_t brightness = 255;
+    float _correction = 0.0f;
+    uint8_t _brightness = 255;
+
+    float _response = 2;
+    // Remapping array from 0-255 values to 0-255^3 values
+    // by taking response into account
+    uint32_t *responseLookup;
+    // Array of 0-255^4 values used temporarily when show() is called
+    uint32_t *responseBuffer;
+
+    CRGB *ledsOutput;
+
     void _flushCorrection();
 };
 

@@ -11,6 +11,7 @@
 class StringRep {
 public:
     static float toFloat(String s, float def);
+    static int toInt(String s, int def);
 };
 
 

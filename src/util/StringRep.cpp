@@ -5,12 +5,21 @@
 #include "StringRep.h"
 
 float StringRep::toFloat(String s, float def) {
-    float f = s.toFloat();
+    float v = s.toFloat();
 
     // toFloat returns 0 as default, lol
     // try to see if it's really 0 by hardcoding...
-    if (f == 0 && s != "0" && s != "0.0")
+    if (v == 0 && s != "0" && s != "0.0")
         return def;
 
-    return f;
+    return v;
+}
+
+int StringRep::toInt(String s, int def) {
+    int v = s.toInt();
+
+    if (v == 0 && s != "0")
+        return def;
+
+    return v;
 }
