@@ -139,7 +139,10 @@ void App::run() {
             Network::pair();
         }
 
-        Network::checkStatus();
+        if (!Network::checkStatus()) {
+            speedControl->stop();
+            Serial.println("No WiFi! Stopping the motor, just in case.");
+        }
     }
     updater->handle();
 }

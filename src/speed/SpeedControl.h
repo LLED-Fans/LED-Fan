@@ -32,6 +32,9 @@ public:
     float getSpeed() { return speed; };
 
     void update(unsigned long millisDelay);
+
+    void stop();
+
 private:
     float desiredSpeed = 0;
     float speed = NAN;

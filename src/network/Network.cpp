@@ -76,7 +76,7 @@ bool Network::checkStatus() {
             break;
     }
 
-    return true;
+    return WiFi.status() == WL_CONNECTED;
 }
 
 bool Network::connectToStation(int tries) {

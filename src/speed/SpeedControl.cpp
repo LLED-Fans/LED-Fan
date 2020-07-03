@@ -31,7 +31,7 @@ void SpeedControl::update(unsigned long microsDelay) {
             microsAccelerating += microsDelay;
         else if (rotationSensor->isPaused) {
             Serial.println("Motor appears to be stuck - Emergency brake engaged!");
-            setDesiredSpeed(0);
+            stop();
             return;
         }
     }
@@ -100,4 +100,8 @@ void SpeedControl::setSpeed(float speed) {
 
     lowChannel->setConstant(LOW);
     highChannel->setRatio(speedRatio);
+}
+
+void SpeedControl::stop() {
+    setDesiredSpeed(0);
 }
