@@ -67,7 +67,7 @@ public:
     int bufferSize;
 
     int cartesianResolution;
-    CartesianSampling cartesianSampling = bilinear;
+    CartesianSampling cartesianSampling = nearest;
 
     IntRoller *concentricResolution;
 

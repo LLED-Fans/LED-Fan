@@ -89,6 +89,7 @@ App::App() {
     );
     screen->setCorrection(LED_BRIGHTNESS_CORRECTION);
     screen->rotationSensor = rotationSensor;
+    screen->cartesianSampling = Screen::CARTESIAN_SAMPLING_MODE;
 
 #ifdef MAX_AMPERE
     float maxAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
