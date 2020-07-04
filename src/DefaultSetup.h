@@ -67,7 +67,7 @@
 // A value of 0 to 255 where 255 is no rescale, and 1 is "full" rescale.
 // Uses LED's "global brightness" parameter to dynamically recompute pixels
 // into a scale where we have better resolution.
-#define MAX_DYNAMIC_COLOR_RESCALE 1
+#define MAX_DYNAMIC_COLOR_RESCALE 8
 
 // ------------------------------------------
 // ---- Rotation Sensor
