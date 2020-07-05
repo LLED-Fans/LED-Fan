@@ -10,6 +10,7 @@ static const int MICROS_INPUT_ACTIVE = 5000 * 1000;
 #include <util/IntRoller.h>
 #include <sensor/RotationSensor.h>
 #include <screen/behavior/NativeBehavior.h>
+#include <util/Image.h>
 #include "Renderer.h"
 
 class Blade {
@@ -59,6 +60,8 @@ public:
     int bufferSize;
 
     int cartesianResolution;
+    float cartesianCenter;
+    BilinearTraverser *bilinearTraverser;
     CartesianSampling cartesianSampling = nearest;
 
     IntRoller *concentricResolution;

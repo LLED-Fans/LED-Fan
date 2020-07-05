@@ -56,6 +56,11 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
         }
     }
 
+    bilinearTraverser = new BilinearTraverser(buffer, cartesianResolution, cartesianResolution);
+    cartesianCenter = float(cartesianResolution - 1) * 0.5f;
+    bilinearTraverser->x = cartesianCenter;
+    bilinearTraverser->y = cartesianCenter;
+
     for (int i = 0; i < Mode::count; ++i)
         inputTimestamps[i] = 0;
 
@@ -124,44 +129,30 @@ void Screen::drawCartesian() {
     // Do not query this more than once since we only
     // show at renderer->render(); anyway. No use being more "accurate"
     float rotation = rotationSensor->estimatedRotation(micros());
-    int cartesianMax = cartesianResolution - 1;
 
     for (int b = 0; b < bladeCount; ++b) {
         auto blade = blades[b];
 
         float vectorX, vectorY;
         PolarCoordinates::asCartesian(
-                std::fmod((rotation + blade->rotationOffset), 1.0f) * float(M_TWOPI),
-                0.5f,
-                &vectorX, &vectorY
+            std::fmod((rotation + blade->rotationOffset), 1.0f) * float(M_TWOPI),
+            cartesianCenter,
+            &vectorX, &vectorY
         );
 
-        for (int p = blade->pixelCount - 1; p >= 0; --p) {
-            Blade::Pixel &pixel = blade->pixels[p];
+        if (cartesianSampling == bilinear) {
+            bilinearTraverser->begin(vectorX, vectorY);
 
-            // 0 to 1
-            float relativeX = 0.5f + vectorX * pixel.radius;
-            float relativeY = 0.5f + vectorY * pixel.radius;
-
-            if (cartesianSampling == bilinear) {
-                Image::bilinearSample(
-                        [this](int x, int y){
-                            return reinterpret_cast<uint8_t*>(&buffer[x + y * cartesianResolution]);
-                        },
-                        reinterpret_cast<uint8_t*>(pixel.color), 3,
-                        relativeX * cartesianMax,
-                        relativeY * cartesianMax
-                );
+            for (int p = blade->pixelCount - 1; p >= 0; --p) {
+                Blade::Pixel &pixel = blade->pixels[p];
+                bilinearTraverser->get(pixel.color, pixel.radius);
             }
-            else {
-                // 0 to cartesianSize - 1
-                int x = std::lroundf(relativeX * cartesianMax);
-                int y = std::lroundf(relativeY * cartesianMax);
-
-                // For plotting coords
-//        Logger.print(ringIndex).ln();
-//        Logger.print(x).ln();
-//        Logger.print(y).ln();
+        }
+        else {
+            for (int p = blade->pixelCount - 1; p >= 0; --p) {
+                Blade::Pixel &pixel = blade->pixels[p];
+                int x = std::lroundf(cartesianCenter + vectorX * pixel.radius);
+                int y = std::lroundf(cartesianCenter + vectorX * pixel.radius);
 
                 *pixel.color = buffer[x + y * cartesianResolution];
             }
