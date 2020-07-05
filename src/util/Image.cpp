@@ -46,11 +46,12 @@ void BilinearTraverser::get(PRGB *dest, float distance) {
     float y = this->y + vecY * distance;
 
     int xIdxLow = int(x), yIdxLow = int(y);
+    int imgIdx = xIdxLow + yIdxLow * width;
 
-    const uint8_t *q00 = image[xIdxLow + yIdxLow * width].components;
-    const uint8_t *q01 = image[xIdxLow + (yIdxLow + 1) * width].components;
-    const uint8_t *q10 = image[(xIdxLow + 1) + yIdxLow * width].components;
-    const uint8_t *q11 = image[(xIdxLow + 1) + (yIdxLow + 1) * width].components;
+    const uint8_t *q00 = image[imgIdx].components;
+    const uint8_t *q01 = image[imgIdx + width].components;
+    const uint8_t *q10 = image[imgIdx + 1].components;
+    const uint8_t *q11 = image[imgIdx + 1 + width].components;
 
     float xR = x - xIdxLow;
     float yR = y - yIdxLow;
