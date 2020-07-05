@@ -100,7 +100,7 @@ App::App() {
 
     screen = new Screen(
         renderer,
-        LED_COUNT,
+        int(LED_COUNT * CARTESIAN_RESOLUTION_FACTOR),
         ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );
     screen->setRadialCorrection(LED_BRIGHTNESS_CORRECTION);
