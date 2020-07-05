@@ -8,8 +8,8 @@
 
 class Updater {
 public:
-    bool shouldCheckUpdate;
-    unsigned long checkUntilTimestamp;
+    bool shouldCheckUpdate = false;
+    unsigned long checkUntilTimestamp = 0;
 
     Updater();
 
