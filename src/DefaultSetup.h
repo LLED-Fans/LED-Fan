@@ -39,10 +39,6 @@
 // ---- Screen
 // ------------------------------------------
 
-// See https://github.com/FastLED/FastLED/blob/master/chipsets.h
-// APA102Controller recommended, WS2013 etc. work too
-#define FastLED_LED_TYPE APA102Controller
-#define COLOR_ORDER BGR
 #define LED_DATA_PIN 13
 
 // Only in use for clock-based LED strips (e.g. APA102)
@@ -113,6 +109,23 @@
 #define MOTOR_PWM_RESOLUTION 8
 
 // ------------------------------------------
+// ---- FastLED
+// ------------------------------------------
+
+// Define to use FastLED. If Apa102 is used, don't define.
+// See https://github.com/FastLED/FastLED/blob/master/chipsets.h
+// APA102Controller recommended, WS2013 etc. work too
+//#define FastLED_LED_TYPE APA102Controller
+#define COLOR_ORDER BGR
+
+// In bytes
+// 2 words per LED, + some boundary + buffer
+#define SPI_BUFFER_SIZE (4 * LED_COUNT + 100)
+
+// Set to a valid SPI host to route all SPI outputs to this
+#define SPI_ESP32_HARDWARE_SPI_HOST HSPI_HOST
+
+// ------------------------------------------
 // ---- Other
 // ------------------------------------------
 
@@ -123,12 +136,6 @@
 #define PAIR_PIN 27
 
 #define LUT_SIN_COUNT 1000
-// In bytes
-// 2 words per LED, + some boundary + buffer
-#define SPI_BUFFER_SIZE (4 * LED_COUNT + 100)
-
-// Set to a valid SPI host to route all SPI outputs to this
-#define SPI_ESP32_HARDWARE_SPI_HOST HSPI_HOST
 
 // Comment out to disable emergency brake
 #define EMERGENCY_BRAKE_ENABLED

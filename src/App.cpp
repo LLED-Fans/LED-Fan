@@ -4,7 +4,11 @@
 
 #include "App.h"
 
+#ifdef FastLED_LED_TYPE
 #include "util/spi/ESP32SPI.h"
+#include <screen/FastLEDRenderer.h>
+#endif
+
 #include <SPIFFS.h>
 #include <screen/ConcentricCoordinates.h>
 #include <network/Network.h>
@@ -24,10 +28,8 @@
 #include <util/extrapolation/StepExtrapolator.h>
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
-#endif
+#include <screen/Apa102Renderer.h>
 
-#ifdef FastLED_LED_TYPE
-#include <screen/FastLEDRenderer.h>
 #endif
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
@@ -90,6 +92,8 @@ App::App() {
 #ifdef FastLED_LED_TYPE
     auto controller = new FastLED_LED_TYPE<LED_DATA_PIN, LED_CLOCK_PIN, COLOR_ORDER, DATA_RATE_MHZ(LED_CLOCK_SPEED_MHZ)>();
     auto renderer = new FastLEDRenderer(LED_COUNT, LED_OVERFLOW_WALL, controller);
+#else
+    auto renderer = new Apa102Renderer(LED_COUNT, LED_OVERFLOW_WALL);
 #endif
     renderer->setColorCorrection(0xFFB0F0);
     renderer->setMaxDynamicColorRescale(MAX_DYNAMIC_COLOR_RESCALE);
@@ -143,7 +147,9 @@ void App::run() {
     screen->update(delayMicros);
     speedControl->update(delayMicros);
 
-    EVERY_N_SECONDS(2) {
+    if (delayMicros > timeUntilSlowUpdate) {
+        timeUntilSlowUpdate = 1000 * 1000 * 2;
+
         if (digitalRead(pairPin) == LOW) {
             Network::pair();
         }
@@ -155,6 +161,8 @@ void App::run() {
             Serial.println("No WiFi! Stopping the motor, just in case.");
         }
     }
+    else
+        timeUntilSlowUpdate -= delayMicros;
 
     updater->handle();
 }

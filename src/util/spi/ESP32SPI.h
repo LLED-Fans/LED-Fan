@@ -6,22 +6,8 @@
 #define LED_FAN_ESP32SPI_H
 
 #include "Setup.h"
-#include <HardwareSerial.h>
-
 #include <FastLED.h>
-#include <driver/spi_common.h>
-#include <driver/spi_master.h>
-
-#include <cstdint>
-#include <SPI.h>
-
-typedef struct {
-    spi_host_device_t host;
-    spi_device_handle_t spi;
-    int dma_chan;
-    spi_device_interface_config_t devcfg;
-    spi_bus_config_t buscfg;
-} SPI_settings_t;
+#include <SPITools.h>
 
 template <uint8_t _DATA_PIN, uint8_t _CLOCK_PIN, uint32_t _CLOCK_SPEED, spi_host_device_t _HOST>
 class ESP32SPI {

@@ -32,6 +32,7 @@ public:
     void run();
 
     int pairPin;
+    int timeUntilSlowUpdate = 1000;
 };
 
 
