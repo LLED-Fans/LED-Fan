@@ -16,7 +16,11 @@ bool StrobeDemo::update(Screen *screen, unsigned long delay) {
         timeUntilSwitch = currentDelay;
 
         isWhite = !isWhite;
-        fill_solid(screen->leds, screen->ledCount, isWhite ? CRGB::White : CRGB::Black);
+
+        Renderer *renderer = screen->renderer;
+        for (int i = 0; i < renderer->pixelCount; ++i) {
+            renderer->rgb[i] = isWhite ? PRGB::white : PRGB::black;
+        }
     }
 
     return true;

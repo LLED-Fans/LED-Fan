@@ -14,6 +14,7 @@
 #include <App.h>
 #include <screen/behavior/Dotted.h>
 #include <util/Profiler.h>
+#include <WiFi.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -47,7 +48,7 @@ String HttpServer::processTemplates(const String &var) {
 
     if (var == "LED_PIN")
 #if LED_TYPE == APA102Controller
-        return String(app->screen->pin) + ", Clock: " + String(LED_CLOCK_PIN);
+        return String(LED_DATA_PIN) + ", Clock: " + String(LED_CLOCK_PIN);
 #else
         return String(app->screen->pin);
 #endif

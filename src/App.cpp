@@ -26,6 +26,10 @@
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
 #endif
 
+#ifdef FastLED_LED_TYPE
+#include <screen/FastLEDRenderer.h>
+#endif
+
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
 App::App() {
@@ -34,10 +38,18 @@ App::App() {
 
     Serial.println("Booting LLED Fan Firmware");
 
-    LUT::initSin(LUT_SIN_COUNT);
-
     // Mount file system
     SPIFFS.begin(false);
+
+    // Initialize WiFi first, we want to connect ASAP
+    Network::setHostname(WIFI_HOSTNAME);
+    Network::setSoftApSetup(new WifiSetup(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD));
+    Network::readConfig();
+    // Start connecting
+    Network::checkStatus();
+
+    // Init LUTs
+    LUT::initSin(LUT_SIN_COUNT);
 
     // Clock Synchronizer
     regularClock = new RegularClock(
@@ -75,19 +87,19 @@ App::App() {
     rotationSensor->criticalCheckpoint = ROTATION_SENSOR_CRITICAL_CHECKPOINT;
 #endif
 
-    screen = new Screen(
-#if LED_TYPE == APA102Controller
-            new LED_TYPE<LED_DATA_PIN, LED_CLOCK_PIN, COLOR_ORDER, DATA_RATE_MHZ(LED_CLOCK_SPEED_MHZ)>(),
-#else
-            new LED_TYPE<LED_DATA_PIN, COLOR_ORDER>(),
+#ifdef FastLED_LED_TYPE
+    auto controller = new FastLED_LED_TYPE<LED_DATA_PIN, LED_CLOCK_PIN, COLOR_ORDER, DATA_RATE_MHZ(LED_CLOCK_SPEED_MHZ)>();
+    auto renderer = new FastLEDRenderer(LED_COUNT, LED_OVERFLOW_WALL, controller);
 #endif
-            LED_DATA_PIN,
-            LED_COUNT,
-            LED_OVERFLOW_WALL,
-            LED_COUNT,
-            ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
+    renderer->setColorCorrection(0xFFB0F0);
+    renderer->setMaxDynamicColorRescale(MAX_DYNAMIC_COLOR_RESCALE);
+
+    screen = new Screen(
+        renderer,
+        LED_COUNT,
+        ConcentricCoordinates::resolution(LED_COUNT, CONCENTRIC_RESOLUTION_ADD, CONCENTRIC_RESOLUTION_MIN)
     );
-    screen->setCorrection(LED_BRIGHTNESS_CORRECTION);
+    screen->setRadialCorrection(LED_BRIGHTNESS_CORRECTION);
     screen->rotationSensor = rotationSensor;
     screen->cartesianSampling = Screen::CARTESIAN_SAMPLING_MODE;
 
@@ -95,7 +107,7 @@ App::App() {
     float maxAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
     if (maxAmpereDrawn > MAX_AMPERE) {
         // Each LED has a lightness of 255 * 3 (r+g+b)
-        screen->maxLightness = float(LED_COUNT * 3) / (maxAmpereDrawn / float(MAX_AMPERE));
+        screen->renderer->setMaxLightness(float(LED_COUNT * 3) / (maxAmpereDrawn / float(MAX_AMPERE)));
     }
 #endif
 
@@ -118,12 +130,6 @@ App::App() {
     pinMode(pairPin, INPUT_PULLUP);
 
     // Initialize Server
-    Network::setHostname(WIFI_HOSTNAME);
-    Network::setSoftApSetup(new WifiSetup(HOST_NETWORK_SSID, HOST_NETWORK_PASSWORD));
-    Network::readConfig();
-    // Start connecting
-    Network::checkStatus();
-
     artnetServer = new ArtnetServer(screen, speedControl);
     updater = new Updater();
 

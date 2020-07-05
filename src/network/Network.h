@@ -37,18 +37,16 @@ class Network {
 public:
     static WifiMode mode;
 
-    static WifiSetup *getSoftApSetup();
+    static void readConfig();
 
+    static WifiSetup *getSoftApSetup();
     static void setSoftApSetup(WifiSetup *softAPSetup);
 
     static WifiSetup *getStationSetup();
-
     static void setStationSetup(WifiSetup *stationSetup);
 
     static void setHostname(String hostname);
     static void pair();
-
-    static void readConfig();
 
     static bool connectToStation(int tries=CONNECT_RETRIES);
     static void hostSoftAP();

@@ -11,7 +11,10 @@ bool Dotted::update(Screen *screen, unsigned long delay) {
     if (screen->rotationSensor->didUpdate)
         isWhite = false; // Keep it as synced as we can
 
-    fill_solid(screen->leds, screen->ledCount, isWhite ? CRGB::White : CRGB::Black);
+    auto renderer = screen->renderer;
+    for (int i = 0; i < renderer->pixelCount; ++i) {
+        renderer->rgb[i] = isWhite ? PRGB::white : PRGB::black;
+    }
     isWhite = !isWhite;
 
     return true;

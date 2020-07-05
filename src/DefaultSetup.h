@@ -41,7 +41,7 @@
 
 // See https://github.com/FastLED/FastLED/blob/master/chipsets.h
 // APA102Controller recommended, WS2013 etc. work too
-#define LED_TYPE APA102Controller
+#define FastLED_LED_TYPE APA102Controller
 #define COLOR_ORDER BGR
 #define LED_DATA_PIN 13
 
@@ -56,9 +56,6 @@
 
 // 0 to 1, at 0.5 half of the pixels will be brightness-adjusted for the rest.
 #define LED_BRIGHTNESS_CORRECTION 0.5
-// To accurately depict color even among corrections, this is the minimum
-//  color correction (pre-ampere-correction) to stay true to.
-#define LED_CORRECTION_MIN_COLORS 8
 
 // RingResolution = add * x + min
 #define CONCENTRIC_RESOLUTION_MIN 2

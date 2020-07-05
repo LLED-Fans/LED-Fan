@@ -7,23 +7,23 @@
 
 static const int MICROS_INPUT_ACTIVE = 5000 * 1000;
 
-#include <FastLED.h>
 #include <util/IntRoller.h>
 #include <sensor/RotationSensor.h>
 #include <screen/behavior/NativeBehavior.h>
+#include "Renderer.h"
 
 class Blade {
 public:
     struct Pixel {
         float radius;
         int ringIndex;
-        fract8 correction;
+        int pixelIndex;
 
-        CRGB *color;
+        PRGB *color;
 
         // Cached for performance
         int concentricResolution;
-        CRGB *concentricPointer;
+        PRGB *concentricPointer;
     };
 
     float rotationOffset;
@@ -44,18 +44,10 @@ public:
     };
 
     RotationSensor *rotationSensor;
-
-    CLEDController *controller;
-    const int pin; // Just for output
-    int ledCount;
-
-    CRGB *leds;
+    Renderer *renderer;
 
     int bladeCount;
     Blade **blades;
-    Blade::Pixel **pixelByLED;
-
-    int overflowWall;
 
     unsigned long lastUpdateTimestamp;
 
@@ -63,7 +55,7 @@ public:
     void setMode(Mode mode);
 
     // Multi-purpose buffer for any input mode
-    CRGB *buffer;
+    PRGB *buffer;
     int bufferSize;
 
     int cartesianResolution;
@@ -74,9 +66,7 @@ public:
     NativeBehavior *behavior = nullptr;
     unsigned long inputTimestamps[Mode::count];
 
-    float maxLightness;
-
-    Screen(CLEDController *controller, int pin, int ledCount, int overflowWall, int cartesianResolution, IntRoller *concentricResolution);
+    Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentricResolution);
 
     void readConfig();
 
@@ -87,34 +77,31 @@ public:
     void drawCartesian();
     void drawConcentric();
 
-    void show();
-
     int noteInput(Mode mode);
 
     void determineMode(unsigned long microseconds);
-    void setCorrection(float ratio);
+    void setRadialCorrection(float ratio);
 
-    float getBrightness() const;
+    int getPixelCount() {
+        return renderer->pixelCount;
+    }
+
+    float getBrightness() const {
+        return renderer->getBrightness();
+    };
     void setBrightness(float brightness);
 
-    float getResponse() const;
-    void setResponse(float response);
+    float getResponse() const {
+        return renderer->getResponse();
+    };
+    void setResponse(float response) {
+        renderer->setResponse(response);
+    };
 
 protected:
     Mode _mode = demo;
-    float _correction = 0.0f;
-    uint8_t _brightness = 255;
 
-    float _response = 2;
-    // Remapping array from 0-255 values to 0-255^3 values
-    // by taking response into account
-    uint32_t *responseLookup;
-    // Array of 0-255^4 values used temporarily when show() is called
-    uint32_t *responseBuffer;
-
-    CRGB *ledsOutput;
-
-    void _flushCorrection();
+    float _radialCorrection;
 };
 
 

@@ -5,8 +5,6 @@
 #ifndef LED_FAN_NATIVEBEHAVIOR_H
 #define LED_FAN_NATIVEBEHAVIOR_H
 
-#include <FastLED.h>
-
 class Screen;
 
 class NativeBehavior {

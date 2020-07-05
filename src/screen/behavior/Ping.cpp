@@ -11,11 +11,14 @@ bool Ping::update(Screen *screen, unsigned long delay) {
     if (timeLeft <= 0)
         return false;
 
-    fill_solid(screen->leds, screen->ledCount, CRGB(
+    auto renderer = screen->renderer;
+    for (int i = 0; i < renderer->pixelCount; ++i) {
+        renderer->rgb[i] =PRGB(
             (((timeLeft - 1) / blinkTime) % 2) == 0 ? 0 : 255,
-        0,
-        0
-    ));
+            0,
+            0
+        );
+    }
 
     timeLeft = timeLeft > delay
         ? timeLeft - delay
