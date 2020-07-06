@@ -180,6 +180,7 @@ void Screen::drawDemo() {
             }
             else {
                 // TODO Fix
+                *pixel.color = PRGB::black;
 //                fill_rainbow(
 //                    pixel.color, 1,
 //                    pixel.radius * 10 + hueShift,
