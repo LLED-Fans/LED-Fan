@@ -3,6 +3,7 @@
 //
 
 #include "App.h"
+#include "LLSpeedTest.h"
 
 #ifdef FastLED_LED_TYPE
 #include "util/spi/ESP32SPI.h"
@@ -39,6 +40,7 @@ App::App() {
     // Enable Monitoring
     Serial.begin(9600);
 #endif
+    llSpeedTestExecute();
 
     Serial.println("Booting LLED Fan Firmware");
 
