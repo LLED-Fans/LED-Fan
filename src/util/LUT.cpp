@@ -7,7 +7,7 @@
 
 LUT::Table *LUT::create_LUT(int count, float min, float max, std::function<float(float)> fun) {
     auto table = new Table();
-    table->values = new float[count];
+    table->values = new float[count + 1]; // + 1 so we can use +1 in interpolate without rollover
     table->a = float(count - 1) / (max - min);
     table->b = -min;
     table->count = count;
@@ -15,6 +15,7 @@ LUT::Table *LUT::create_LUT(int count, float min, float max, std::function<float
     for (int i = 0; i < count; ++i) {
         table->values[i] = fun(min + i / table->a);
     }
+    table->values[count] = table->values[0];
 
     return table;
 }
@@ -26,8 +27,8 @@ float LUT::Table::lookup(float key) {
 float LUT::Table::interpolate(float key) {
     float lookup = (key + b) * a;
     int bottom = int(lookup);
-    float part = lookup - float(bottom);
-    return values[bottom] * part + values[bottom + 1] * (1.0f - part);
+    float upPart = lookup - float(bottom);
+    return values[bottom] * (1.0f - upPart) + values[bottom + 1] * upPart;
 }
 
 LUT::Table *LUT::sin = nullptr;
