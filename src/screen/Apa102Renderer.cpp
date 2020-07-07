@@ -58,7 +58,7 @@ void Apa102Renderer::_prepareBuffer() {
 
 
 void Apa102Renderer::_flush() {
-    uint8_t boundary = 0b11100000;
+    uint32_t boundary = 0b11100000;
     uint32_t emptyBoundary = uint32_t(0xff);
 
     uint8_t maxBrightness = 0b00011111;
@@ -76,7 +76,7 @@ void Apa102Renderer::_flush() {
             continue;
         }
 
-        uint8_t brightness = ((peakBrightness - 1) / 255 * maxBrightness / _255e3) + 1;
+        uint32_t brightness = ((peakBrightness - 1) / 255 * maxBrightness / _255e3) + 1;
 
         uint32_t rescaler = _255e3 * brightness / maxBrightness;
 
@@ -85,7 +85,7 @@ void Apa102Renderer::_flush() {
         uint32_t g = std::min(g_r / rescaler, uint32_t(255));
         uint32_t b = std::min(b_r / rescaler, uint32_t(255));
 
-        intBuffer[c++] = ((r << 8 | g) << 8 | b) << 8 | uint32_t(boundary | brightness);
+        intBuffer[c++] = (r << 24) | (g << 16) | (b << 8) | boundary | brightness;
     }
 
     // Flush transaction
