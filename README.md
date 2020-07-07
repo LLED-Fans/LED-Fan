@@ -58,7 +58,7 @@ The chip expects a single LED strip to be layout down across the whole fan blade
 
 **Why not just on one blade?** By placing the LEDs across both blade edges and not just one, the rotation speed can be halved, which both conserves energy, noise and stabilizes across lower clock speeds.
 
-**Why not mirrored across the center?** By offsetting the pixels, a larger area can be covered with light, eliminating holes in the picture. This also doubles the resolution, which makes for a higher-fidelity picture. If a lower resolution is desired for FPS or bandwidth purposes, target 2x or 4x API endpoints (WIP).
+**Why not mirrored across the center?** By offsetting the pixels, a larger area can be covered with light, eliminating holes in the picture. This also doubles the resolution, which makes for a higher-fidelity picture. When placing the strips, make sure the internal light sources, not the pixels themselves, are placed correctly.
 
 **Why a single critical checkpoint?** Reed switches are, among one another, quite inexact (+-20%). One reed switch however functions in an analogue way and switch on very reliably.
 
