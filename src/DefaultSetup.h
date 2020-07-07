@@ -53,7 +53,7 @@
 // 0 to 1, at 0.5 half of the pixels will be brightness-adjusted for the rest.
 #define LED_BRIGHTNESS_CORRECTION 0.5
 
-#define CARTESIAN_RESOLUTION_FACTOR 1.5
+#define CARTESIAN_RESOLUTION_FACTOR 2
 
 // RingResolution = add * x + min
 #define CONCENTRIC_RESOLUTION_MIN 2
