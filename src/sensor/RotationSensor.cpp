@@ -147,12 +147,12 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
             // Since we're only considering in-segment differences, set y to reflect 1 segment slopes
             y[i] = y[i + 1] - 1;
         }
+    }
 
-        // Best case we now have n / checkpointCount references
-        if (x.size() < minCheckpointPasses) {
-            _isReliable = false;
-            return;
-        }
+    // We erased some values; gotta recompute
+    if (x.size() < minCheckpointPasses) {
+        _isReliable = false;
+        return;
     }
 
     extrapolator->adjust(x, y);
