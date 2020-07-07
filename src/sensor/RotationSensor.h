@@ -25,6 +25,8 @@ public:
     bool separateCheckpoints = false;
     int criticalCheckpoint = -1;
 
+    int referenceTime = -1;
+
     GPIOVisitor *visitor;
 
     // x = micros, y = rotation 0 to switches.count

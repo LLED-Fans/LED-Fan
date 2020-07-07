@@ -26,8 +26,7 @@ void RotationSensor::update() {
     visitor->update(&checkpoint, &time);
 
     if (checkpoint < 0) {
-        // TODO Handle when time rolls over
-        if (isPaused || (micros() - checkpointTimestamps->last()) < pauseInterval)
+        if (isPaused || (int(micros()) - checkpointTimestamps->last()) < pauseInterval)
             return;
 
         checkpointTimestamps->fill(0);
@@ -83,6 +82,8 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         return;
     }
 
+    referenceTime = checkpoint;
+
     // Raw Data Collection
     std::vector<double> x{};
     x.reserve(n);
@@ -95,7 +96,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         if (checkpointIndex < 0)
             continue; // Not set yet
 
-        x.push_back((*checkpointTimestamps)[j]);
+        x.push_back((*checkpointTimestamps)[j] - referenceTime);
         estimatedY.push_back(checkpointIndex);
     }
 
@@ -193,7 +194,7 @@ float RotationSensor::estimatedRotation(unsigned long time) {
     if (!_isReliable || isPaused)
         return NAN;
 
-    float position = extrapolator->extrapolate(time);
+    float position = extrapolator->extrapolate(int(time) - referenceTime);
 
     if (std::isnan(position))
         return NAN;
