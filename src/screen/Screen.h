@@ -94,9 +94,7 @@ public:
     };
     void setBrightness(float brightness);
 
-    float getResponse() const {
-        return renderer->getResponse();
-    };
+    float getResponse() const;;
     void setResponse(float response);;
 
 protected:

@@ -268,6 +268,10 @@ void Screen::setBrightness(float brightness) {
     TextFiles::writeConf("brightness", String(brightness));
 }
 
+float Screen::getResponse() const {
+    return renderer->getResponse() - float(NATURAL_COLOR_RESPONSE) + 1;
+}
+
 void Screen::setResponse(float response) {
     response = std::max(1.0f, std::min(10.0f, response));
     TextFiles::writeConf("response", String(response));
