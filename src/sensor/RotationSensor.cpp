@@ -78,6 +78,11 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         return;
     }
 
+    if (criticalCheckpoint>= 0 && checkpoint != criticalCheckpoint) {
+        // Recalculating won't actually do anything different
+        return;
+    }
+
     // Raw Data Collection
     std::vector<double> x{};
     x.reserve(n);

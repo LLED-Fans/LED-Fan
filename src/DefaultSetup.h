@@ -90,11 +90,11 @@
 #define ROTATION_PAUSED_MS 2000
 
 // See ROTATION_EXTRAPOLATION_XXX
-#define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_STEP
+#define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_REGRESSION
 // How many checkpoints to account for during extrapolation
 // High numbers are stabler under stable conditions,
 // low numbers are quicker to adjust
-#define CHECKPOINT_HISTORY_COUNT 8
+#define CHECKPOINT_HISTORY_COUNT 20
 
 // ------------------------------------------
 // ---- Motor Control
