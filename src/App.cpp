@@ -12,6 +12,7 @@
 #include <SPIFFS.h>
 #include <screen/ConcentricCoordinates.h>
 #include <network/Network.h>
+#include <screen/Apa102Renderer.h>
 
 #include <util/Logger.h>
 #include <util/LUT.h>
@@ -28,8 +29,6 @@
 #include <util/extrapolation/StepExtrapolator.h>
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
-#include <screen/Apa102Renderer.h>
-
 #endif
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
