@@ -152,7 +152,7 @@ void Screen::drawCartesian() {
             for (int p = blade->pixelCount - 1; p >= 0; --p) {
                 Blade::Pixel &pixel = blade->pixels[p];
                 int x = std::lroundf(cartesianCenter + vectorX * pixel.radius);
-                int y = std::lroundf(cartesianCenter + vectorX * pixel.radius);
+                int y = std::lroundf(cartesianCenter + vectorY * pixel.radius);
 
                 *pixel.color = buffer[x + y * cartesianResolution];
             }
