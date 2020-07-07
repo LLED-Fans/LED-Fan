@@ -67,13 +67,16 @@ Some quick tests gave the following numbers:
     nop                       : 0.004 us
     digitalRead               : 0.143 us
     digitalWrite              : 0.125 us
-    pinMode                   : 2.705 us
+    pinMode                   : 2.708 us
     multiply byte             : 0.038 us
     divide byte               : 0.053 us
     add byte                  : 0.034 us
     multiply integer          : 0.054 us
-    divide integer            : 0.063 us
+    divide integer            : 0.058 us
     add integer               : 0.054 us
+    mod integer               : 0.062 us
+    or/and integer            : 0.054 us
+    shift integer             : 0.054 us
     multiply long             : 0.055 us
     divide long               : 0.073 us
     add long                  : 0.054 us
@@ -85,9 +88,6 @@ Some quick tests gave the following numbers:
     dtostrf()                 : 11.323 us
     y |= (1<<x)               : 0.046 us
     bitSet()                  : 0.046 us
-    analogRead()              : 28.598 us
-    delay(1)                  : 7.998 us
-    delay(100)                : 100000.000 us
-    delayMicroseconds(2)      : 2.852 us
-    delayMicroseconds(5)      : 5.759 us
-    delayMicroseconds(100)    : 100.598 us
+    analogRead()              : 22.648 us
+    
+This suggests that besides float division and byte operations, no operator can be considered noteworthy and has to be preferred / avoided.
