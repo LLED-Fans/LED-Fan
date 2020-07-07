@@ -73,8 +73,6 @@
 
 // See ROTATION_SENSOR_TYPE_XXX
 #define ROTATION_SENSOR_TYPE ROTATION_SENSOR_TYPE_INTERRUPT
-// See ROTATION_EXTRAPOLATION_XXX
-#define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_REGRESSION
 // Comma-Separated list of pins in use
 #define ROTATION_SENSOR_PINS 26,18,23,4
 // If defined, only use this checkpoint for final position calculation.
@@ -91,10 +89,12 @@
 // After this idle time, we're considered to be paused.
 #define ROTATION_PAUSED_MS 2000
 
+// See ROTATION_EXTRAPOLATION_XXX
+#define ROTATION_EXTRAPOLATION ROTATION_EXTRAPOLATION_STEP
 // How many checkpoints to account for during extrapolation
 // High numbers are stabler under stable conditions,
 // low numbers are quicker to adjust
-#define CHECKPOINT_HISTORY_COUNT 12
+#define CHECKPOINT_HISTORY_COUNT 8
 
 // ------------------------------------------
 // ---- Motor Control

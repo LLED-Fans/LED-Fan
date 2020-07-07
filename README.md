@@ -60,6 +60,8 @@ The chip expects a single LED strip to be layout down across the whole fan blade
 
 **Why not mirrored across the center?** By offsetting the pixels, a larger area can be covered with light, eliminating holes in the picture. This also doubles the resolution, which makes for a higher-fidelity picture. If a lower resolution is desired for FPS or bandwidth purposes, target 2x or 4x API endpoints (WIP).
 
+**Why a single critical checkpoint?** Reed switches are, among one another, quite inexact (+-20%). One reed switch however functions in an analogue way and switch on very reliably.
+
 ## Performance Considerations
 
 Some quick tests gave the following numbers:
