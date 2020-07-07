@@ -97,9 +97,7 @@ public:
     float getResponse() const {
         return renderer->getResponse();
     };
-    void setResponse(float response) {
-        renderer->setResponse(response);
-    };
+    void setResponse(float response);;
 
 protected:
     Mode _mode = demo;

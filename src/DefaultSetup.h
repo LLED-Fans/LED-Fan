@@ -67,6 +67,9 @@
 // into a scale where we have better resolution.
 #define MAX_DYNAMIC_COLOR_RESCALE 8
 
+// Natural, or rather "minimum" response of LEDs.
+#define NATURAL_COLOR_RESPONSE 2.2f
+
 // ------------------------------------------
 // ---- Rotation Sensor
 // ------------------------------------------
