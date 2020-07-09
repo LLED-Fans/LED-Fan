@@ -209,7 +209,7 @@ void HttpServer::setupRoutes() {
         unsigned long time = 2000 * 1000;
 
         screen->behavior = new Ping(time);
-        Logger.print("Pong").ln();
+        WifiLog.print("Pong").ln();
         request->send(200, "text/plain", String(time));
     });
 
@@ -239,7 +239,7 @@ void HttpServer::setupRoutes() {
     });
 
     _server.on("/log", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", Logger.string());
+        request->send(200, "text/plain", WifiLog.output.string());
     });
 
     registerREST("/rotation", "rotation", [rotationSensor](String value) {

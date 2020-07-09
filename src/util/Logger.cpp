@@ -6,48 +6,72 @@
 
 #include <utility>
 
-WifiLogger Logger = WifiLogger(1024);
+Logger<WifiLogger> WifiLog = Logger<WifiLogger>(WifiLogger(1024));
 
 WifiLogger::WifiLogger(int bufferSize) : data(new CharRoller(bufferSize)) {}
 
-WifiLogger WifiLogger::ln() {
-    return print('\n');
-}
-
-WifiLogger WifiLogger::print(char *value) {
+void WifiLogger::write(char *value) {
     data->push(value);
-    return *this;
 }
 
-WifiLogger WifiLogger::print(String value) {
+void WifiLogger::write(String value) {
     data->push(std::move(value));
-    return *this;
 }
 
-WifiLogger WifiLogger::print(char v) {
+void WifiLogger::write(char v) {
     data->push(v);
-    return *this;
 }
 
-WifiLogger WifiLogger::clear() {
+void WifiLogger::clear() {
     data->clear();
-    return *this;
 }
 
 String WifiLogger::string() {
     return data->toString();
 }
 
-WifiLogger WifiLogger::print(bool v) { return print(String(v ? "true" : "false")); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(char v) {
+    output.write(v);
+    return *this;
+}
 
-WifiLogger WifiLogger::print(unsigned int v) { return print(String(v)); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(String v) {
+    output.write(v);
+    return *this;
+}
 
-WifiLogger WifiLogger::print(int v) { return print(String(v)); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(char *v) {
+    output.write(v);
+    return *this;
+}
 
-WifiLogger WifiLogger::print(long v) { return print(String(v)); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::ln() { return print('\n'); }
 
-WifiLogger WifiLogger::print(unsigned long v) { return print(String(v)); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(bool v) { return print(String(v ? "true" : "false")); }
 
-WifiLogger WifiLogger::print(float v) { return print(String(v)); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(unsigned int v) { return print(String(v)); }
 
-WifiLogger WifiLogger::print(double v) { return print(String(v)); }
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(int v) { return print(String(v)); }
+
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(long v) { return print(String(v)); }
+
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(unsigned long v) { return print(String(v)); }
+
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(float v) { return print(String(v)); }
+
+template <class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::print(double v) { return print(String(v)); }
+
+
+// Need to be specifically declared...
+template class Logger<WifiLogger>;

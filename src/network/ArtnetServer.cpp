@@ -69,7 +69,7 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
 #endif
 
     if (!endpoint) {
-        Logger.print("Error: Unknown Endpoint").ln();
+        WifiLog.print("Error: Unknown Endpoint").ln();
         return;
     }
 

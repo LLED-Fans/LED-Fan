@@ -36,7 +36,7 @@
 App::App() {
 #if CORE_DEBUG_LEVEL > 0
     // Enable Monitoring
-    Serial.begin(9600);
+    Serial.begin(0);
 #endif
 
     Serial.println("Booting LLED Fan Firmware");

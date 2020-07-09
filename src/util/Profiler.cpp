@@ -8,7 +8,7 @@
 #include <esp32-hal.h>
 
 void Profiler::start(String section) {
-    Logger.print("----------").ln();
+    WifiLog.print("----------").ln();
 
     timestamp = micros();
     currentSection = std::move(section);
@@ -23,7 +23,7 @@ void Profiler::mark(String section) {
 }
 
 void Profiler::end() {
-    Logger.print(currentSection + String(": ") + readableTime(micros() - timestamp)).ln();
+    WifiLog.print(currentSection + String(": ") + readableTime(micros() - timestamp)).ln();
     currentSection = String();
 }
 

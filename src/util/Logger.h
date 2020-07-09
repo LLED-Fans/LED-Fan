@@ -15,24 +15,34 @@ public:
     WifiLogger(int bufferSize);
 
     String string();
+    void clear();
 
-    WifiLogger clear();
-    WifiLogger ln();
-    
-    WifiLogger print(char *value);
-    WifiLogger print(String value);
-    WifiLogger print(char v);
-
-    WifiLogger print(bool v);
-    WifiLogger print(unsigned int v);
-    WifiLogger print(int v);
-    WifiLogger print(long v);
-    WifiLogger print(unsigned long v);
-    WifiLogger print(float v);
-    WifiLogger print(double v);
+    void write(char *value);
+    void write(String value);
+    void write(char value);
 };
 
-extern WifiLogger Logger;
+template <class LoggingOutput>
+class Logger {
+public:
+    LoggingOutput output;
+    Logger(LoggingOutput output) : output(output) {}
+
+    Logger print(char *value);
+    Logger print(String value);
+    Logger print(char v);
+    Logger ln();
+
+    Logger print(bool v);
+    Logger print(unsigned int v);
+    Logger print(int v);
+    Logger print(long v);
+    Logger print(unsigned long v);
+    Logger print(float v);
+    Logger print(double v);
+};
+
+extern Logger<WifiLogger> WifiLog;
 
 
 #endif //LED_FAN_LOGGER_H

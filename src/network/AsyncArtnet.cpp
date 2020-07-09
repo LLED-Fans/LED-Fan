@@ -16,11 +16,11 @@ using namespace std::placeholders;
 template <typename T>
 bool AsyncArtnet<T>::listen(uint16_t port) {
     if (!udp.listen(port)) {
-        Logger.print("UDP Listen failed!").ln();
+        WifiLog.print("UDP Listen failed!").ln();
         return false;
     }
 
-    Logger.print("UDP Listening on Port: ").print(port).ln();
+    WifiLog.print("UDP Listening on Port: ").print(port).ln();
     udp.onPacket(std::bind(&AsyncArtnet::accept, this, _1));
 
     return true;
@@ -155,26 +155,26 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
         return ART_SYNC;
     }
 
-    Logger.print("Got unrecognized packet with opcode: " + String(opcode)).ln();
+    WifiLog.print("Got unrecognized packet with opcode: " + String(opcode)).ln();
 
     return 0;
 }
 
 template <typename T>
 bool AsyncArtnet<T>::print(AsyncUDPPacket packet) {
-    Logger.print("UDP Packet Type: ");
-    Logger.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-    Logger.print(", From: ");
-    Logger.print(packet.remoteIP());
-    Logger.print(":");
-    Logger.print(packet.remotePort());
-    Logger.print(", To: ");
-    Logger.print(packet.localIP());
-    Logger.print(":");
-    Logger.print(packet.localPort());
-    Logger.print(", Length: ");
-    Logger.print(packet.length());
-    Logger.print(", Data: ");
+    WifiLog.print("UDP Packet Type: ");
+    WifiLog.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+    WifiLog.print(", From: ");
+    WifiLog.print(packet.remoteIP());
+    WifiLog.print(":");
+    WifiLog.print(packet.remotePort());
+    WifiLog.print(", To: ");
+    WifiLog.print(packet.localIP());
+    WifiLog.print(":");
+    WifiLog.print(packet.localPort());
+    WifiLog.print(", Length: ");
+    WifiLog.print(packet.length());
+    WifiLog.print(", Data: ");
     Serial.write(packet.data(), packet.length());
     //reply to the client
 //    packet.printf("Got %u bytes of data", packet.length());
