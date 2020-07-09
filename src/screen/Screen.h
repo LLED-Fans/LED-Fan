@@ -101,6 +101,8 @@ protected:
     Mode _mode = demo;
 
     float _radialCorrection;
+
+    bool hasSignal(unsigned long microseconds) const;
 };
 
 

@@ -79,8 +79,10 @@ void Screen::update(unsigned long delayMicros) {
 
 void Screen::draw(unsigned long delayMicros) {
     if (behavior != nullptr) {
-        if (behavior->update(this, delayMicros)) {
-            renderer->render();;
+        auto status = behavior->update(this, delayMicros);
+
+        if (status == NativeBehavior::alive || (status == NativeBehavior::purgatory && !hasSignal(micros()))) {
+            renderer->render();
             return;
         }
 
@@ -108,21 +110,27 @@ void Screen::draw(unsigned long delayMicros) {
 }
 
 void Screen::determineMode(unsigned long microseconds) {
-    if (microseconds > inputTimestamps[_mode] + MICROS_INPUT_ACTIVE) {
+    if (!hasSignal(microseconds)) {
         // No recent signal on input
 
         Mode mostRecentInput = Mode::count;
-        unsigned long mostRecentInputTimestamp = microseconds - MICROS_INPUT_ACTIVE;
+        unsigned long leastDelay = MICROS_INPUT_ACTIVE;
         for (int i = 0; i < Mode::count; i++) {
-            if (inputTimestamps[i] > mostRecentInputTimestamp) {
+            unsigned long delay = microseconds - inputTimestamps[i];
+
+            if (delay < leastDelay) {
                 mostRecentInput = static_cast<Mode>(i);
-                mostRecentInputTimestamp = inputTimestamps[i];
+                leastDelay = delay;
             }
         }
         if (mostRecentInput != Mode::count) {
             this->setMode(mostRecentInput);
         }
     }
+}
+
+bool Screen::hasSignal(unsigned long microseconds) const {
+    return (microseconds - inputTimestamps[_mode]) < MICROS_INPUT_ACTIVE;
 }
 
 void Screen::drawCartesian() {

@@ -17,7 +17,7 @@ public:
     bool isWhite = false;
     unsigned long timeUntilSwitch;
 
-    virtual bool update(Screen *screen, unsigned long delay);
+    virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
 };
 
 

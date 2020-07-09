@@ -7,7 +7,7 @@
 
 Dotted::Dotted() {}
 
-bool Dotted::update(Screen *screen, unsigned long delay) {
+NativeBehavior::Status Dotted::update(Screen *screen, unsigned long delay) {
     if (screen->rotationSensor->didUpdate)
         isWhite = false; // Keep it as synced as we can
 
@@ -17,7 +17,7 @@ bool Dotted::update(Screen *screen, unsigned long delay) {
     }
     isWhite = !isWhite;
 
-    return true;
+    return purgatory;
 
 }
 

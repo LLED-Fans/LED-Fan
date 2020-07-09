@@ -5,9 +5,9 @@
 #include "StrobeDemo.h"
 #include <screen/Screen.h>
 
-bool StrobeDemo::update(Screen *screen, unsigned long delay) {
+NativeBehavior::Status StrobeDemo::update(Screen *screen, unsigned long delay) {
     if (currentDelay > maxDelay)
-        return false;
+        return dead;
 
     if (timeUntilSwitch > delay)
         timeUntilSwitch -= delay;
@@ -23,5 +23,5 @@ bool StrobeDemo::update(Screen *screen, unsigned long delay) {
         }
     }
 
-    return true;
+    return alive;
 }

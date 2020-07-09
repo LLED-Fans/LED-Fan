@@ -9,7 +9,11 @@ class Screen;
 
 class NativeBehavior {
 public:
-    virtual bool update(Screen *screen, unsigned long delay);
+    enum Status {
+        dead, alive, purgatory
+    };
+
+    virtual Status update(Screen *screen, unsigned long delay);
 };
 
 

@@ -14,7 +14,7 @@ public:
 
     Dotted();
 
-    virtual bool update(Screen *screen, unsigned long delay);
+    virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
 };
 
 

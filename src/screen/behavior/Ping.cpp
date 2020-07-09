@@ -7,9 +7,9 @@
 
 Ping::Ping(unsigned long timeLeft) : timeLeft(timeLeft) {}
 
-bool Ping::update(Screen *screen, unsigned long delay) {
+NativeBehavior::Status Ping::update(Screen *screen, unsigned long delay) {
     if (timeLeft <= 0)
-        return false;
+        return dead;
 
     auto renderer = screen->renderer;
     for (int i = 0; i < renderer->pixelCount; ++i) {
@@ -24,7 +24,6 @@ bool Ping::update(Screen *screen, unsigned long delay) {
         ? timeLeft - delay
         : 0;
 
-    return true;
-
+    return alive;
 }
 

@@ -4,6 +4,6 @@
 
 #include "NativeBehavior.h"
 
-bool NativeBehavior::update(Screen *screen, unsigned long delay) {
-    return false;
+NativeBehavior::Status NativeBehavior::update(Screen *screen, unsigned long delay) {
+    return dead;
 }
