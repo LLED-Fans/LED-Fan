@@ -208,7 +208,7 @@ void HttpServer::setupRoutes() {
     registerREST("/behavior", "id", [screen](String id) {
         if (id == "None")
             screen ->behavior = nullptr;
-        else if (id == "Strobe")
+        else if (id == "StrobeDemo")
             screen->behavior = new StrobeDemo();
         else if (id == "Dotted")
             screen -> behavior = new Dotted();
