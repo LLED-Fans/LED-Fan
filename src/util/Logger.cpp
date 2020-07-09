@@ -7,6 +7,7 @@
 #include <utility>
 
 Logger<WifiLogger> WifiLog = Logger<WifiLogger>(WifiLogger(1024));
+Logger<SerialLogger> SerialLog = Logger<SerialLogger>(SerialLogger());
 
 template <class LoggingOutput>
 Logger<LoggingOutput> Logger<LoggingOutput>::print(char v) {
@@ -29,6 +30,17 @@ Logger<LoggingOutput> Logger<LoggingOutput>::print(char *v) {
 template <class LoggingOutput>
 Logger<LoggingOutput> Logger<LoggingOutput>::ln() { return print('\n'); }
 
+template<class LoggingOutput>
+Logger<LoggingOutput> Logger<LoggingOutput>::printf(char *fmt, ...) {
+    va_list va;
+    va_start(va, fmt);
+    char buf[vsnprintf(NULL, 0, fmt, va) + 1];
+    vsprintf(buf, fmt, va);
+    output.write(buf);
+    va_end(va);
+    return *this;
+}
+
 template <class LoggingOutput>
 Logger<LoggingOutput> Logger<LoggingOutput>::print(bool v) { return print(String(v ? "true" : "false")); }
 
@@ -50,6 +62,6 @@ Logger<LoggingOutput> Logger<LoggingOutput>::print(float v) { return print(Strin
 template <class LoggingOutput>
 Logger<LoggingOutput> Logger<LoggingOutput>::print(double v) { return print(String(v)); }
 
-
 // Need to be specifically declared...
 template class Logger<WifiLogger>;
+template class Logger<SerialLogger>;

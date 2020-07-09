@@ -39,7 +39,7 @@ App::App() {
     Serial.begin(0);
 #endif
 
-    Serial.println("Booting LLED Fan Firmware");
+    SerialLog.print("Booting LLED Fan Firmware").ln();
 
     // Mount file system
     SPIFFS.begin(false);
@@ -159,7 +159,7 @@ void App::run() {
 
         if (speedControl->getDesiredSpeed() > 0 && !isNetworkConnected) {
             speedControl->stop();
-            Serial.println("No WiFi! Stopping the motor, just in case.");
+            SerialLog.print("No WiFi! Stopping the motor, just in case.").ln();
         }
     }
     else

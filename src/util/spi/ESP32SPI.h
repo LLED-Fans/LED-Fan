@@ -7,6 +7,7 @@
 
 #include "Setup.h"
 #include <FastLED.h>
+#include <util/Logger.h>
 #include <SPITools.h>
 
 template <uint8_t _DATA_PIN, uint8_t _CLOCK_PIN, uint32_t _CLOCK_SPEED, spi_host_device_t _HOST>
@@ -58,7 +59,7 @@ public:
         // Allocate DMA memory
         buffer = reinterpret_cast<uint8_t *>(heap_caps_malloc(bufferSize, MALLOC_CAP_DMA));
         if (!buffer) {
-            Serial.println("Failed to allocate SPI buffer; possibly too little DMA memory available?");
+            SerialLog.print("Failed to allocate SPI buffer; possibly too little DMA memory available?").ln();
             exit(1);
         }
     }
@@ -80,7 +81,7 @@ public:
 
     void inline release() __attribute__((always_inline)) {
         if (transactionLength > bufferSize) {
-            Serial.println("Too little DMA buffer! Run while you can!");
+            SerialLog.print("Too little DMA buffer! Run while you can!").ln();
             // Oh god, we fucked up
             // If you get this error, re-calculate your buffer size
             return;

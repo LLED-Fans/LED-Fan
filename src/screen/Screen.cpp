@@ -154,7 +154,8 @@ void Screen::drawCartesian() {
                 int x = std::lroundf(cartesianCenter + vectorX * pixel.radius);
                 int y = std::lroundf(cartesianCenter + vectorY * pixel.radius);
 
-                *pixel.color = buffer[x + y * cartesianResolution];
+                *pixel.color = PRGB(((x + y) % 3) == 0 ? 255 : 0, ((x + y) % 3) == 1 ? 255 : 0, ((x + y) % 2) == 0 ? 255 : 0);
+//                *pixel.color = buffer[x + y * cartesianResolution];
             }
         }
     }

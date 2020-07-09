@@ -3,7 +3,6 @@
 //
 
 #include <esp32-hal-adc.h>
-#include <HardwareSerial.h>
 #include "SensorSwitch.h"
 
 SensorSwitch::SensorSwitch(int pin, PeakDetector *peaks): pin(pin), peaks(peaks) {
@@ -18,7 +17,6 @@ bool SensorSwitch::test() {
         thresholdSwitch->upper = ((peaks->lower * 1 / 5) + (peaks->upper * 4 / 5));
         thresholdSwitch->lower = ((peaks->lower * 3 / 5) + (peaks->upper * 2 / 5));
         isReliable = thresholdSwitch->upper > thresholdSwitch->lower + 200;
-        //Printf::ln("Boundaries! %d", thresholdSwitch.lower, thresholdSwitch.upper);
     }
 
     return thresholdSwitch->accept(magnetValue);

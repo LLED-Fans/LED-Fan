@@ -6,7 +6,29 @@
 #define LED_FAN_LOGGER_H
 
 
+#include <HardwareSerial.h>
 #include "CharRoller.h"
+
+template <class LoggingOutput>
+class Logger {
+public:
+    LoggingOutput output;
+    Logger(LoggingOutput output) : output(output) {}
+
+    Logger print(char *value);
+    Logger print(String value);
+    Logger print(char v);
+    Logger ln();
+
+    Logger printf(char * fmt, ...);
+    Logger print(bool v);
+    Logger print(unsigned int v);
+    Logger print(int v);
+    Logger print(long v);
+    Logger print(unsigned long v);
+    Logger print(float v);
+    Logger print(double v);
+};
 
 class WifiLogger {
 public:
@@ -22,27 +44,16 @@ public:
     void write(char value) { data->push(value); };
 };
 
-template <class LoggingOutput>
-class Logger {
+extern Logger<WifiLogger> WifiLog;
+
+class SerialLogger {
 public:
-    LoggingOutput output;
-    Logger(LoggingOutput output) : output(output) {}
-
-    Logger print(char *value);
-    Logger print(String value);
-    Logger print(char v);
-    Logger ln();
-
-    Logger print(bool v);
-    Logger print(unsigned int v);
-    Logger print(int v);
-    Logger print(long v);
-    Logger print(unsigned long v);
-    Logger print(float v);
-    Logger print(double v);
+    void write(char *value) { Serial.print(value); };
+    void write(String value) { Serial.print(value); };
+    void write(char value) { Serial.print(value); };
 };
 
-extern Logger<WifiLogger> WifiLog;
+extern Logger<SerialLogger> SerialLog;
 
 
 #endif //LED_FAN_LOGGER_H

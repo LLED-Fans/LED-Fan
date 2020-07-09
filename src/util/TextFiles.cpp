@@ -4,13 +4,14 @@
 
 #include <SPIFFS.h>
 #include "TextFiles.h"
+#include "Logger.h"
 
 bool TextFiles::write(String path, String s) {
     File file = SPIFFS.open(path, FILE_WRITE);
 
     if(!file){
-        Serial.print("There was an error opening the file: ");
-        Serial.println(path);
+        SerialLog.print("There was an error opening the file: ");
+        SerialLog.print(path).ln();
         return false;
     }
 

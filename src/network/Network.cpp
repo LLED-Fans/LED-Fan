@@ -2,7 +2,6 @@
 // Created by Lukas Tenbrink on 20.01.20.
 //
 
-#include <HardwareSerial.h>
 #include <WiFi.h>
 #include <SPIFFS.h>
 #include <util/TextFiles.h>
@@ -85,11 +84,11 @@ bool Network::connectToStation(int tries) {
 
     if (!stationSetup->isComplete()) {
         mode = WifiMode::accessPoint;
-        Serial.println("Invalid Station Setup! Pairing!");
+        SerialLog.print("Invalid Station Setup! Pairing!").ln();
         return false;
     }
 
-    Serial.println("Connecting to " + stationSetup->ssid + "...");
+    SerialLog.print("Connecting to " + stationSetup->ssid + "...").ln();
 
     needsReconnect = false;
     WiFi.mode(WIFI_MODE_STA);
@@ -118,7 +117,7 @@ IPAddress Network::address() {
 }
 
 void Network::pair() {
-    Serial.println("Pairing…");
+    SerialLog.print("Pairing…").ln();
 
     // Clear current pairing
     setStationSetup(new WifiSetup("", ""));
@@ -138,7 +137,7 @@ void Network::readConfig() {
 
 void Network::hostSoftAP() {
     if (!softAPSetup->isComplete()) {
-        Serial.println("Failed to host access point!");
+        SerialLog.print("Failed to host access point!").ln();
         return;
     }
 

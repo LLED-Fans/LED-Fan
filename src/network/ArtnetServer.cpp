@@ -3,7 +3,6 @@
 //
 
 #include <util/Logger.h>
-#include <HardwareSerial.h>
 #include "ArtnetServer.h"
 
 using namespace std::placeholders;
@@ -92,8 +91,8 @@ void ArtnetServer::acceptDMX(ArtnetChannelPacket<ArtnetEndpoint> *packet) {
 }
 
 void ArtnetServer::acceptSync(IPAddress *remoteIP) {
-    Serial.print("Got Sync: ");
-    Serial.println(*remoteIP);
+    SerialLog.print("Got Sync: ");
+    SerialLog.print(*remoteIP).ln();
 }
 
 std::vector<ArtnetEndpoint *> *ArtnetServer::endpoints() {

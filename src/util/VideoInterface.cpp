@@ -5,7 +5,6 @@
 #include <screen/ConcentricCoordinates.h>
 #include <Setup.h>
 #include "VideoInterface.h"
-#include "Printf.h"
 
 VideoInterface::VideoInterface(Screen *screen, ArtnetServer *artnetServer) : screen(screen),
                                                                              artnetServer(artnetServer) {

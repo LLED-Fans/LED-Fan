@@ -4,6 +4,7 @@
 
 #include "Apa102Renderer.h"
 #include <algorithm>
+#include <util/Logger.h>
 #include "Setup.h"
 
 Apa102Renderer::Apa102Renderer(size_t pixelCount, size_t overflowWall) : Renderer(pixelCount, overflowWall) {
@@ -44,7 +45,7 @@ Apa102Renderer::Apa102Renderer(size_t pixelCount, size_t overflowWall) : Rendere
     // Allocate DMA memory
     buffer = reinterpret_cast<uint8_t *>(heap_caps_malloc(bufferSize, MALLOC_CAP_DMA));
     if (!buffer) {
-        Serial.println("Failed to allocate SPI buffer; possibly too little DMA memory available?");
+        SerialLog.print("Failed to allocate SPI buffer; possibly too little DMA memory available?").ln();
         exit(1);
     }
     _prepareBuffer();

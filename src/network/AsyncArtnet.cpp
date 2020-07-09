@@ -4,7 +4,6 @@
 
 #include "AsyncArtnet.h"
 
-#include <HardwareSerial.h>
 #include <WiFi.h>
 
 #include "ArtnetEndpoint.h"

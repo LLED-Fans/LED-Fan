@@ -6,7 +6,7 @@
 #include <cmath>
 #include <esp32-hal-gpio.h>
 #include <Setup.h>
-#include <HardwareSerial.h>
+#include <util/Logger.h>
 #include "SpeedControl.h"
 
 SpeedControl::SpeedControl(
@@ -30,7 +30,7 @@ void SpeedControl::update(unsigned long microsDelay) {
         if (microsAccelerating < ROTATION_PAUSED_MS * 1000)
             microsAccelerating += microsDelay;
         else if (rotationSensor->isPaused) {
-            Serial.println("Motor appears to be stuck - Emergency brake engaged!");
+            SerialLog.print("Motor appears to be stuck - Emergency brake engaged!").ln();
             stop();
             return;
         }
