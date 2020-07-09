@@ -57,12 +57,14 @@ void Network::setHostname(String hostname) {
 }
 
 bool Network::checkStatus() {
+    wl_status_t status = WiFi.status();
+
     switch (mode) {
         case WifiMode::station:
             // Don't call connect() again if status != connected
             // because it will cancel current connection attempts.
 
-            if (needsReconnect || WiFi.getMode() != WIFI_MODE_STA)
+            if (needsReconnect || WiFi.getMode() != WIFI_MODE_STA || status == WL_CONNECT_FAILED)
                 connectToStation(1);
 
             break;
@@ -75,7 +77,7 @@ bool Network::checkStatus() {
             break;
     }
 
-    return WiFi.status() == WL_CONNECTED;
+    return status == WL_CONNECTED;
 }
 
 bool Network::connectToStation(int tries) {
