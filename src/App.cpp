@@ -104,10 +104,11 @@ App::App() {
     screen->cartesianSampling = Screen::CARTESIAN_SAMPLING_MODE;
 
 #ifdef MAX_AMPERE
-    float maxAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
-    if (maxAmpereDrawn > MAX_AMPERE) {
-        // Each LED has a lightness of 255 * 3 (r+g+b)
-        screen->renderer->setMaxLightness(float(LED_COUNT * 3) / (maxAmpereDrawn / float(MAX_AMPERE)));
+    float peakAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
+    if (peakAmpereDrawn > MAX_AMPERE) {
+        float allowedRatio = float(MAX_AMPERE) / peakAmpereDrawn;
+        // Each LED has a lightness of 3 (r+g+b)
+        screen->renderer->setMaxLightness(float(LED_COUNT * 3) * allowedRatio);
     }
 #endif
 
