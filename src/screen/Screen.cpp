@@ -91,6 +91,7 @@ void Screen::draw(unsigned long delayMicros) {
 
         // Behavior over, reset pointer
         behavior = nullptr;
+        determineMode(micros());
     }
 
     if (!rotationSensor->isReliable()) {
@@ -123,8 +124,13 @@ void Screen::determineMode(unsigned long microseconds) {
                 leastDelay = delay;
             }
         }
+
         if (mostRecentInput != Mode::count) {
             this->setMode(mostRecentInput);
+        }
+        else {
+            // No inputs, might as well switch back to demo.
+            behavior = new Demo();
         }
     }
 }
