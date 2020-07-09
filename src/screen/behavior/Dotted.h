@@ -14,6 +14,7 @@ public:
 
     Dotted();
 
+    String name() override { return "Dotted"; }
     virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
 };
 

@@ -17,6 +17,7 @@ public:
     bool isWhite = false;
     unsigned long timeUntilSwitch;
 
+    String name() override { return "Strobe"; }
     virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
 };
 

@@ -15,6 +15,7 @@ public:
 
     Ping(unsigned long timeLeft);
 
+    String name() override { return "Ping"; }
     virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
 };
 

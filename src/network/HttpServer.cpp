@@ -61,15 +61,6 @@ String HttpServer::processTemplates(const String &var) {
         return r;
     }
 
-    if (var == "S_MODE_DEMO") {
-        return app->screen->getMode() == Screen::demo ? "mdl-button--accent" : "";
-    }
-    if (var == "S_MODE_SCREEN") {
-        return app->screen->getMode() == Screen::cartesian ? "mdl-button--accent" : "";
-    }
-    if (var == "S_MODE_CONCENTRIC") {
-        return app->screen->getMode() == Screen::concentric ? "mdl-button--accent" : "";
-    }
     if (var == "VIRTUAL_SCREEN_SIZE") {
         return String(app->screen->cartesianResolution);
     }
@@ -215,22 +206,23 @@ void HttpServer::setupRoutes() {
     });
 
     registerREST("/behavior", "id", [screen](String id) {
-        if (id == "none") {
+        if (id == "None")
             screen ->behavior = nullptr;
-        }
-        else if (id == "strobe") {
+        else if (id == "Strobe")
             screen->behavior = new StrobeDemo();
-        }
-        else if (id == "dotted")
+        else if (id == "Dotted")
             screen -> behavior = new Dotted();
-        else if (id == "demo")
+        else if (id == "Demo")
             screen -> behavior = new Demo();
-        else {
+        else
             return String();
-        }
 
         return String(2000 * 1000);
-    }, [](){ return ""; });
+    }, [screen](){
+        if (screen->behavior)
+            return screen->behavior->name();
+        return String("None");
+    });
 
     _server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", String(5000 * 1000));

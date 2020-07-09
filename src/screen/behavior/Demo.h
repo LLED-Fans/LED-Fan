@@ -12,6 +12,7 @@ class Demo : public NativeBehavior {
 public:
     Demo();
 
+    String name() override { return "Demo"; }
     virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
 };
 
