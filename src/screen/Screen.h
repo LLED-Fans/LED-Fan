@@ -37,7 +37,7 @@ public:
 class Screen {
 public:
     enum Mode {
-        demo, cartesian, concentric, count
+        cartesian, concentric, count
     };
 
     enum CartesianSampling {
@@ -76,7 +76,6 @@ public:
     void update(unsigned long delayMicros);
 
     void draw(unsigned long delayMicros);
-    void drawDemo();
     void drawCartesian();
     void drawConcentric();
 

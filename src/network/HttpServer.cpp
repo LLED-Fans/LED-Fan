@@ -15,6 +15,7 @@
 #include <screen/behavior/Dotted.h>
 #include <util/Profiler.h>
 #include <WiFi.h>
+#include <screen/behavior/Demo.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -222,6 +223,8 @@ void HttpServer::setupRoutes() {
         }
         else if (id == "dotted")
             screen -> behavior = new Dotted();
+        else if (id == "demo")
+            screen -> behavior = new Demo();
         else {
             return String();
         }

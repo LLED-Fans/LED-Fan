@@ -14,6 +14,7 @@
 #include <util/StringRep.h>
 #include <numeric>
 #include <esp32-hal.h>
+#include <screen/behavior/Demo.h>
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
 
@@ -65,6 +66,8 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
         inputTimestamps[i] = 0;
 
     readConfig();
+
+    behavior = new Demo();
 }
 
 void Screen::readConfig() {
@@ -99,9 +102,6 @@ void Screen::draw(unsigned long delayMicros) {
     switch (_mode) {
         default:
             drawCartesian();
-            break;
-        case demo:
-            drawDemo();
             break;
         case concentric:
             drawConcentric();
@@ -164,37 +164,6 @@ void Screen::drawCartesian() {
 
 //                *pixel.color = PRGB(((x + y) % 3) == 0 ? 255 : 0, ((x + y) % 3) == 1 ? 255 : 0, ((x + y) % 2) == 0 ? 255 : 0);
                 *pixel.color = buffer[x + y * cartesianResolution];
-            }
-        }
-    }
-
-    renderer->render();
-}
-
-void Screen::drawDemo() {
-    float rotation = rotationSensor->estimatedRotation(micros());
-    auto milliseconds = millis();
-
-    for (int b = 0; b < bladeCount; ++b) {
-        auto blade = blades[b];
-        auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
-
-        auto hueShift = milliseconds * 255 / 1000 / 10  + (unsigned long)(bladeRotation * 255);
-
-        for (int p = blade->pixelCount - 1; p >= 0; --p) {
-            Blade::Pixel &pixel = blade->pixels[p];
-
-            if (bladeRotation > 0.75f) {
-                *pixel.color = PRGB::white;
-            }
-            else {
-                // TODO Fix
-                *pixel.color = PRGB::black;
-//                fill_rainbow(
-//                    pixel.color, 1,
-//                    pixel.radius * 10 + hueShift,
-//                    0
-//                );
             }
         }
     }
