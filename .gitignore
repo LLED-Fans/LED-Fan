@@ -3,7 +3,7 @@ src/builds/*
 !src/builds/.gitkeep
 
 # Auto-Generated
-sdkconfig
+#sdkconfig  # .defaults doesn't work for some reason
 
 # IDE
 .pio
