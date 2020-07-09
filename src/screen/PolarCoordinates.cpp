@@ -9,8 +9,8 @@
 
 void PolarCoordinates::asCartesian(float theta, float r, float *x, float *y, bool positive) {
     // -r to r
-    *x = LUT::sin->lookup(theta) * r;
-    *y = LUT::cos->lookup(theta) * r;
+    *x = LUT::sin->interpolate(theta) * r;
+    *y = LUT::cos->interpolate(theta) * r;
 
     if (positive) {
         // 0 to 1, assuming -1 < r < 1
