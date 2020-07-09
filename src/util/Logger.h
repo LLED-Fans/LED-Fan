@@ -12,14 +12,14 @@ class WifiLogger {
 public:
     CharRoller *data;
 
-    WifiLogger(int bufferSize);
+    WifiLogger(int bufferSize) : data(new CharRoller(bufferSize)) {};
 
-    String string();
-    void clear();
+    String string() { return data->toString(); };
+    void clear() { data->clear(); };
 
-    void write(char *value);
-    void write(String value);
-    void write(char value);
+    void write(char *value) { data->push(value); };
+    void write(String value) { data->push(std::move(value)); };
+    void write(char value) { data->push(value); };
 };
 
 template <class LoggingOutput>

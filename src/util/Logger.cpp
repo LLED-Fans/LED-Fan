@@ -8,28 +8,6 @@
 
 Logger<WifiLogger> WifiLog = Logger<WifiLogger>(WifiLogger(1024));
 
-WifiLogger::WifiLogger(int bufferSize) : data(new CharRoller(bufferSize)) {}
-
-void WifiLogger::write(char *value) {
-    data->push(value);
-}
-
-void WifiLogger::write(String value) {
-    data->push(std::move(value));
-}
-
-void WifiLogger::write(char v) {
-    data->push(v);
-}
-
-void WifiLogger::clear() {
-    data->clear();
-}
-
-String WifiLogger::string() {
-    return data->toString();
-}
-
 template <class LoggingOutput>
 Logger<LoggingOutput> Logger<LoggingOutput>::print(char v) {
     output.write(v);
