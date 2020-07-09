@@ -6,8 +6,10 @@
 #define LED_FAN_LOGGER_H
 
 
-#include <HardwareSerial.h>
+#include <esp_log.h>
 #include "CharRoller.h"
+
+static const char* TAG = "lled";
 
 template <class LoggingOutput>
 class Logger {
@@ -48,9 +50,14 @@ extern Logger<WifiLogger> WifiLog;
 
 class SerialLogger {
 public:
-    void write(char *value) { Serial.print(value); };
-    void write(String value) { Serial.print(value); };
-    void write(char value) { Serial.print(value); };
+    SerialLogger() {
+        esp_log_level_set(TAG, ESP_LOG_INFO);
+    }
+
+    // TODO Not ideal lol, but hey, let's fix later
+    void write(char *value) { ESP_LOGI(TAG, "%s", value); };
+    void write(String value) { ESP_LOGI(TAG, "%s", value.begin()); };
+    void write(char value) { ESP_LOGI(TAG, "%c", value); };
 };
 
 extern Logger<SerialLogger> SerialLog;

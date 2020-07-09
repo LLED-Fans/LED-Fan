@@ -34,11 +34,6 @@
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
 
 App::App() {
-#if CORE_DEBUG_LEVEL > 0
-    // Enable Monitoring
-    Serial.begin(0);
-#endif
-
     SerialLog.print("Booting LLED Fan Firmware").ln();
 
     // Mount file system

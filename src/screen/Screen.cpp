@@ -13,7 +13,7 @@
 #include <util/TextFiles.h>
 #include <util/StringRep.h>
 #include <numeric>
-#include <HardwareSerial.h>
+#include <esp32-hal.h>
 #include "ConcentricCoordinates.h"
 #include "PolarCoordinates.h"
 

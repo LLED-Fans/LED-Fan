@@ -15,11 +15,11 @@ using namespace std::placeholders;
 template <typename T>
 bool AsyncArtnet<T>::listen(uint16_t port) {
     if (!udp.listen(port)) {
-        WifiLog.print("UDP Listen failed!").ln();
+        SerialLog.print("UDP Listen failed!").ln();
         return false;
     }
 
-    WifiLog.print("UDP Listening on Port: ").print(port).ln();
+    SerialLog.print("UDP Listening on Port: ").print(port).ln();
     udp.onPacket(std::bind(&AsyncArtnet::accept, this, _1));
 
     return true;
@@ -154,27 +154,28 @@ bool AsyncArtnet<T>::accept(AsyncUDPPacket packet) {
         return ART_SYNC;
     }
 
-    WifiLog.print("Got unrecognized packet with opcode: " + String(opcode)).ln();
+    SerialLog.print("Got unrecognized packet with opcode: " + String(opcode)).ln();
 
     return 0;
 }
 
 template <typename T>
 bool AsyncArtnet<T>::print(AsyncUDPPacket packet) {
-    WifiLog.print("UDP Packet Type: ");
-    WifiLog.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-    WifiLog.print(", From: ");
-    WifiLog.print(packet.remoteIP());
-    WifiLog.print(":");
-    WifiLog.print(packet.remotePort());
-    WifiLog.print(", To: ");
-    WifiLog.print(packet.localIP());
-    WifiLog.print(":");
-    WifiLog.print(packet.localPort());
-    WifiLog.print(", Length: ");
-    WifiLog.print(packet.length());
-    WifiLog.print(", Data: ");
-    Serial.write(packet.data(), packet.length());
+    Logger<SerialLogger> &log = SerialLog;
+    log.print("UDP Packet Type: ");
+    log.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+    log.print(", From: ");
+    log.print(packet.remoteIP());
+    log.print(":");
+    log.print(packet.remotePort());
+    log.print(", To: ");
+    log.print(packet.localIP());
+    log.print(":");
+    log.print(packet.localPort());
+    log.print(", Length: ");
+    log.print(packet.length());
+    log.print(", Data: ");
+    log.print(packet.data());
     //reply to the client
 //    packet.printf("Got %u bytes of data", packet.length());
 
