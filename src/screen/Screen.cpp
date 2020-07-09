@@ -69,7 +69,7 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
 
 void Screen::readConfig() {
     renderer->setBrightness(StringRep::toFloat(TextFiles::readConf("brightness"), 1.0f));
-    setResponse(StringRep::toInt(TextFiles::readConf("response"), 1));
+    setResponse(StringRep::toFloat(TextFiles::readConf("response"), 1));
 }
 
 void Screen::update(unsigned long delayMicros) {
