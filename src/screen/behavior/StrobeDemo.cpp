@@ -18,9 +18,8 @@ NativeBehavior::Status StrobeDemo::update(Screen *screen, unsigned long delay) {
         isWhite = !isWhite;
 
         Renderer *renderer = screen->renderer;
-        for (int i = 0; i < renderer->pixelCount; ++i) {
-            renderer->rgb[i] = isWhite ? PRGB::white : PRGB::black;
-        }
+        PRGB(isWhite ? PRGB::white : PRGB::black)
+            .fill(renderer->rgb, renderer->pixelCount);
     }
 
     return alive;

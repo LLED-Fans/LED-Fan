@@ -16,6 +16,7 @@
 #include <util/Profiler.h>
 #include <WiFi.h>
 #include <screen/behavior/Demo.h>
+#include <screen/behavior/PerfectStrobe.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -210,10 +211,12 @@ void HttpServer::setupRoutes() {
             screen ->behavior = nullptr;
         else if (id == "StrobeDemo")
             screen->behavior = new StrobeDemo();
+        else if (id == "Strobe")
+            screen->behavior = new PerfectStrobe();
         else if (id == "Dotted")
-            screen -> behavior = new Dotted();
+            screen->behavior = new Dotted();
         else if (id == "Demo")
-            screen -> behavior = new Demo();
+            screen->behavior = new Demo();
         else
             return String();
 

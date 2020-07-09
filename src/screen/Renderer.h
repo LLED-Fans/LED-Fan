@@ -41,9 +41,18 @@ struct PRGB {
         return *this;
     }
 
+    void fill(PRGB *array, int count) {
+        for (int i = 0; i < count; ++i) {
+            array[i] = *this;
+        }
+    }
+
     typedef enum {
         black = 0x000000,
         white = 0xffffff,
+        red = 0xff0000,
+        green = 0x00ff00,
+        blue = 0x0000ff
     } HTMLColorCode;
 };
 

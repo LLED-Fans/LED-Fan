@@ -11,11 +11,9 @@ NativeBehavior::Status Dotted::update(Screen *screen, unsigned long delay) {
     if (screen->rotationSensor->didUpdate)
         isWhite = false; // Keep it as synced as we can
 
-    auto renderer = screen->renderer;
-    for (int i = 0; i < renderer->pixelCount; ++i) {
-        renderer->rgb[i] = isWhite ? PRGB::white : PRGB::black;
-    }
-    isWhite = !isWhite;
+    Renderer *renderer = screen->renderer;
+    PRGB(isWhite ? PRGB::white : PRGB::black)
+        .fill(renderer->rgb, renderer->pixelCount);
 
     return purgatory;
 

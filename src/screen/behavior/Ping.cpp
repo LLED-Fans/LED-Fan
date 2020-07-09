@@ -11,14 +11,9 @@ NativeBehavior::Status Ping::update(Screen *screen, unsigned long delay) {
     if (timeLeft <= 0)
         return dead;
 
-    auto renderer = screen->renderer;
-    for (int i = 0; i < renderer->pixelCount; ++i) {
-        renderer->rgb[i] =PRGB(
-            (((timeLeft - 1) / blinkTime) % 2) == 0 ? 0 : 255,
-            0,
-            0
-        );
-    }
+    Renderer *renderer = screen->renderer;
+    PRGB((((timeLeft - 1) / blinkTime) % 2) == 0 ? PRGB::black : PRGB::red)
+        .fill(renderer->rgb, renderer->pixelCount);
 
     timeLeft = timeLeft > delay
         ? timeLeft - delay
