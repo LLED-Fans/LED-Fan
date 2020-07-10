@@ -10,13 +10,10 @@
 #include <esp_wifi.h>
 #include <util/Logger.h>
 #include <screen/behavior/Ping.h>
-#include <screen/behavior/StrobeDemo.h>
 #include <App.h>
-#include <screen/behavior/Dotted.h>
 #include <util/Profiler.h>
 #include <WiFi.h>
-#include <screen/behavior/Demo.h>
-#include <screen/behavior/PerfectStrobe.h>
+#include <screen/behavior/Behaviors.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -207,19 +204,11 @@ void HttpServer::setupRoutes() {
     });
 
     registerREST("/behavior", "id", [screen](String id) {
-        if (id == "None")
-            screen ->behavior = nullptr;
-        else if (id == "StrobeDemo")
-            screen->behavior = new StrobeDemo();
-        else if (id == "Strobe")
-            screen->behavior = new PerfectStrobe();
-        else if (id == "Dotted")
-            screen->behavior = new Dotted();
-        else if (id == "Demo")
-            screen->behavior = new Demo();
-        else
+        auto entry = NativeBehaviors::list.find(id);
+        if (entry == NativeBehaviors::list.end())
             return String();
 
+        screen->behavior = entry->second();
         return String(2000 * 1000);
     }, [screen](){
         if (screen->behavior)

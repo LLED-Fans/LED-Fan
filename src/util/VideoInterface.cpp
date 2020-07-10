@@ -4,6 +4,7 @@
 
 #include <screen/ConcentricCoordinates.h>
 #include <Setup.h>
+#include <screen/behavior/Behaviors.h>
 #include "VideoInterface.h"
 
 VideoInterface::VideoInterface(Screen *screen, ArtnetServer *artnetServer) : screen(screen),
@@ -14,9 +15,12 @@ DynamicJsonDocument VideoInterface::info() {
     IntRoller *concentricResolution = screen->concentricResolution;
 
     const std::vector<ArtnetEndpoint *> *endpoints = artnetServer->endpoints();
+    auto behaviors = NativeBehaviors::list;
 
     DynamicJsonDocument doc(
-            JSON_OBJECT_SIZE(2)
+            JSON_OBJECT_SIZE(3)
+            // Behaviors
+            + JSON_ARRAY_SIZE(behaviors.size())
             // Cartesian Screen
             + JSON_OBJECT_SIZE(3)
             // Concentric Screen
@@ -25,6 +29,13 @@ DynamicJsonDocument VideoInterface::info() {
             + JSON_ARRAY_SIZE(8)
             + 512 // Capacity for strings
     );
+
+    {
+        auto list = doc.createNestedArray("behaviors");
+        for (auto pair : behaviors) {
+            list.add(pair.first);
+        }
+    }
 
     // ==============================================
     // ================Cartesian=====================
