@@ -37,7 +37,7 @@ public:
 class Screen {
 public:
     enum Mode {
-        cartesian, concentric, count
+        none, cartesian, concentric, count
     };
 
     enum CartesianSampling {
@@ -97,7 +97,7 @@ public:
     void setResponse(float response);;
 
 protected:
-    Mode _mode = cartesian;
+    Mode _mode = none;
 
     float _radialCorrection;
 

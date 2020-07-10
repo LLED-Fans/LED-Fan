@@ -6,9 +6,9 @@
 #define LED_FAN_DEMO_H
 
 
-#include "NativeBehavior.h"
+#include "RotatingBehavior.h"
 
-class Demo : public NativeBehavior {
+class Demo : public RotatingBehavior {
 public:
     float *speeds = nullptr;
     PRGB *colors = nullptr;
@@ -18,7 +18,7 @@ public:
     Demo();
 
     String name() override { return "Demo"; }
-    virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
+    virtual NativeBehavior::Status render(Screen *screen, unsigned long delay, float rotation);
 
     ~Demo();
 private:

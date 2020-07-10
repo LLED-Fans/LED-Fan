@@ -46,7 +46,7 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
             int ringIdx = bladeRingOffset + p * bladeCount;
             int ledIndex = bladeStartLED + p * bladePolarity;
 
-            blade->pixels[p] = Blade::Pixel{
+            blade->pixels[p] = Blade::Pixel {
                 ringRadii[ringIdx],
                 ringIdx,
                 ledIndex,
@@ -63,11 +63,9 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
     bilinearTraverser->y = cartesianCenter;
 
     for (int i = 0; i < Mode::count; ++i)
-        inputTimestamps[i] = 0;
+        inputTimestamps[i] = ULONG_MAX - MICROS_INPUT_ACTIVE;
 
     readConfig();
-
-    behavior = new Demo();
 }
 
 void Screen::readConfig() {
@@ -81,20 +79,27 @@ void Screen::update(unsigned long delayMicros) {
 }
 
 void Screen::draw(unsigned long delayMicros) {
+    if (_mode != none && !hasSignal(micros()))
+        _mode = none;  // Switch away from image
+
+    if (_mode == none && behavior == nullptr) {
+        // Nothing to show, let's switch back to Demo.
+        behavior = new Demo();
+    }
+
     if (behavior != nullptr) {
         auto status = behavior->update(this, delayMicros);
 
-        if (status == NativeBehavior::alive || (status == NativeBehavior::purgatory && !hasSignal(micros()))) {
+        if (status == NativeBehavior::alive || (status == NativeBehavior::purgatory && _mode == none)) {
             renderer->render();
             return;
         }
 
         // Behavior over, reset pointer
         behavior = nullptr;
-        determineMode(micros());
     }
 
-    if (!rotationSensor->isReliable()) {
+    if (!rotationSensor->isReliable() || _mode == none) {
         memset((void *)renderer->rgb, 0, renderer->pixelCount * 3); // Fill black
         renderer->render();
         return;
@@ -102,6 +107,7 @@ void Screen::draw(unsigned long delayMicros) {
 
     switch (_mode) {
         default:
+        case cartesian:
             drawCartesian();
             break;
         case concentric:
@@ -111,27 +117,24 @@ void Screen::draw(unsigned long delayMicros) {
 }
 
 void Screen::determineMode(unsigned long microseconds) {
-    if (!hasSignal(microseconds)) {
-        // No recent signal on input
+    if (_mode != none && hasSignal(microseconds))
+        return;
 
-        Mode mostRecentInput = Mode::count;
-        unsigned long leastDelay = MICROS_INPUT_ACTIVE;
-        for (int i = 0; i < Mode::count; i++) {
-            unsigned long delay = microseconds - inputTimestamps[i];
+    // No recent signal on input
 
-            if (delay < leastDelay) {
-                mostRecentInput = static_cast<Mode>(i);
-                leastDelay = delay;
-            }
-        }
+    Mode mostRecentInput = Mode::none;
+    unsigned long leastDelay = MICROS_INPUT_ACTIVE;
+    for (int i = 1; i < Mode::count; i++) {
+        unsigned long delay = microseconds - inputTimestamps[i];
 
-        if (mostRecentInput != Mode::count) {
-            this->setMode(mostRecentInput);
+        if (delay < leastDelay) {
+            mostRecentInput = static_cast<Mode>(i);
+            leastDelay = delay;
         }
-        else {
-            // No inputs, might as well switch back to demo.
-            behavior = new Demo();
-        }
+    }
+
+    if (mostRecentInput != Mode::none) {
+        this->setMode(mostRecentInput);
     }
 }
 
