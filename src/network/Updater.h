@@ -6,6 +6,8 @@
 #define LED_FAN_UPDATER_H
 
 
+static const int UPDATE_TIME_MILLIS = 60 * 1000;
+
 class Updater {
 public:
     bool shouldCheckUpdate = false;

@@ -42,12 +42,12 @@ Updater::Updater() {
 
 int Updater::check() {
     shouldCheckUpdate = true;
-    return 60 * 1000 * 1000;
+    return UPDATE_TIME_MILLIS * 1000;
 }
 
 void Updater::handle() {
     if (shouldCheckUpdate) {
-        checkUntilTimestamp = millis() + 10000;
+        checkUntilTimestamp = millis() + UPDATE_TIME_MILLIS;
         shouldCheckUpdate = false;
     }
 
