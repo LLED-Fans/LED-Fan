@@ -16,6 +16,7 @@
 
 #include <util/Logger.h>
 #include <util/LUT.h>
+#include <screen/behavior/Behaviors.h>
 
 #if ROTATION_SENSOR_TYPE == ROTATION_SENSOR_TYPE_HALL_SYNC
 #include <sensor/SyncGPIOSwitch.h>
@@ -46,8 +47,9 @@ App::App() {
     // Start connecting
     Network::checkStatus();
 
-    // Init LUTs
+    // Init Statics
     LUT::initSin(LUT_SIN_COUNT);
+    NativeBehaviors::init();
 
     // Clock Synchronizer
     regularClock = new RegularClock(

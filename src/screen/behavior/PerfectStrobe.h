@@ -6,7 +6,6 @@
 #define LED_FAN_PERFECTSTROBE_H
 
 
-#include <screen/Renderer.h>
 #include "NativeBehavior.h"
 
 class PerfectStrobe : public NativeBehavior {

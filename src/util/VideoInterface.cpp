@@ -32,8 +32,8 @@ DynamicJsonDocument VideoInterface::info() {
 
     {
         auto list = doc.createNestedArray("behaviors");
-        for (auto pair : behaviors) {
-            list.add(pair.first);
+        for (auto name : behaviors.keys) {
+            list.add(name.begin());
         }
     }
 

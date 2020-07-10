@@ -6,7 +6,7 @@
 #define LED_FAN_IMAGE_H
 
 #include <functional>
-#include <screen/Renderer.h>
+#include <screen/Pixels.h>
 
 class Image {
 public:

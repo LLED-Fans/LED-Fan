@@ -97,7 +97,7 @@ public:
     void setResponse(float response);;
 
 protected:
-    Mode _mode = demo;
+    Mode _mode = cartesian;
 
     float _radialCorrection;
 

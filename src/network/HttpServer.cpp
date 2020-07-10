@@ -15,6 +15,8 @@
 #include <WiFi.h>
 #include <screen/behavior/Behaviors.h>
 
+#include <utility>
+
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
 });
@@ -204,11 +206,11 @@ void HttpServer::setupRoutes() {
     });
 
     registerREST("/behavior", "id", [screen](String id) {
-        auto entry = NativeBehaviors::list.find(id);
-        if (entry == NativeBehaviors::list.end())
+        auto provider = NativeBehaviors::list[std::move(id)];
+        if (provider == nullptr)
             return String();
 
-        screen->behavior = entry->second();
+        screen->behavior = (*provider)();
         return String(2000 * 1000);
     }, [screen](){
         if (screen->behavior)

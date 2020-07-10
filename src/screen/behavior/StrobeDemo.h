@@ -15,7 +15,7 @@ public:
     double maxDelay = 50;
 
     bool isWhite = false;
-    unsigned long timeUntilSwitch;
+    unsigned long timeUntilSwitch = 0;
 
     String name() override { return "StrobeDemo"; }
     virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);

@@ -6,6 +6,7 @@
 #define LED_FAN_NATIVEBEHAVIOR_H
 
 #include <WString.h>
+#include <screen/Pixels.h>
 
 class Screen;
 

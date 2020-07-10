@@ -10,10 +10,19 @@
 
 class Demo : public NativeBehavior {
 public:
+    float *speeds = nullptr;
+    PRGB *colors = nullptr;
+    float *sizes = nullptr;
+    float *onRatios = nullptr;
+
     Demo();
 
     String name() override { return "Demo"; }
     virtual NativeBehavior::Status update(Screen *screen, unsigned long delay);
+
+    ~Demo();
+private:
+    void _populate(Screen *screen);
 };
 
 
