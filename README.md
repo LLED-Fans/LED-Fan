@@ -47,6 +47,11 @@ To update using a non-default setup file, create SomeSetup.h in builds/. The fil
     
 as per http://docs.platformio.org/en/latest/platforms/espressif32.html#over-the-air-ota-update.
 
+## Factory
+
+If reversion to factory is required, run `./otatool_proxy.py --port "/dev/ttyUSB1" erase_otadata`. This will erase OTA partitions and revert back to what was uploaded via serial.
+The script is sub-par, especially with the parts provided from esp-idf, and may need be checked. It is recommended to set output from parttool not to "None" since several restarts of the device are required during running of scripts.
+
 
 ## Build
 
