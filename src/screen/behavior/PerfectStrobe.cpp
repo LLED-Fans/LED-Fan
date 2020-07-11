@@ -10,10 +10,20 @@
 PerfectStrobe::PerfectStrobe(const PRGB &color) : color(color) {}
 
 NativeBehavior::Status PerfectStrobe::update(Screen *screen, unsigned long delay) {
-    float rotation = screen->rotationSensor->estimatedRotation(micros());
-    if (rotation < lastRotation)
-        isOn = !isOn;
-    lastRotation = rotation;
+    if (!screen->rotationSensor->isReliable()) {
+        if (timeUntilSwitch < delay) {
+            timeUntilSwitch = 200 * 1000;
+            isOn = !isOn;
+        }
+
+        return purgatory;
+    }
+    else {
+        float rotation = screen->rotationSensor->estimatedRotation(micros());
+        if (rotation < lastRotation)
+            isOn = !isOn;
+        lastRotation = rotation;
+    }
 
     Renderer *renderer = screen->renderer;
     PRGB(isOn ? color : PRGB::black)

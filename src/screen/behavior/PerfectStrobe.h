@@ -12,6 +12,7 @@ class PerfectStrobe : public NativeBehavior {
 public:
     PRGB color;
     bool isOn = false;
+    unsigned long timeUntilSwitch = 100 * 1000;
     float lastRotation = 0.0f;
 
     PerfectStrobe(const PRGB &color = PRGB::white);
