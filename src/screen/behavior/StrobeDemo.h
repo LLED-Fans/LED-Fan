@@ -12,7 +12,7 @@ class StrobeDemo : public NativeBehavior {
 public:
     double currentDelay = 1;
     double stepUp = 1.01;
-    double maxDelay = 50;
+    double maxDelay = 50 * 1000;
 
     bool isWhite = false;
     unsigned long timeUntilSwitch = 0;
