@@ -16,6 +16,7 @@
 #include <screen/behavior/Behaviors.h>
 
 #include <utility>
+#include <util/CrudeJson.h>
 
 #define SERVE_HTML(uri, file) _server.on(uri, HTTP_GET, [template_processor](AsyncWebServerRequest *request){\
     request->send(SPIFFS, file, "text/html", false, template_processor);\
@@ -216,6 +217,10 @@ void HttpServer::setupRoutes() {
         if (screen->behavior)
             return screen->behavior->name();
         return String("None");
+    });
+
+    _server.on("/behavior/list", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", CrudeJson::array(NativeBehaviors::list.keys));
     });
 
     _server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
