@@ -54,6 +54,8 @@ void Demo::_populate(Screen *screen) {
         PHSV color = PHSV(random(0, 256), random(0, 256), random(0, 256));
         if (lastHue != 0)
             color.h = (color.h >> 1) + lastHue - uint8_t(64);
+        if (color.v < 100)
+            color.v = 0;
         colors[i] = color;
         lastHue = color.h;
         speeds[i] = randomf(0.1f, 0.3f) / 1000.0f * (random(2) ? 1 : -1);
