@@ -47,10 +47,15 @@ void Demo::_populate(Screen *screen) {
     speeds = new float[pixels];
     onRatios = new float[pixels];
 
+    uint8_t lastHue = 0;
     for (int i = 0; i < pixels; ++i) {
         // Must divide 1.0 into equal pieces
         sizes[i] = 1.0f / random(2, 12);
-        colors[i] = PHSV(random(0, 256), random(0, 256), random(0, 256));
+        PHSV color = PHSV(random(0, 256), random(0, 256), random(0, 256));
+        if (lastHue != 0)
+            color.h = (color.h >> 1) + lastHue - uint8_t(64);
+        colors[i] = color;
+        lastHue = color.h;
         speeds[i] = randomf(0.1f, 0.3f) / 1000.0f * (random(2) ? 1 : -1);
         onRatios[i] = randomf(0.05f, 0.3f) * sizes[i];
     }
