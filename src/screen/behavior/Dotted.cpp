@@ -15,6 +15,8 @@ NativeBehavior::Status Dotted::update(Screen *screen, unsigned long delay) {
     PRGB(isWhite ? PRGB::white : PRGB::black)
         .fill(renderer->rgb, renderer->pixelCount);
 
+    isWhite = !isWhite;
+
     return purgatory;
 
 }
