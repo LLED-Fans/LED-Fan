@@ -12,7 +12,7 @@
 
 class FancyPing : public NativeBehavior {
 public:
-    unsigned long timeLeft = M_TWOPI * 1000 * 1000 / 4;
+    unsigned long timeLeft = M_TWOPI * (1000.0 * 1000 / 4 + 500 * 1000);
 
     String name() override { return "Fancy Ping"; }
     NativeBehavior::Status update(Screen *screen, unsigned long delay) override;
