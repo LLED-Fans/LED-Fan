@@ -19,6 +19,7 @@ public:
         float radius;
         int ringIndex;
         int pixelIndex;
+        int bladeIndex;
 
         PRGB *color;
 
@@ -49,6 +50,7 @@ public:
 
     int bladeCount;
     Blade **blades;
+    Blade::Pixel **pixels;
 
     unsigned long lastUpdateTimestamp;
 

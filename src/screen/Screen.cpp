@@ -33,6 +33,7 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
 
     bladeCount = 2;
     blades = new Blade*[bladeCount];
+    pixels = new Blade::Pixel*[pixelCount];
     for (int b = 0; b < bladeCount; ++b) {
         Blade *blade = blades[b] = new Blade(
                 pixelCount / bladeCount,
@@ -44,16 +45,18 @@ Screen::Screen(Renderer *renderer, int cartesianResolution, IntRoller *concentri
 
         for (int p = 0; p < blade->pixelCount; ++p) {
             int ringIdx = bladeRingOffset + p * bladeCount;
-            int ledIndex = bladeStartLED + p * bladePolarity;
+            int pixelIdx = bladeStartLED + p * bladePolarity;
 
             blade->pixels[p] = Blade::Pixel {
                 ringRadii[ringIdx],
                 ringIdx,
-                ledIndex,
-                renderer->rgb + ledIndex,
+                pixelIdx,
+                b,
+                renderer->rgb + pixelIdx,
                 (*concentricResolution)[ringIdx],
                 buffer + std::accumulate(concentricResolution->data, concentricResolution->data + ringIdx, 0)
             };
+            pixels[ringIdx] = &blade->pixels[p];
         }
     }
 

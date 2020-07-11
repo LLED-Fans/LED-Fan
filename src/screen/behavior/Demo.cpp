@@ -18,23 +18,41 @@ NativeBehavior::Status Demo::render(Screen *screen, unsigned long delay, float r
     if (!sizes)
         _populate(screen);
 
-    auto milliseconds = millis();
+    int milliseconds = millis();
+    int pixels = screen->getPixelCount();
 
-    for (int b = 0; b < screen->bladeCount; ++b) {
-        auto blade = screen->blades[b];
-        auto bladeRotation = std::fmod(rotation + blade->rotationOffset, 1.0f);
+    // MovingShift
+    // always positive so that we can use % later
+    float shift = fmodf(-float(milliseconds) / (20 * 1000.0f) * pixels, pixels) + pixels;
+    int shiftLow = int(shift);
+    float prevRatio = shift - shiftLow;
+    float toRatio = 1.0f - prevRatio;
 
-        for (int p = blade->pixelCount - 1; p >= 0; --p) {
-            Blade::Pixel &pixel = blade->pixels[p];
-            int pIdx = pixel.pixelIndex;
+    float bladeRotations[screen->bladeCount];
+    for (int j = 0; j < screen->bladeCount; ++j)
+        bladeRotations[j] = std::fmod(rotation + screen->blades[j]->rotationOffset, 1.0f);
+
+    // Can't interpolate between prev / next pixels because neighbors are always on the other sides...
+    for (int i = 0; i < pixels; ++i) {
+        Blade::Pixel *pixel = screen->pixels[i];
+        auto bladeRotation = bladeRotations[pixel->bladeIndex];
+
+        PRGB rColors[2];
+        for (int s = 0; s < 2; ++s) {
+            int pIdx = (i + shiftLow + s) % pixels;
 
             float position = fmodf(milliseconds * speeds[pIdx] + bladeRotation, sizes[pIdx]);
-
             if (position < 0) // fmodf can return negative values
                 position += sizes[pIdx];
 
-            *pixel.color = position < onRatios[pIdx] ? colors[pIdx] : PRGB::black;
+            rColors[s] = position < onRatios[pIdx] ? colors[pIdx] : PRGB::black;
         }
+
+        *pixel->color = PRGB(
+            rColors[1].r * prevRatio + rColors[0].r * toRatio,
+            rColors[1].g * prevRatio + rColors[0].g * toRatio,
+            rColors[1].b * prevRatio + rColors[0].b * toRatio
+        );
     }
 
     return purgatory;
@@ -43,7 +61,7 @@ NativeBehavior::Status Demo::render(Screen *screen, unsigned long delay, float r
 void Demo::_populate(Screen *screen) {
     int pixels = screen->getPixelCount();
     sizes = new float[pixels];
-    colors = new PRGB[pixels];
+    colors = new PRGB[pixels + 1];
     speeds = new float[pixels];
     onRatios = new float[pixels];
 
@@ -61,6 +79,8 @@ void Demo::_populate(Screen *screen) {
         speeds[i] = randomf(0.1f, 0.3f) / 1000.0f * (random(2) ? 1 : -1);
         onRatios[i] = randomf(0.05f, 0.3f) * sizes[i];
     }
+    // For interpolation easyness
+    colors[pixels] = colors[0];
 }
 
 Demo::~Demo() {
