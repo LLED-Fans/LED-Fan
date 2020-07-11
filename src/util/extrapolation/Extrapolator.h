@@ -9,9 +9,9 @@
 
 class Extrapolator {
 public:
-    virtual void adjust(std::vector<double> x, std::vector<double> y) = 0;
-    virtual double extrapolate(double x) = 0;
-    virtual double slope() = 0;
+    virtual void adjust(std::vector<float> x, std::vector<float> y) = 0;
+    virtual float extrapolate(float x) = 0;
+    virtual float slope() = 0;
 };
 
 

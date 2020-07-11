@@ -10,11 +10,11 @@
 #include "Extrapolator.h"
 
 class LinearRegressionExtrapolator : public Extrapolator {
-    double a = NAN, b = NAN;
+    float a = NAN, b = NAN;
 
-    void adjust(std::vector<double> x, std::vector<double> y) override;
-    double extrapolate(double x) override;
-    double slope() override;
+    void adjust(std::vector<float> x, std::vector<float> y) override;
+    float extrapolate(float x) override;
+    float slope() override;
 };
 
 

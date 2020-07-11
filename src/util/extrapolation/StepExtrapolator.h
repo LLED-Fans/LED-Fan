@@ -12,12 +12,12 @@
 
 class StepExtrapolator : public Extrapolator {
 public:
-    double baselineX = NAN;
-    double _slope = NAN;
+    float baselineX = NAN;
+    float _slope = NAN;
 
-    void adjust(std::vector<double> x, std::vector<double> y) override;
-    double extrapolate(double x) override;
-    double slope() override;
+    void adjust(std::vector<float> x, std::vector<float> y) override;
+    float extrapolate(float x) override;
+    float slope() override;
 };
 
 

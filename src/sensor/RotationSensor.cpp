@@ -85,7 +85,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     referenceTime = checkpoint;
 
     // Raw Data Collection
-    std::vector<double> x{};
+    std::vector<float> x{};
     x.reserve(n);
     std::vector<int> estimatedY{};
     estimatedY.reserve(n);
@@ -100,13 +100,13 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
         estimatedY.push_back(checkpointIndex);
     }
 
-    double estimatedCheckpointDiff = FastCluster::center(
+    float estimatedCheckpointDiff = FastCluster::center(
         FastCluster::stepDiffs(x),
-        10 * 1000
+        float(10 * 1000)
     );
 
     // Try to estimate if we missed any checkpoints
-    std::vector<double> y(n);
+    std::vector<float> y(n);
 
     if (estimatedCheckpointDiff <= 0) {
         // Not sure what happened... but don't take the chance.
@@ -118,7 +118,7 @@ void RotationSensor::registerCheckpoint(unsigned long time, int checkpoint) {
     y[n - 1] = estimatedY[n - 1];
     for (int j = n - 2; j >= 0; --j) {
         int expectedSteps = (estimatedY[j + 1] - estimatedY[j] + checkpointCount * direction) % checkpointCount;
-        double estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff * direction;
+        float estimatedSteps = (x[j + 1] - x[j]) / estimatedCheckpointDiff * direction;
 
         // Accept +- multiples of checkpointCount
         y[j] = y[j + 1] - (round((estimatedSteps - expectedSteps) / checkpointCount) * checkpointCount + expectedSteps);

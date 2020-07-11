@@ -5,14 +5,14 @@
 #include <util/Polynomial.h>
 #include "LinearRegressionExtrapolator.h"
 
-void LinearRegressionExtrapolator::adjust(std::vector<double> x, std::vector<double> y) {
+void LinearRegressionExtrapolator::adjust(std::vector<float> x, std::vector<float> y) {
     Polynomial::linearRegression(x, y, &a, &b);
 }
 
-double LinearRegressionExtrapolator::extrapolate(double x) {
+float LinearRegressionExtrapolator::extrapolate(float x) {
     return a * x + b;
 }
 
-double LinearRegressionExtrapolator::slope() {
+float LinearRegressionExtrapolator::slope() {
     return a;
 }
