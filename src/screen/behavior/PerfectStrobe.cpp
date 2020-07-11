@@ -19,10 +19,8 @@ NativeBehavior::Status PerfectStrobe::update(Screen *screen, unsigned long delay
             timeUntilSwitch -= delay;
     }
     else {
-        float rotation = screen->rotationSensor->estimatedRotation(micros());
-        if (rotation < lastRotation)
+        if (screen->rotationSensor->didUpdate && (*screen->rotationSensor->checkpointIndices)[-1] == 0)
             isOn = !isOn;
-        lastRotation = rotation;
     }
 
     Renderer *renderer = screen->renderer;
