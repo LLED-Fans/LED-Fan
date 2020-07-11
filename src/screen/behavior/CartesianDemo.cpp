@@ -25,9 +25,9 @@ NativeBehavior::Status CartesianDemo::render(Screen *screen, unsigned long delay
             int y = std::lroundf(screen->cartesianCenter + vectorY * pixel.radius);
 
             *pixel.color = PRGB(
-                    ((x + y) % 3) == 0 ? 255 : 0,
-                    ((x + y) % 3) == 1 ? 255 : 0,
-                    ((x + y) % 2) == 0 ? 255 : 0
+                ((x + y) % 3) == 0 ? 255 : 0,
+                ((x + y) % 3) == 1 ? 255 : 0,
+                ((x + y) % 2) == 0 ? 255 : 0
             );
         }
     }
