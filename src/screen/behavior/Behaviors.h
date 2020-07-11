@@ -22,25 +22,7 @@ public:
 
     static Dict list;
 
-    static void init() {
-        list.clear();
-
-        list.put("None", []() {
-            return nullptr;
-        });
-        list.put("Demo", []() {
-            return new Demo();
-        });
-        list.put("StrobeDemo", []() {
-            return new StrobeDemo();
-        });
-        list.put("Strobe", []() {
-            return new PerfectStrobe();
-        });
-        list.put("Dotted", []() {
-            return new Dotted();
-        });
-    };
+    static void init();;
 };
 
 #endif //LED_FAN_BEHAVIORS_H
