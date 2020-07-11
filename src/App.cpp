@@ -30,6 +30,8 @@
 #include <util/extrapolation/StepExtrapolator.h>
 #elif ROTATION_EXTRAPOLATION == ROTATION_EXTRAPOLATION_REGRESSION
 #include <util/extrapolation/LinearRegressionExtrapolator.h>
+#include <screen/behavior/FancyPing.h>
+
 #endif
 
 #define MICROSECONDS_PER_FRAME (1000 * 1000 / MAX_FRAMES_PER_SECOND)
@@ -104,6 +106,8 @@ App::App() {
     screen->setRadialCorrection(LED_BRIGHTNESS_CORRECTION);
     screen->rotationSensor = rotationSensor;
     screen->cartesianSampling = Screen::CARTESIAN_SAMPLING_MODE;
+    // Startup Animation
+    screen->behavior = new FancyPing();
 
 #ifdef MAX_AMPERE
     float peakAmpereDrawn = LED_COUNT * AMPERE_PER_LED;
