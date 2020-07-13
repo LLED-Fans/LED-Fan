@@ -59,13 +59,15 @@ void Apa102Renderer::_prepareBuffer() {
 
 
 void Apa102Renderer::_flush() {
-    uint32_t boundary = 0b11100000;
-    uint32_t emptyBoundary = uint32_t(0xff);
+    uint8_t boundary = 0b11100000;
+    Apa102Color emptyBoundary = Apa102Color {
+            0xff, 0, 0, 0
+    };
 
     uint8_t maxBrightness = 0b00011111;
     int _255e3 = 255 * 255 * 255;
 
-    auto intBuffer = reinterpret_cast<uint32_t*>(buffer);
+    auto colorBuffer = reinterpret_cast<Apa102Color*>(buffer);
 
     unsigned int i = 0, c = _startBoundary / 4;
     while(i < pixelCount * 3) {
@@ -73,20 +75,20 @@ void Apa102Renderer::_flush() {
         uint32_t peakBrightness = std::max(std::max(r_r, g_r), b_r);
 
         if (peakBrightness == 0) {
-            intBuffer[c++] = emptyBoundary;
+            colorBuffer[c++] = emptyBoundary;
             continue;
         }
 
-        uint32_t brightness = ((peakBrightness - 1) / 255 * maxBrightness / _255e3) + 1;
+        uint8_t brightness = ((peakBrightness - 1) / 255 * maxBrightness / _255e3) + 1;
 
         uint32_t rescaler = _255e3 * brightness / maxBrightness;
 
         // We may have rounding errors coming out at 256
-        uint32_t r = std::min(r_r / rescaler, uint32_t(255));
-        uint32_t g = std::min(g_r / rescaler, uint32_t(255));
-        uint32_t b = std::min(b_r / rescaler, uint32_t(255));
+        uint8_t r = std::min(r_r / rescaler, uint32_t(255));
+        uint8_t g = std::min(g_r / rescaler, uint32_t(255));
+        uint8_t b = std::min(b_r / rescaler, uint32_t(255));
 
-        intBuffer[c++] = (r << 24) | (g << 16) | (b << 8) | boundary | brightness;
+        colorBuffer[c++] = Apa102Color {uint8_t(boundary | brightness), b, g, r };
     }
 
     // Flush transaction

@@ -9,6 +9,13 @@
 #include <SPITools.h>
 #include "Renderer.h"
 
+struct Apa102Color {
+    uint8_t brightness;
+    uint8_t blue;
+    uint8_t green;
+    uint8_t red;
+};
+
 class Apa102Renderer : public Renderer {
 public:
     size_t bufferSize;
