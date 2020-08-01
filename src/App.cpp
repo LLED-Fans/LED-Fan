@@ -39,6 +39,10 @@
 App::App() {
     SerialLog.print("Booting LLED Fan Firmware").ln();
 
+    // Don't init Device ID until asked via HTTP
+    // Because WiFi gives excellent entropy
+//    DeviceID::get();
+
     // Mount file system
     SPIFFS.begin(false);
 

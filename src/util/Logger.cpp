@@ -22,7 +22,7 @@ Logger<LoggingOutput> Logger<LoggingOutput>::print(String v) {
 }
 
 template <class LoggingOutput>
-Logger<LoggingOutput> Logger<LoggingOutput>::print(char *v) {
+Logger<LoggingOutput> Logger<LoggingOutput>::print(const char *v) {
     output.write(v);
     return *this;
 }

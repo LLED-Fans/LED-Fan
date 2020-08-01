@@ -12,9 +12,12 @@ static const char *const CFG_PATH = "/cfg/";
 
 class TextFiles {
 public:
+    static bool has(String path);
+
     static bool write(String path, String s);
     static String read(String path);
 
+    static bool hasConf(String path);
     static bool writeConf(String path, String s);
     static String readConf(String path);
 };

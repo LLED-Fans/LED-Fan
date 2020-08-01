@@ -17,7 +17,7 @@ public:
     LoggingOutput output;
     Logger(LoggingOutput output) : output(output) {}
 
-    Logger print(char *value);
+    Logger print(const char *value);
     Logger print(String value);
     Logger print(char v);
     Logger ln();

@@ -1,0 +1,1 @@
+This folder was lifted and modified, under MIT license, from https://github.com/typester/esp32-uuid.

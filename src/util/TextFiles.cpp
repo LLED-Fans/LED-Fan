@@ -6,6 +6,10 @@
 #include "TextFiles.h"
 #include "Logger.h"
 
+bool TextFiles::has(String path) {
+    return SPIFFS.exists(path);
+}
+
 bool TextFiles::write(String path, String s) {
     File file = SPIFFS.open(path, FILE_WRITE);
 
@@ -31,6 +35,10 @@ String TextFiles::read(String path) {
     String string = file.readString();
     file.close();
     return string;
+}
+
+bool TextFiles::hasConf(String path) {
+    return has(CFG_PATH + path);
 }
 
 bool TextFiles::writeConf(String path, String s) {

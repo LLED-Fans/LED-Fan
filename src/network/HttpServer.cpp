@@ -264,8 +264,7 @@ void HttpServer::setupRoutes() {
 
     _server.on("/i", HTTP_GET,[videoInterface](AsyncWebServerRequest *request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
-        auto json = videoInterface->info();
-        serializeJsonPretty(json, *response);
+        videoInterface->info(response);
         request->send(response);
     });
 }

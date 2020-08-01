@@ -6,19 +6,23 @@
 #include <Setup.h>
 #include <screen/behavior/Behaviors.h>
 #include "VideoInterface.h"
+#include "DeviceID.h"
+#include "Logger.h"
 
 VideoInterface::VideoInterface(Screen *screen, ArtnetServer *artnetServer) : screen(screen),
                                                                              artnetServer(artnetServer) {
 }
 
-DynamicJsonDocument VideoInterface::info() {
-    IntRoller *concentricResolution = screen->concentricResolution;
-
+void VideoInterface::info(AsyncResponseStream *stream) {
     const std::vector<ArtnetEndpoint *> *endpoints = artnetServer->endpoints();
     auto behaviors = NativeBehaviors::list;
 
+    const String deviceID = DeviceID::getString();
+
     DynamicJsonDocument doc(
-            JSON_OBJECT_SIZE(3)
+            JSON_OBJECT_SIZE(4)
+            // Device ID
+            + deviceID.length()
             // Behaviors
             + JSON_ARRAY_SIZE(behaviors.size())
             // Cartesian Screen
@@ -27,8 +31,10 @@ DynamicJsonDocument VideoInterface::info() {
             + JSON_OBJECT_SIZE(3)
             + JSON_ARRAY_SIZE(8)
             + JSON_ARRAY_SIZE(8)
-            + 512 // Capacity for strings
+            + 512 // Capacity for other strings
     );
+
+    doc["id"] = deviceID.begin();
 
     {
         auto list = doc.createNestedArray("behaviors");
@@ -85,6 +91,6 @@ DynamicJsonDocument VideoInterface::info() {
         equations.add("cos(theta)*0.5*radius+0.5");
     }
 
-    return doc;
+    serializeJsonPretty(doc, *stream);
 }
 

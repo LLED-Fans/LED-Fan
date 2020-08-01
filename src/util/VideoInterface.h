@@ -8,6 +8,7 @@
 #include <ArduinoJson.h>
 #include <screen/Screen.h>
 #include <network/ArtnetServer.h>
+#include <ESPAsyncWebServer.h>
 
 class VideoInterface {
 public:
@@ -16,7 +17,7 @@ public:
 
     VideoInterface(Screen *screen, ArtnetServer *artnetServer);
 
-    DynamicJsonDocument info();
+    void info(AsyncResponseStream *stream);
 };
 
 
