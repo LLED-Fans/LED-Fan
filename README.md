@@ -27,6 +27,17 @@ Since some stuff currently works... sub-bar, do the following steps too:
     // Set task priority to 20 in AsyncUDP.cpp
 
 
+# First Run
+
+Check the correct partition file to use and select it in the platformio.ini.
+
+Remember to hold boot and press "EN" on the ESP to put it to flash mode. Run:
+
+	SETUP_FILE="" bash -c "platformio run -t upload"
+	SETUP_FILE="" bash -c "platformio run -t uploadfs"
+
+It should boot up with a new WiFi. When connected, its local IP is `192.168.4.1`.
+
 ## Debug
 
 (macOS only) To debug a message, run
